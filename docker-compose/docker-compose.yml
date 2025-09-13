@@ -1,0 +1,60 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: geodb
+      POSTGRES_USER: geo
+      POSTGRES_PASSWORD: geo
+    volumes:
+      - $HOME/geocidadao/db:/var/lib/postgresql/data
+    restart: always
+    networks:
+       - geo-network
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./geocidadao/rabbitmq:/var/lib/rabbitmq/
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    networks:
+      - geo-network
+  mongodb:
+    image: mongo:8.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - $HOME/geocidadao/mongodb:/data/db
+    networks:
+      - geo-network
+
+  traefik:
+    image: traefik:v2.10
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "${TRAEFIK_SERVICES_PORT}:80"
+      - "${TRAEFIK_DASHBOARD_PORT}:8080"
+    volumes:
+      - ./traefik:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - geo-network
+networks:
+  geo-network:
+    driver: bridge
