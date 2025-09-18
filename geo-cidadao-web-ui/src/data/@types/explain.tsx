@@ -1,0 +1,1 @@
+// Esse diretório é onde ficam as interfaces e tipos do projeto
