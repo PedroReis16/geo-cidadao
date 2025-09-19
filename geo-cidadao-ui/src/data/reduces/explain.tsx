@@ -1,0 +1,1 @@
+// A pasta reduces/reducers serve para concentrar a lógica de manipulação de estado baseada em ações (geralmente com useReducer ou Redux). Ela separa as regras de atualização do estado da lógica de UI, deixando o código mais organizado e reutilizável.
