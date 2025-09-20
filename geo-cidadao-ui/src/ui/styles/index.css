@@ -11,6 +11,24 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Tema claro */
+  --color-bg: #f4f4f4;
+  --color-text: #1c1c1c;
+  --color-card: #ffffff;
+  --color-primary: #0a4d68;
+  --color-secondary: #08bdbd;
+  --color-alert: #ff6b35;
+}
+
+[data-theme="dark"] {
+  /* Tema escuro */
+  --color-bg: #1c1c1c;
+  --color-text: #e5e5e5;
+  --color-card: #242424;
+  --color-primary: #0a4d68;
+  --color-secondary: #08bdbd;
+  --color-alert: #ff6b35;
 }
 
 a {

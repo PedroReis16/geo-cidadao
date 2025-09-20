@@ -15,6 +15,7 @@ import NotFoundPage from "./NotFoundPage";
 
 // Styles
 import "../ui/styles/App.css";
+import { ThemeProvider } from "../data/contexts/ThemeProvider";
 
 const router = createBrowserRouter([
   {
@@ -45,10 +46,12 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
-      <Header />
-      <main>
-        <RouterProvider router={router} />
-      </main>
+      <ThemeProvider>
+        <Header />
+        <main>
+          <RouterProvider router={router} />
+        </main>
+      </ThemeProvider>
     </>
   );
 }
