@@ -1,31 +1,56 @@
-import { useState } from 'react'
-import reactLogo from '../assets/react.svg'
-import '../ui/styles/App.css'
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+  Navigate,
+} from "react-router-dom";
+
+//Components
+import Header from "../ui/components/Header";
+
+//Pages
+import HomePage from "./HomePage";
+import PostPage from "./PostPage";
+import NotFoundPage from "./NotFoundPage";
+
+// Styles
+import "../ui/styles/App.css";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Outlet />,
+    children: [
+      {
+        index: true,
+        path: "feed",
+        element: <HomePage />,
+      },
+      {
+        path: "posts/:id",
+        element: <PostPage />,
+      },
+      {
+        path: "*",
+        element: <NotFoundPage />,
+      },
+      {
+        index: true,
+        element: <Navigate to="/feed" replace />, // Redirect root to /feed
+      },
+    ],
+  },
+]);
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <div>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Header />
+      <main>
+        <RouterProvider router={router} />
+      </main>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
