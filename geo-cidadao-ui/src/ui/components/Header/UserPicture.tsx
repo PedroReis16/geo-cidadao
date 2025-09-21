@@ -9,6 +9,9 @@ function UserPicture() {
       <li>
         <ThemeSwitcher />
       </li>
+      <li>
+        <p>Sair</p>
+      </li>
     </ul>
   );
 }
