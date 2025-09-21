@@ -48,7 +48,7 @@ function App() {
     <>
       <ThemeProvider>
         <Header />
-        <main>
+        <main className="content">
           <RouterProvider router={router} />
         </main>
       </ThemeProvider>
