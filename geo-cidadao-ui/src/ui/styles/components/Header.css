@@ -1,1 +1,25 @@
-/* Estilo do cabeçalho da aplicaçaõ */
+#page-header {
+  background-color: var(--color-card);
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+
+.headerLogo {
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 40px;
+  height: 40px;
+  padding: 2px 0px 0px 0px;
+  display: inline-block;
+}
+
+#header-logo {
+  background-image: url("../../../assets/geo-cidadao_light_logo.svg");
+}
+
+[data-theme="dark"] #header-logo {
+  background-image: url("../../../assets/geo-cidadao_dark_logo.png");
+}

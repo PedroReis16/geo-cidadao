@@ -1,20 +1,10 @@
-import React from "react";
-import { useTheme } from "../../data/contexts/ThemeContext";
-
-
-const ThemeSwitcher: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
-  return (
-    <button onClick={toggleTheme}>
-      {theme === "light" ? "🌙 Escuro" : "☀️ Claro"}
-    </button>
-  );
-};
+import ThemeSwitcher from "./ThemeSwitcher";
+import "../../ui/styles/components/Header.css";
 
 function Header() {
-
   return (
-    <header style={{ background: "var(--color-card)", padding: "1rem" }}>
+    <header className="content" id="page-header">
+      <a href="/" id="header-logo" className="headerLogo" />
       <h1>Cabeçalho</h1>
       <ThemeSwitcher />
     </header>
