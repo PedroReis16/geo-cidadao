@@ -17,7 +17,7 @@
 }
 
 #header-logo {
-  background-image: url("../../../assets/geo-cidadao_light_logo.svg");
+  background-image: url("../../../assets/geo-cidadao_light_logo.png");
 }
 
 [data-theme="dark"] #header-logo {
