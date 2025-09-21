@@ -1,5 +1,5 @@
-import ThemeSwitcher from "./ThemeSwitcher";
-import "../../ui/styles/components/Header.css";
+import UserPicture from "./UserPicture";
+import "../../../ui/styles/components/Header/Header.css";
 
 function Header() {
   return (
@@ -9,7 +9,8 @@ function Header() {
         <i id="searchIcon" />
         <input id="search-input" type="text" placeholder="Pesquisar" />
       </div>
-      <ThemeSwitcher />
+      {/* <ThemeSwitcher /> */}
+      <UserPicture />
     </header>
   );
 }
