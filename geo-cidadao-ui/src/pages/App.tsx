@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 
 //Components
-import Header from "../ui/components/Header";
+import Header from "../ui/components/Header/Header";
 
 //Pages
 import HomePage from "./HomePage";
