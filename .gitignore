@@ -60,4 +60,41 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Spring Boot
+
+geo-cidadao-services/*/HELP.md
+geo-cidadao-services/*/target/
+geo-cidadao-services/*/.mvn/wrapper/maven-wrapper.jar
+geo-cidadao-services/*/!**/src/main/**/target/
+geo-cidadao-services/*/!**/src/test/**/target/
+
+### STS ###
+geo-cidadao-services/*/.apt_generated
+geo-cidadao-services/*/.classpath
+geo-cidadao-services/*/.factorypath
+geo-cidadao-services/*/.project
+geo-cidadao-services/*/.settings
+geo-cidadao-services/*/.springBeans
+geo-cidadao-services/*/.sts4-cache
+
+### IntelliJ IDEA ###
+.geo-cidadao-services/*/.idea
+geo-cidadao-services/*/*.iws
+geo-cidadao-services/*/*.iml
+geo-cidadao-services/*/*.ipr
+
+### NetBeans ###
+geo-cidadao-services/*/nbproject/private/
+geo-cidadao-services/*/nbbuild/
+geo-cidadao-services/*/dist/
+geo-cidadao-services/*/nbdist/
+geo-cidadao-services/*/.nb-gradle/
+geo-cidadao-services/*/build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+geo-cidadao-services/*/.vscode/
+
 docker-compose/geocidadao
+

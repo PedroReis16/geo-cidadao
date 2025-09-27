@@ -67,6 +67,31 @@ services:
     volumes:
       - keycloak_data:/opt/keycloak/data
 
+  gerenciamento-usuarios:
+    container_name: gerenciamento-usuarios
+    build:
+      context: ../geo-cidadao-services/dockerfiles
+      dockerfile: gerenciamento-usuarios-api.dockerfile
+    ports:
+      - "7080:7080"
+    env_file:
+      - default.env
+      - gerenciamento-usuarios.env
+    depends_on:
+      - db
+    labels:
+      - traefik.http.routers.gerenciamento-usuarios.rule=PathPrefix(`/gerenciamento-usuarios`)
+      - traefik.http.services.gerenciamento-usuarios.loadbalancer.server.port=8080
+      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.cors.headers.addvaryheader=true
+      - traefik.http.routers.gerenciamento-usuarios.middlewares=cors
+    networks:
+      - pacs-network
+    restart: always
+
   traefik:
     image: traefik:v2.10
     command: --api.insecure=true --providers.docker
