@@ -89,7 +89,7 @@ services:
       - traefik.http.middlewares.cors.headers.addvaryheader=true
       - traefik.http.routers.gerenciamento-usuarios.middlewares=cors
     networks:
-      - pacs-network
+      - geo-network
     restart: always
 
   traefik:
