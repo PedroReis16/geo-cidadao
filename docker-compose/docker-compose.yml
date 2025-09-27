@@ -3,9 +3,9 @@ services:
   db:
     image: postgres:15-alpine
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
-      POSTGRES_PORT: 5433
+      POSTGRES_PORT: 5432
       POSTGRES_DB: geodb
       POSTGRES_USER: geo
       POSTGRES_PASSWORD: geo
@@ -24,8 +24,8 @@ services:
       timeout: 10s
       retries: 5
     ports:
-      - "5673:5672"
-      - "15673:15672"
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/
     environment:
@@ -38,7 +38,7 @@ services:
     container_name: mongodb
     restart: always
     ports:
-      - "27018:27017"
+      - "27017:27017"
     volumes:
       - mongo_data:/data/db
     networks:
