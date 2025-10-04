@@ -9,24 +9,10 @@ import {
   Map,
 } from "lucide-react";
 import MapComponent from "../ui/components/MapComponent";
-import "../ui/styles/Pages/FeedPage.css";
+import "../ui/styles/pages/FeedPage.css";
+import type { FeedItem } from "../data/@types/FeedItem";
+import type { Coordinates } from "../data/@types/Coordinates";
 
-interface FeedItem {
-  id: number;
-  lat: number;
-  lng: number;
-  title: string;
-  description: string;
-  author: string;
-  likes: number;
-  comments: number;
-  image: string | null;
-}
-
-interface Coordinates {
-  lat: number;
-  lng: number;
-}
 
 const INITIAL_ITEMS: FeedItem[] = [
   {
