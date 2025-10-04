@@ -85,41 +85,9 @@ const FeedPage: React.FC = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // const handleAddItem = () => {
-  //   if (!newItemData.title.trim() || !newItemPos) return;
-  //   const newItem: FeedItem = {
-  //     id: Date.now(),
-  //     lat: newItemPos.lat,
-  //     lng: newItemPos.lng,
-  //     title: newItemData.title,
-  //     description: newItemData.description,
-  //     author: "Você",
-  //     likes: 0,
-  //     comments: 0,
-  //     image: null,
-  //   };
-  //   setItems((prev) => [newItem, ...prev]);
-  //   setShowAddModal(false);
-  //   setNewItemData({ title: "", description: "" });
-  //   setNewItemPos(null);
-  // };
-
   return (
     <div className={`feed-container ${isMapExpanded ? "map-open" : ""}`}>
-      {/* <header className="feed-header">
-        <div className="feed-header-left">
-          <MapPin size={28} className="icon-blue" />
-          <h1>Social Map</h1>
-        </div>
-        <button
-          className="toggle-map-btn"
-          onClick={() => setIsMapExpanded(!isMapExpanded)}
-        >
-          <Map size={20} />
-          {isMapExpanded ? "Ver Feed" : "Ver Mapa"}
-        </button>
-      </header> */}
-
+      
       <main className="feed-main">
         <div
           ref={feedRef}
@@ -159,44 +127,6 @@ const FeedPage: React.FC = () => {
         </div>
       </main>
 
-      {/* Modal adicionar
-      {showAddModal && (
-        <div className="modal-overlay fade-in">
-          <div className="modal">
-            <h2>
-              <Plus size={20} /> Novo Item
-            </h2>
-            <label>Título *</label>
-            <input
-              type="text"
-              value={newItemData.title}
-              onChange={(e) => setNewItemData({ ...newItemData, title: e.target.value })}
-              placeholder="Nome do item"
-            />
-            <label>Descrição</label>
-            <textarea
-              value={newItemData.description}
-              onChange={(e) => setNewItemData({ ...newItemData, description: e.target.value })}
-              placeholder="Descreva este local"
-              rows={3}
-            />
-            <div className="modal-actions">
-              <button
-                onClick={() => {
-                  setShowAddModal(false);
-                  setNewItemData({ title: "", description: "" });
-                  setNewItemPos(null);
-                }}
-              >
-                Cancelar
-              </button>
-              <button onClick={handleAddItem} disabled={!newItemData.title.trim()}>
-                Adicionar
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 };
