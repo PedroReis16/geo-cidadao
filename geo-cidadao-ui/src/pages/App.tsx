@@ -9,7 +9,7 @@ import {
 import Header from "../ui/components/Header/Header";
 
 //Pages
-import HomePage from "./HomePage";
+import FeedPage from "./FeedPage";
 import PostPage from "./PostPage";
 import NotFoundPage from "./NotFoundPage";
 
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
       {
         index: true,
         path: "feed",
-        element: <HomePage />,
+        element: <FeedPage />,
       },
       {
         path: "posts/:id",

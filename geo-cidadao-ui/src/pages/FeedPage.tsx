@@ -1,4 +1,4 @@
-function HomePage() {
+function FeedPage() {
   return (
     <>
       <p>Conteúdo da Home Page</p>
@@ -6,4 +6,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default FeedPage;
