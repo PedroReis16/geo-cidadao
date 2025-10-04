@@ -14,7 +14,6 @@ import PostPage from "./PostPage";
 import NotFoundPage from "./NotFoundPage";
 
 // Styles
-import "../ui/styles/App.css";
 import { ThemeProvider } from "../data/contexts/ThemeProvider";
 
 const router = createBrowserRouter([
