@@ -85,6 +85,32 @@ const FeedPage: React.FC = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Função para lidar com clique no preview do item no mapa
+  const handleItemPreviewClick = (item: FeedItem) => {
+    // Minimiza o mapa
+    setIsMapExpanded(false);
+    
+    // Define o item como selecionado
+    setSelectedItem(item);
+    setHighlightedFeedItem(item.id);
+    
+    // Aguarda um pouco para o mapa minimizar, depois rola até o item
+    setTimeout(() => {
+      const feedElement = document.getElementById(`feed-item-${item.id}`);
+      if (feedElement && feedRef.current) {
+        feedElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+      }
+      
+      // Remove o highlight após 3 segundos
+      setTimeout(() => {
+        setHighlightedFeedItem(null);
+      }, 3000);
+    }, 700); // Tempo da animação de fechar o mapa
+  };
+
   return (
     <div className={`feed-container ${isMapExpanded ? "map-open" : ""}`}>
       
@@ -120,9 +146,10 @@ const FeedPage: React.FC = () => {
             setSelectedItem={setSelectedItem}
             onMapClick={(coords) => {
               setNewItemPos(coords);
-              setShowAddModal(true);
+              // setShowAddModal(true);
             }}
             newItemPos={newItemPos}
+            onItemPreviewClick={handleItemPreviewClick}
           />
         </div>
       </main>
