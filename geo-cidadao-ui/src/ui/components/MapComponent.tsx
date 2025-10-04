@@ -1,29 +1,10 @@
 import React, { useRef, useState } from "react";
 import { MapPin, Maximize2, ZoomIn, ZoomOut, X } from "lucide-react";
 import "../styles/components/MapComponent.css";
+import type { FeedItem } from "../../data/@types/FeedItem";
+import type { Coordinates } from "../../data/@types/Coordinates";
+import type { Position } from "../../data/@types/Position";
 
-
-interface FeedItem {
-  id: number;
-  lat: number;
-  lng: number;
-  title: string;
-  description: string;
-  author: string;
-  likes: number;
-  comments: number;
-  image: string | null;
-}
-
-interface Coordinates {
-  lat: number;
-  lng: number;
-}
-
-interface Position {
-  x: number;
-  y: number;
-}
 
 interface MapComponentProps {
   items: FeedItem[];
