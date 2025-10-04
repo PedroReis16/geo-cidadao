@@ -1,0 +1,94 @@
+.feed-item {
+  background: #fff;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feed-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+}
+
+.feed-item.highlight {
+  box-shadow: 0 0 0 4px #3b82f6;
+  transform: scale(1.02);
+}
+
+.feed-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.feed-item-author {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-radius: 50%;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.see-map-btn {
+  background: #eff6ff;
+  color: #2563eb;
+  border: none;
+  border-radius: 20px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.see-map-btn:hover {
+  background: #dbeafe;
+  transform: scale(1.05);
+}
+
+.feed-item-content {
+  margin-top: 0.8rem;
+  background: #f3f4f6;
+  padding: 1rem;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.feed-item-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 0.8rem;
+}
+
+.feed-item-actions button {
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  color: #374151;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.feed-item-actions button:hover {
+  color: #2563eb;
+  transform: scale(1.1);
+}

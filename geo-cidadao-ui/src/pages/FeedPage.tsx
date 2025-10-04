@@ -1,18 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  MapPin,
-  Plus,
-  Heart,
-  MessageCircle,
-  Share2,
-  Bookmark,
-  Map,
-} from "lucide-react";
 import MapComponent from "../ui/components/MapComponent";
 import "../ui/styles/pages/FeedPage.css";
 import type { FeedItem } from "../data/@types/FeedItem";
 import type { Coordinates } from "../data/@types/Coordinates";
-
+import FeedPost from "../ui/components/FeedPost";
 
 const INITIAL_ITEMS: FeedItem[] = [
   {
@@ -81,9 +72,9 @@ const FeedPage: React.FC = () => {
   const [highlightedFeedItem, setHighlightedFeedItem] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
-  const [showAddModal, setShowAddModal] = useState<boolean>(false);
+  // const [showAddModal, setShowAddModal] = useState<boolean>(false);
   const [newItemPos, setNewItemPos] = useState<Coordinates | null>(null);
-  const [newItemData, setNewItemData] = useState({ title: "", description: "" });
+  // const [newItemData, setNewItemData] = useState({ title: "", description: "" });
 
   const feedRef = useRef<HTMLDivElement | null>(null);
 
@@ -94,28 +85,28 @@ const FeedPage: React.FC = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const handleAddItem = () => {
-    if (!newItemData.title.trim() || !newItemPos) return;
-    const newItem: FeedItem = {
-      id: Date.now(),
-      lat: newItemPos.lat,
-      lng: newItemPos.lng,
-      title: newItemData.title,
-      description: newItemData.description,
-      author: "Você",
-      likes: 0,
-      comments: 0,
-      image: null,
-    };
-    setItems((prev) => [newItem, ...prev]);
-    setShowAddModal(false);
-    setNewItemData({ title: "", description: "" });
-    setNewItemPos(null);
-  };
+  // const handleAddItem = () => {
+  //   if (!newItemData.title.trim() || !newItemPos) return;
+  //   const newItem: FeedItem = {
+  //     id: Date.now(),
+  //     lat: newItemPos.lat,
+  //     lng: newItemPos.lng,
+  //     title: newItemData.title,
+  //     description: newItemData.description,
+  //     author: "Você",
+  //     likes: 0,
+  //     comments: 0,
+  //     image: null,
+  //   };
+  //   setItems((prev) => [newItem, ...prev]);
+  //   setShowAddModal(false);
+  //   setNewItemData({ title: "", description: "" });
+  //   setNewItemPos(null);
+  // };
 
   return (
     <div className={`feed-container ${isMapExpanded ? "map-open" : ""}`}>
-      <header className="feed-header">
+      {/* <header className="feed-header">
         <div className="feed-header-left">
           <MapPin size={28} className="icon-blue" />
           <h1>Social Map</h1>
@@ -127,7 +118,7 @@ const FeedPage: React.FC = () => {
           <Map size={20} />
           {isMapExpanded ? "Ver Feed" : "Ver Mapa"}
         </button>
-      </header>
+      </header> */}
 
       <main className="feed-main">
         <div
@@ -135,54 +126,15 @@ const FeedPage: React.FC = () => {
           className={`feed-list ${isMapExpanded && isMobile ? "fade-out" : "fade-in"}`}
         >
           {items.map((item) => (
-            <div
+            <FeedPost
               key={item.id}
-              id={`feed-item-${item.id}`}
-              className={`feed-item ${highlightedFeedItem === item.id ? "highlight" : ""}`}
-            >
-              <div className="feed-item-header">
-                <div className="feed-item-author">
-                  <div className="avatar">{item.author[0]}</div>
-                  <div>
-                    <h3>{item.author}</h3>
-                    <p>{item.title}</p>
-                  </div>
-                </div>
-                <button
-                  className="see-map-btn"
-                  onClick={() => {
-                    setCenter({ lat: item.lat, lng: item.lng });
-                    setZoom(16);
-                    setSelectedItem(item);
-                    setIsMapExpanded(true);
-                  }}
-                >
-                  <MapPin size={14} /> Ver no mapa
-                </button>
-              </div>
-
-              <div className="feed-item-content">
-                <p>{item.description}</p>
-                <small>
-                  {item.lat.toFixed(4)}, {item.lng.toFixed(4)}
-                </small>
-              </div>
-
-              <div className="feed-item-actions">
-                <button>
-                  <Heart size={20} /> {item.likes}
-                </button>
-                <button>
-                  <MessageCircle size={20} /> {item.comments}
-                </button>
-                <button>
-                  <Share2 size={20} />
-                </button>
-                <button>
-                  <Bookmark size={20} />
-                </button>
-              </div>
-            </div>
+              content={item}
+              highlightedFeedItem={highlightedFeedItem}
+              setCenter={setCenter}
+              setZoom={setZoom}
+              setSelectedItem={setSelectedItem}
+              setIsMapExpanded={setIsMapExpanded}
+            />
           ))}
         </div>
 
@@ -207,7 +159,7 @@ const FeedPage: React.FC = () => {
         </div>
       </main>
 
-      {/* Modal adicionar */}
+      {/* Modal adicionar
       {showAddModal && (
         <div className="modal-overlay fade-in">
           <div className="modal">
@@ -244,7 +196,7 @@ const FeedPage: React.FC = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
