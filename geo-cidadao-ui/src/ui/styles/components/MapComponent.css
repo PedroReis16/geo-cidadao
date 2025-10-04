@@ -3,61 +3,59 @@
   height: 100%;
   position: relative;
   overflow: hidden;
-  background: repeating-linear-gradient(
-      0deg,
-      #e5e7eb 0px,
-      #e5e7eb 1px,
-      transparent 1px,
-      transparent 40px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      #e5e7eb 0px,
-      #e5e7eb 1px,
-      transparent 1px,
-      transparent 40px
-    ),
-    linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
-  background-size: 40px 40px;
   cursor: pointer;
-  transition: background-size 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .map-container.expanded {
-  cursor: grab;
+  cursor: default;
 }
 
-.map-container.expanded:active {
-  cursor: grabbing;
+/* Container do Leaflet */
+.leaflet-map {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
 
-.marker {
-  position: absolute;
-  transform: translate(-50%, -100%);
-  cursor: pointer;
+/* Remove controles padrão do Leaflet */
+.leaflet-control-container {
+  display: none;
+}
+
+/* Estilização dos marcadores customizados */
+.custom-marker-icon {
+  background: transparent;
+  border: none;
   transition: transform 0.2s ease;
+  cursor: pointer;
 }
 
-.marker:hover {
-  transform: translate(-50%, -100%) scale(1.1);
+.custom-marker-icon:hover {
+  transform: scale(1.1);
 }
 
-.marker.new {
+/* Animação para novo marcador */
+.custom-marker-icon.new-marker {
   animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse {
   0% {
-    transform: translate(-50%, -100%) scale(1);
+    transform: scale(1);
+    opacity: 1;
   }
   50% {
-    transform: translate(-50%, -100%) scale(1.2);
+    transform: scale(1.2);
+    opacity: 0.8;
   }
   100% {
-    transform: translate(-50%, -100%) scale(1);
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
+/* Overlay para estado minimizado */
 .map-overlay {
   position: absolute;
   inset: 0;
@@ -66,6 +64,12 @@
   align-items: center;
   justify-content: center;
   transition: background 0.3s;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.map-container.collapsed .map-overlay {
+  pointer-events: auto;
 }
 
 .map-overlay:hover {
@@ -73,7 +77,7 @@
 }
 
 .map-overlay-content {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   padding: 0.5rem 1rem;
   border-radius: 9999px;
   display: flex;
@@ -83,12 +87,14 @@
   font-weight: 500;
   opacity: 0;
   transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .map-overlay:hover .map-overlay-content {
   opacity: 1;
 }
 
+/* Botão de fechar */
 .btn-close {
   position: absolute;
   top: 1rem;
@@ -99,8 +105,16 @@
   padding: 0.6rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
+  z-index: 1000;
+  transition: all 0.2s;
 }
 
+.btn-close:hover {
+  background: #f3f4f6;
+  transform: scale(1.05);
+}
+
+/* Controles de zoom */
 .zoom-controls {
   position: absolute;
   top: 5rem;
@@ -108,6 +122,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  z-index: 1000;
 }
 
 .zoom-controls button {
@@ -117,9 +132,44 @@
   padding: 0.6rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoom-controls button:hover {
+  background: #f3f4f6;
+  transform: scale(1.05);
 }
 
 .zoom-controls button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Ajustes para tiles do Leaflet */
+.leaflet-tile-container {
+  filter: brightness(0.98);
+}
+
+/* Remove atribuição do Leaflet (se quiser) */
+.leaflet-bottom.leaflet-right {
+  display: none;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .btn-close,
+  .zoom-controls {
+    right: 0.5rem;
+  }
+  
+  .btn-close {
+    top: 0.5rem;
+  }
+  
+  .zoom-controls {
+    top: 4rem;
+  }
 }

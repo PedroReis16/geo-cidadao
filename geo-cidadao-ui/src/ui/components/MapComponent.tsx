@@ -1,10 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { MapPin, Maximize2, ZoomIn, ZoomOut, X } from "lucide-react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import "../styles/components/MapComponent.css";
 import type { FeedItem } from "../../data/@types/FeedItem";
 import type { Coordinates } from "../../data/@types/Coordinates";
-import type { Position } from "../../data/@types/Position";
-
 
 interface MapComponentProps {
   items: FeedItem[];
@@ -33,162 +33,231 @@ const MapComponent: React.FC<MapComponentProps> = ({
   onMapClick,
   newItemPos,
 }) => {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState<Position>({ x: 0, y: 0 });
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const markersRef = useRef<Map<number, L.Marker>>(new Map());
+  const newMarkerRef = useRef<L.Marker | null>(null);
+  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
 
-  const MIN_ZOOM = 8;
-  const MAX_ZOOM = 18;
-  const SHOW_ITEMS_MIN_ZOOM = 13;
+  // Inicializa o mapa
+  useEffect(() => {
+    if (!mapContainerRef.current || mapInstanceRef.current) return;
 
-  const latLngToPixel = (lat: number, lng: number): Position => {
-    if (!mapRef.current) return { x: 0, y: 0 };
-    const mapWidth = mapRef.current.offsetWidth;
-    const mapHeight = mapRef.current.offsetHeight;
-    const scale = Math.pow(2, zoom);
-    const worldWidth = 256 * scale;
+    // Cria instância do mapa
+    const map = L.map(mapContainerRef.current, {
+      center: [center.lat, center.lng],
+      zoom: zoom,
+      zoomControl: false,
+      attributionControl: false,
+    });
 
-    const x = (lng + 180) * (worldWidth / 360);
-    const latRad = (lat * Math.PI) / 180;
-    const mercN = Math.log(Math.tan(Math.PI / 4 + latRad / 2));
-    const y = worldWidth / 2 - (worldWidth * mercN) / (2 * Math.PI);
+    // Adiciona tile layer (OpenStreetMap)
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors',
+    }).addTo(map);
 
-    const centerX = (center.lng + 180) * (worldWidth / 360);
-    const centerLatRad = (center.lat * Math.PI) / 180;
-    const centerMercN = Math.log(Math.tan(Math.PI / 4 + centerLatRad / 2));
-    const centerY = worldWidth / 2 - (worldWidth * centerMercN) / (2 * Math.PI);
+    // Listener para atualizar estado quando usuário move/zoomeia
+    map.on("moveend", () => {
+      const mapCenter = map.getCenter();
+      setCenter({ lat: mapCenter.lat, lng: mapCenter.lng });
+    });
 
-    return {
-      x: mapWidth / 2 + (x - centerX),
-      y: mapHeight / 2 + (y - centerY),
+    map.on("zoomend", () => {
+      setZoom(map.getZoom());
+    });
+
+    // Listener para cliques no mapa
+    map.on("click", (e: L.LeafletMouseEvent) => {
+      if (isMapExpanded && onMapClick) {
+        onMapClick({ lat: e.latlng.lat, lng: e.latlng.lng });
+      }
+    });
+
+    mapInstanceRef.current = map;
+    setIsMapReady(true);
+
+    return () => {
+      map.remove();
+      mapInstanceRef.current = null;
+      setIsMapReady(false);
     };
-  };
+  }, []);
 
-  const pixelToLatLng = (x: number, y: number): Coordinates => {
-    if (!mapRef.current) return { lat: 0, lng: 0 };
-    const mapWidth = mapRef.current.offsetWidth;
-    const mapHeight = mapRef.current.offsetHeight;
-    const scale = Math.pow(2, zoom);
-    const worldWidth = 256 * scale;
+  // Atualiza centro e zoom quando props mudam
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    
+    const map = mapInstanceRef.current;
+    const currentCenter = map.getCenter();
+    const currentZoom = map.getZoom();
 
-    const centerX = (center.lng + 180) * (worldWidth / 360);
-    const centerLatRad = (center.lat * Math.PI) / 180;
-    const centerMercN = Math.log(Math.tan(Math.PI / 4 + centerLatRad / 2));
-    const centerY = worldWidth / 2 - (worldWidth * centerMercN) / (2 * Math.PI);
+    if (
+      Math.abs(currentCenter.lat - center.lat) > 0.0001 ||
+      Math.abs(currentCenter.lng - center.lng) > 0.0001 ||
+      currentZoom !== zoom
+    ) {
+      map.setView([center.lat, center.lng], zoom, { animate: true });
+    }
+  }, [center, zoom]);
 
-    const worldX = centerX + (x - mapWidth / 2);
-    const worldY = centerY + (y - mapHeight / 2);
+  // Handler de redimensionamento responsivo
+  useEffect(() => {
+    if (!mapInstanceRef.current || !mapContainerRef.current) return;
 
-    const lng = (worldX / worldWidth) * 360 - 180;
-    const mercN = (worldWidth / 2 - worldY) * (2 * Math.PI) / worldWidth;
-    const latRad = 2 * Math.atan(Math.exp(mercN)) - Math.PI / 2;
-    const lat = (latRad * 180) / Math.PI;
+    const handleResize = () => {
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
 
-    return { lat, lng };
-  };
+      resizeTimeoutRef.current = setTimeout(() => {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.invalidateSize();
+        }
+      }, 100);
+    };
 
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? -1 : 1;
-    setZoom((prev) => Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, prev + delta)));
-  };
+    // Observer para mudanças no container
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(mapContainerRef.current);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button === 0) {
-      setIsDragging(true);
-      setDragStart({ x: e.clientX, y: e.clientY });
+    // Listener para resize da janela
+    window.addEventListener("resize", handleResize);
+
+    // Força invalidação quando expande/colapsa
+    setTimeout(() => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+      }
+    }, 650); // Após a animação CSS
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", handleResize);
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+    };
+  }, [isMapExpanded]);
+
+  // Gerencia marcadores dos items
+  useEffect(() => {
+    if (!mapInstanceRef.current || !isMapReady) return;
+
+    const map = mapInstanceRef.current;
+
+    // Remove marcadores que não existem mais
+    markersRef.current.forEach((marker, id) => {
+      if (!items.find((item) => item.id === id)) {
+        marker.remove();
+        markersRef.current.delete(id);
+      }
+    });
+
+    // Adiciona ou atualiza marcadores
+    items.forEach((item) => {
+      let marker = markersRef.current.get(item.id);
+
+      if (!marker) {
+        // Cria ícone personalizado
+        const icon = L.divIcon({
+          className: "custom-marker-icon",
+          html: `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#2563eb" stroke="#2563eb" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3" fill="white"></circle>
+            </svg>
+          `,
+          iconSize: [24, 24],
+          iconAnchor: [12, 24],
+        });
+
+        marker = L.marker([item.lat, item.lng], { icon })
+          .addTo(map)
+          .on("click", () => {
+            if (isMapExpanded) {
+              setSelectedItem(item);
+            }
+          });
+
+        markersRef.current.set(item.id, marker);
+      } else {
+        // Atualiza posição se mudou
+        const currentPos = marker.getLatLng();
+        if (currentPos.lat !== item.lat || currentPos.lng !== item.lng) {
+          marker.setLatLng([item.lat, item.lng]);
+        }
+      }
+
+      // Atualiza estilo do marcador selecionado
+      const isSelected = selectedItem?.id === item.id;
+      const iconHtml = `
+        <svg width="${isMapExpanded && zoom >= 15 ? '36' : '24'}" height="${isMapExpanded && zoom >= 15 ? '36' : '24'}" viewBox="0 0 24 24" fill="${isSelected ? '#dc2626' : '#2563eb'}" stroke="${isSelected ? '#dc2626' : '#2563eb'}" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3" fill="white"></circle>
+        </svg>
+      `;
+
+      const newIcon = L.divIcon({
+        className: "custom-marker-icon",
+        html: iconHtml,
+        iconSize: [isMapExpanded && zoom >= 15 ? 36 : 24, isMapExpanded && zoom >= 15 ? 36 : 24],
+        iconAnchor: [isMapExpanded && zoom >= 15 ? 18 : 12, isMapExpanded && zoom >= 15 ? 36 : 24],
+      });
+
+      marker.setIcon(newIcon);
+    });
+  }, [items, isMapReady, isMapExpanded, selectedItem, zoom]);
+
+  // Gerencia marcador do novo item
+  useEffect(() => {
+    if (!mapInstanceRef.current || !isMapReady) return;
+
+    const map = mapInstanceRef.current;
+
+    if (newItemPos) {
+      if (!newMarkerRef.current) {
+        const newIcon = L.divIcon({
+          className: "custom-marker-icon new-marker",
+          html: `
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="#16a34a" stroke="#16a34a" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3" fill="white"></circle>
+            </svg>
+          `,
+          iconSize: [36, 36],
+          iconAnchor: [18, 36],
+        });
+
+        newMarkerRef.current = L.marker([newItemPos.lat, newItemPos.lng], { icon }).addTo(map);
+      } else {
+        newMarkerRef.current.setLatLng([newItemPos.lat, newItemPos.lng]);
+      }
+    } else if (newMarkerRef.current) {
+      newMarkerRef.current.remove();
+      newMarkerRef.current = null;
+    }
+  }, [newItemPos, isMapReady]);
+
+  const handleZoomIn = () => {
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.zoomIn();
     }
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !mapRef.current) return;
-    const dx = e.clientX - dragStart.x;
-    const dy = e.clientY - dragStart.y;
-    const scale = Math.pow(2, zoom);
-    const worldWidth = 256 * scale;
-
-    const lngDelta = -(dx / mapRef.current.offsetWidth) * (360 / (worldWidth / 256));
-    const latDelta = (dy / mapRef.current.offsetHeight) * (180 / (worldWidth / 256));
-
-    setCenter((prev) => ({
-      lat: Math.max(-85, Math.min(85, prev.lat + latDelta)),
-      lng: ((prev.lng + lngDelta + 180) % 360) - 180,
-    }));
-    setDragStart({ x: e.clientX, y: e.clientY });
+  const handleZoomOut = () => {
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.zoomOut();
+    }
   };
-
-  const handleMouseUp = () => setIsDragging(false);
-
-  const handleMapClick = (e: React.MouseEvent) => {
-    if (isDragging || !isMapExpanded || !mapRef.current || !onMapClick) return;
-    const rect = mapRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const coords = pixelToLatLng(x, y);
-    onMapClick(coords);
-  };
-
-  const handleZoomIn = () => setZoom((prev) => Math.min(MAX_ZOOM, prev + 1));
-  const handleZoomOut = () => setZoom((prev) => Math.max(MIN_ZOOM, prev - 1));
 
   return (
     <div
-      ref={mapRef}
       className={`map-container ${isMapExpanded ? "expanded" : "collapsed"}`}
-      onWheel={isMapExpanded ? handleWheel : undefined}
-      onMouseDown={isMapExpanded ? handleMouseDown : undefined}
-      onMouseMove={isMapExpanded ? handleMouseMove : undefined}
-      onMouseUp={isMapExpanded ? handleMouseUp : undefined}
-      onMouseLeave={isMapExpanded ? handleMouseUp : undefined}
-      onClick={isMapExpanded ? handleMapClick : () => setIsMapExpanded(true)}
+      onClick={!isMapExpanded ? () => setIsMapExpanded(true) : undefined}
     >
-      {/* Marcadores */}
-      {zoom >= SHOW_ITEMS_MIN_ZOOM &&
-        items.map((item) => {
-          const pos = latLngToPixel(item.lat, item.lng);
-          const isSelected = selectedItem?.id === item.id;
-          const isVisible =
-            pos.x >= -50 &&
-            pos.x <= (mapRef.current?.offsetWidth || 0) + 50 &&
-            pos.y >= -50 &&
-            pos.y <= (mapRef.current?.offsetHeight || 0) + 50;
-
-          if (!isVisible) return null;
-          return (
-            <div
-              key={item.id}
-              className="marker"
-              style={{
-                left: `${pos.x}px`,
-                top: `${pos.y}px`,
-                zIndex: isSelected ? 1000 : 10,
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (isMapExpanded) setSelectedItem(item);
-              }}
-            >
-              <MapPin
-                size={isMapExpanded && zoom >= 15 ? 36 : 24}
-                color={isSelected ? "#dc2626" : "#2563eb"}
-                fill={isSelected ? "#dc2626" : "#2563eb"}
-              />
-            </div>
-          );
-        })}
-
-      {/* Novo item */}
-      {newItemPos && (
-        <div
-          className="marker new"
-          style={{
-            left: `${latLngToPixel(newItemPos.lat, newItemPos.lng).x}px`,
-            top: `${latLngToPixel(newItemPos.lat, newItemPos.lng).y}px`,
-          }}
-        >
-          <MapPin size={36} color="#16a34a" fill="#16a34a" />
-        </div>
-      )}
+      <div ref={mapContainerRef} className="leaflet-map" />
 
       {/* Overlay minimizado */}
       {!isMapExpanded && (
@@ -207,10 +276,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
             <X size={20} />
           </button>
           <div className="zoom-controls">
-            <button onClick={handleZoomIn} disabled={zoom >= MAX_ZOOM}>
+            <button onClick={handleZoomIn}>
               <ZoomIn size={20} />
             </button>
-            <button onClick={handleZoomOut} disabled={zoom <= MIN_ZOOM}>
+            <button onClick={handleZoomOut}>
               <ZoomOut size={20} />
             </button>
           </div>
