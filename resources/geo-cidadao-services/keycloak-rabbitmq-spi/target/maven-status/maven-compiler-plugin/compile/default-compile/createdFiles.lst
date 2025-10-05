@@ -1,0 +1,4 @@
+com\geocidadao\keycloak\RabbitMQEventListenerProvider$1.class
+com\geocidadao\keycloak\RabbitMQEventListenerProviderFactory.class
+com\geocidadao\keycloak\RabbitMQEventListenerProvider.class
+com\geocidadao\keycloak\RabbitMQPublisher.class
