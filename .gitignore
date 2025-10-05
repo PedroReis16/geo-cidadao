@@ -419,8 +419,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-### VS Code ###
-geo-cidadao-services/*/.vscode/
 
 docker-compose/geocidadao
 
