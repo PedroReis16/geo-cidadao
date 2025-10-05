@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   keycloak:
-    image: quay.io/keycloak/keycloak:latest
+    image: quay.io/keycloak/keycloak:26.4
     container_name: keycloak
     command: "start-dev"
     ports:
@@ -17,11 +17,16 @@ services:
 
       KC_HOSTNAME: localhost
       KC_HTTP_PORT: 8180
+
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: admin
+      RABBITMQ_PASSWORD: admin
     networks:
       - geo-network
     depends_on:
       - db
     volumes:
+      - ./keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
       - keycloak_data:/opt/keycloak/data
   db:
     image: postgres:15-alpine
@@ -38,7 +43,7 @@ services:
     networks:
       - geo-network
   rabbitmq:
-    image: rabbitmq:3.13-management
+    image: rabbitmq:4.1.4-management
     container_name: rabbitmq
     restart: always
     healthcheck:
