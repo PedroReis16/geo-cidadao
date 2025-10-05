@@ -88,9 +88,6 @@ builder.Services.ConfigureOAuth([
 
 WebApplication app = builder.Build();
 
-if (useApm)
-    app.UseAllElasticApm(builder.Configuration);
-
 app.ConfigureRequestLogging();
 
 app.UseSwagger(c =>
