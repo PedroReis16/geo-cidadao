@@ -419,6 +419,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+geo-cidadao-services/keycloak-rabbitmq-spi/target
 
 docker-compose/geocidadao
 
