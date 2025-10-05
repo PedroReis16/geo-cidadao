@@ -18,7 +18,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 string basePath = builder.Configuration.GetValue<string>("BasePath") ?? "";
 
-// builder.ConfigureServiceLogs();
+builder.ConfigureServiceLogs();
 
 builder.Services.AddControllers(options =>
 {
@@ -88,7 +88,7 @@ builder.Services.AddSwaggerGen(option =>
 
 WebApplication app = builder.Build();
 
-// app.ConfigureRequestLogging();
+app.ConfigureRequestLogging();
 
 app.UseSwagger(c =>
 {

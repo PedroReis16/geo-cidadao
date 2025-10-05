@@ -56,7 +56,7 @@ namespace GeoCidadao.Model.Config
                                          || rm.Value?.ToString() == "PATCH")
                                  )
                                  .WriteTo.MongoDB(
-                                     databaseUrl: builder.Configuration.GetConnectionString("PacsLogsDb")!
+                                     databaseUrl: builder.Configuration.GetConnectionString("GeoLogsDb")!
                                      )
                          );
                  });
