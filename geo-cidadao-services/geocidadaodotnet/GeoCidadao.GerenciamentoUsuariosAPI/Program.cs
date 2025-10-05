@@ -5,13 +5,16 @@ using GeoCidadao.Caching.Extensions;
 using GeoCidadao.Database;
 using GeoCidadao.Database.Migrations;
 using GeoCidadao.Model.Middlewares;
-using GeoCidadao.Model.OAuth;
 using GeoCidadao.GerenciamentoUsuariosAPI.Config;
 using System.Text.Json.Serialization;
 using System.Reflection;
-using GeoCidadao.Model.Constants;
-using GeoCidadao.Model.Helpers;
 using GeoCidadao.Model.Config;
+using Quartz;
+using GeoCidadao.Jobs.Config;
+using GeoCidadao.Jobs.Listeners;
+using GeoCidadao.GerenciamentoUsuariosAPI.Model.Jobs.QueueJobs;
+using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices;
+using GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -45,6 +48,9 @@ builder.Services.AddTransient<HttpResponseCacheHandler>();
 // Services
 
 // DAOs
+
+// Queue Services
+builder.Services.AddSingleton<INewUserQueueJobService, NewUserQueueJobService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();
@@ -85,6 +91,48 @@ builder.Services.AddSwaggerGen(option =>
 //     builder.Configuration.GetRequiredSection(AppSettingsProperties.OAuth).Get<OAuthConfiguration>()!,
 //     builder.Configuration.GetRequiredSection(AppSettingsProperties.PortalAuthClient).Get<OAuthConfiguration>()!
 // ]);
+
+builder.Services.Configure<QuartzOptions>(options =>
+{
+    options.Scheduling.IgnoreDuplicates = true;
+    options.Scheduling.OverWriteExistingData = false;
+});
+
+builder.Services.AddQuartz(q =>
+{
+    q.SchedulerId = q.SchedulerName = JobConstants.SchedulerName;
+
+    q.AddJobListener<JobChainListener>();
+
+    q.UseSimpleTypeLoader();
+    q.UseInMemoryStore();
+    q.UseDefaultThreadPool(tp =>
+    {
+        int maxConcurrency = builder.Configuration
+                      .GetRequiredSection(AppSettingsProperties.MaxConcurrency)
+                      .Get<int>();
+
+        tp.MaxConcurrency = maxConcurrency > 0 ? maxConcurrency : Environment.ProcessorCount;
+    });
+
+    // Fila de processamento de novos usuários
+    q.AddJob<NewUserQueueJob>(j =>
+    {
+        j.WithIdentity(nameof(NewUserQueueJob));
+        j.DisallowConcurrentExecution();
+    });
+
+    q.AddTrigger(t =>
+    {
+        t.ForJob(nameof(NewUserQueueJob));
+        t.StartNow();
+    });
+});
+
+builder.Services.AddQuartzHostedService(options =>
+{
+    options.WaitForJobsToComplete = true;
+});
 
 WebApplication app = builder.Build();
 

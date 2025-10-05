@@ -23,6 +23,10 @@
     <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+    <PackageReference Include="Quartz" Version="3.8.1" />
+    <PackageReference Include="Quartz.AspNetCore" Version="3.8.1" />
+    <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.8.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +34,7 @@
     <ProjectReference Include="..\GeoCidadao.Caching\GeoCidadao.Caching.csproj" />
     <ProjectReference Include="..\GeoCidadao.Database\GeoCidadao.Database.csproj" />
     <ProjectReference Include="..\GeoCidadao.AMQP\GeoCidadao.AMQP.csproj" />
+    <ProjectReference Include="..\GeoCidadao.Jobs\GeoCidadao.Jobs.csproj" />
   </ItemGroup>
 
 </Project>

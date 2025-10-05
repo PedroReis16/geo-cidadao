@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
-using MobilePacs.Jobs.Config;
-using MobilePacs.Jobs.Listeners;
+using GeoCidadao.Jobs.Config;
+using GeoCidadao.Jobs.Listeners;
 using Quartz;
 using Quartz.Impl.Matchers;
 
-namespace MobilePacs.Jobs.Services
+namespace GeoCidadao.Jobs.Services
 {
     public interface IBaseJobService
     {
