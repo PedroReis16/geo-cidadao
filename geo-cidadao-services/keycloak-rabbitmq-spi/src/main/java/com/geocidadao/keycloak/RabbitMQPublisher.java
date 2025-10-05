@@ -12,16 +12,17 @@ import org.json.JSONObject;
 
 public class RabbitMQPublisher {
 
-    private static final String EXCHANGE_NAME = "user.events";
+    private static final String EXCHANGE_NAME = "keycloak.events";
     private static final String ROUTING_KEY = "user.created";
 
     private final ConnectionFactory factory;
 
     public RabbitMQPublisher() {
         factory = new ConnectionFactory();
-        factory.setHost(System.getenv("RABBITMQ_HOST"));
-        factory.setUsername(System.getenv("RABBITMQ_USER"));
-        factory.setPassword(System.getenv("RABBITMQ_PASS"));
+        factory.setHost("rabbitmq");
+        factory.setUsername("admin");
+        factory.setPassword("admin");
+        factory.setPort(5672);
     }
 
     public void publishUserCreatedEvent(Event event, KeycloakSession session) {
