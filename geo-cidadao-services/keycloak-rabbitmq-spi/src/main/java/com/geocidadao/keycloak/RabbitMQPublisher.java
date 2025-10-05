@@ -8,12 +8,14 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.UserModel;
 
 import java.nio.charset.StandardCharsets;
+
 import org.json.JSONObject;
 
 public class RabbitMQPublisher {
 
-    private static final String EXCHANGE_NAME = "keycloak.events";
-    private static final String ROUTING_KEY = "user.created";
+    private static final String EXCHANGE_NAME = "keycloak_events_topic_exchange";
+    private static final String EXCHANGE_DLQ = "keycloak_events_exchange_dlq";
+    private static final String ROUTING_KEY = "new.user";
 
     private final ConnectionFactory factory;
 
@@ -46,9 +48,20 @@ public class RabbitMQPublisher {
 
     private void publishMessage(String exchange, String routingKey, String message) {
         try (Connection connection = factory.newConnection();
-             Channel channel = connection.createChannel()) {
+                Channel channel = connection.createChannel()) {
+
+            // Declarar apenas os exchanges (não as filas)
             channel.exchangeDeclare(exchange, "topic", true);
-            channel.basicPublish(exchange, routingKey, null, message.getBytes(StandardCharsets.UTF_8));
+            channel.exchangeDeclare(EXCHANGE_DLQ, "topic", true);
+
+            // Publicar a mensagem no exchange principal
+            channel.basicPublish(
+                    exchange,
+                    routingKey,
+                    null,
+                    message.getBytes(StandardCharsets.UTF_8));
+
+            System.out.printf("Mensagem publicada em %s com routingKey %s%n", exchange, routingKey);
         } catch (Exception e) {
             e.printStackTrace();
         }
