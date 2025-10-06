@@ -1,0 +1,31 @@
+{
+  "version": "2.0.0",
+  "configurations": [
+    {
+      "name": "GerenciamentoUsuariosAPI",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: GerenciamentoUsuariosAPI",
+      "program": "${workspaceFolder}/GeoCidadao.GerenciamentoUsuariosAPI/bin/Debug/net8.0/GeoCidadao.GerenciamentoUsuariosAPI.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/GeoCidadao.GerenciamentoUsuariosAPI",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/gerenciamento-usuarios/swagger"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:8090;"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug all",
+      "configurations": ["GerenciamentoUsuariosAPI"],
+      "stopAll": true
+    }
+  ]
+}

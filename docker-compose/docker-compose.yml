@@ -10,12 +10,12 @@ services:
       POSTGRES_USER: geo
       POSTGRES_PASSWORD: geo
     volumes:
-      - $HOME/geocidadao/db:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     restart: always
     networks:
-       - geo-network
+      - geo-network
   rabbitmq:
-    image: rabbitmq:3.13-management
+    image: rabbitmq:4.1.4-management
     container_name: rabbitmq
     restart: always
     healthcheck:
@@ -27,12 +27,55 @@ services:
       - "5672:5672"
       - "15672:15672"
     volumes:
-      - ./geocidadao/rabbitmq:/var/lib/rabbitmq/
+      - rabbitmq_data:/var/lib/rabbitmq/
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
     networks:
       - geo-network
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - geo-network
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4
+    container_name: keycloak
+    entrypoint: /bin/bash
+    command: -c "/opt/keycloak/bin/kc.sh build && /opt/keycloak/bin/kc.sh start-dev"
+    ports:
+      - "8082:8180"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/geodb
+      KC_DB_USERNAME: geo
+      KC_DB_PASSWORD: geo
+
+      KC_HOSTNAME: localhost
+      KC_HTTP_PORT: 8180
+
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: admin
+      RABBITMQ_PASSWORD: admin
+
+    networks:
+      - geo-network
+    depends_on:
+      - db
+      - rabbitmq
+      - mailhog
+    volumes:
+      - ./keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
+      - ./keycloak/themes:/opt/keycloak/themes/custom-theme
+      - keycloak_data:/opt/keycloak/data
+  
+
   mongodb:
     image: mongo:8.0
     container_name: mongodb
@@ -40,7 +83,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - $HOME/geocidadao/mongodb:/data/db
+      - mongo_data:/data/db
     networks:
       - geo-network
 
@@ -58,3 +101,9 @@ services:
 networks:
   geo-network:
     driver: bridge
+volumes:
+  postgres_data:
+  rabbitmq_data:
+  localstack_data:
+  mongo_data:
+  keycloak_data:
