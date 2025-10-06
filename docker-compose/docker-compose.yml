@@ -72,6 +72,7 @@ services:
       - mailhog
     volumes:
       - ./keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
+      - ./keycloak/themes:/opt/keycloak/themes/custom-theme
       - keycloak_data:/opt/keycloak/data
   
 
