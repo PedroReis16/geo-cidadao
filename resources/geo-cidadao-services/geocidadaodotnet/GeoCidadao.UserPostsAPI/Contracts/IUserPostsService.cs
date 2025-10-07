@@ -7,6 +7,8 @@ namespace GeoCidadao.UserPostsAPI.Contracts
 {
     public interface IUserPostsService
     {
-        
+        Task CreatePostAsync();
+        Task DeletePostAsync(Guid postId);
+        Task UpdatePostAsync(Guid id);
     }
 }

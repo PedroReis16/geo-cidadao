@@ -19,12 +19,34 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://localhost:8090;"
       }
+    },
+    {
+      "name": "UserPostsAPI",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: UserPostsAPI",
+      "program": "${workspaceFolder}/GeoCidadao.UserPostsAPI/bin/Debug/net8.0/GeoCidadao.UserPostsAPI.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/GeoCidadao.UserPostsAPI",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/user-posts/swagger"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:8091;"
+      }
     }
   ],
   "compounds": [
     {
       "name": "Debug all",
-      "configurations": ["GerenciamentoUsuariosAPI"],
+      "configurations": [
+        "GerenciamentoUsuariosAPI",
+        "UserPostsAPI"
+      ],
       "stopAll": true
     }
   ]

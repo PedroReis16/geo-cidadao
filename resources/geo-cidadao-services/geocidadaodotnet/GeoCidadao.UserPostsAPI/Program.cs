@@ -83,10 +83,10 @@ builder.Services.AddSwaggerGen(option =>
     option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-builder.Services.ConfigureOAuth([
-    builder.Configuration.GetRequiredSection(AppSettingsProperties.OAuth).Get<OAuthConfiguration>()!,
-    builder.Configuration.GetRequiredSection(AppSettingsProperties.PortalAuthClient).Get<OAuthConfiguration>()!
-]);
+// builder.Services.ConfigureOAuth([
+//     builder.Configuration.GetRequiredSection(AppSettingsProperties.OAuth).Get<OAuthConfiguration>()!,
+//     builder.Configuration.GetRequiredSection(AppSettingsProperties.PortalAuthClient).Get<OAuthConfiguration>()!
+// ]);
 
 WebApplication app = builder.Build();
 
