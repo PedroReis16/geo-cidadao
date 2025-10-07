@@ -9,9 +9,9 @@ using GeoCidadao.Model.OAuth;
 using GeoCidadao.UserPostsAPI.Config;
 using System.Text.Json.Serialization;
 using System.Reflection;
-using GeoCidadao.Model.Constants;
-using GeoCidadao.Model.Helpers;
 using GeoCidadao.Model.Config;
+using GeoCidadao.UserPostsAPI.Services;
+using GeoCidadao.UserPostsAPI.Contracts;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -43,6 +43,8 @@ builder.Services.AddResponseCaching();
 builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
+builder.Services.AddTransient<IUserPostsService, UserPostsService>();
+
 
 // DAOs
 
