@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { MapPin, Maximize2, ZoomIn, ZoomOut, X, Heart, MessageCircle, ExternalLink } from "lucide-react";
+import { MapPin, Maximize2, ZoomIn, ZoomOut, X } from "lucide-react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/components/MapComponent.css";

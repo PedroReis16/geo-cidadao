@@ -18,12 +18,9 @@
   --color-primary: #0a4d68;
   --color-secondary: #08bdbd;
   --color-alert: #ff6b35;
-}
-
-.content{
-  padding: 0 10%;
-  background-color: var(--color-bg);
-  transition: background 0.3s;
+  --color-border: #e5e5e5;
+  --color-hover: rgba(0, 0, 0, 0.05);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 [data-theme="dark"] {
@@ -34,6 +31,15 @@
   --color-primary: #0a4d68;
   --color-secondary: #08bdbd;
   --color-alert: #ff6b35;
+  --color-border: #333;
+  --color-hover: rgba(255, 255, 255, 0.05);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.content {
+  padding: 0 10%;
+  background-color: var(--color-bg);
+  transition: background 0.3s;
 }
 
 button {
