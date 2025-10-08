@@ -3,7 +3,7 @@ import { Heart, MessageCircle, MapPin } from "lucide-react";
 import PostHeader from "./PostHeader";
 import MediaCarousel from "./MediaCarousel";
 import MediaModal from "./MediaModal";
-import "./PostCard.css";
+import "../../../ui/styles/components/PostCard/PostCard.css";
 import type { Post } from "../../../data/@types/Post";
 
 

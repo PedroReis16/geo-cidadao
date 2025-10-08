@@ -1,6 +1,6 @@
 import React from "react";
 import { X } from "lucide-react";
-import "./MediaModal.css";
+import "../../styles/components/PostCard/MediaModal.css";
 
 interface MediaItem {
   type: "image" | "video";

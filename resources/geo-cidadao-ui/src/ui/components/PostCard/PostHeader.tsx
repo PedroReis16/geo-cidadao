@@ -1,5 +1,5 @@
 import React from "react";
-import "./PostHeader.css";
+import "../../styles/components/PostCard/PostHeader.css";
 
 interface User {
   name: string;

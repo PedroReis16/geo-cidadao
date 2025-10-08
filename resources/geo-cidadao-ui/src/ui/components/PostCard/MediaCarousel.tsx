@@ -1,6 +1,6 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import "./MediaCarousel.css";
+import "../../styles/components/PostCard/MediaCarousel.css";
 
 interface MediaItem {
   type: "image" | "video";

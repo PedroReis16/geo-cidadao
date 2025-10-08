@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import MapComponent from "../ui/components/MapComponent";
 import "../ui/styles/pages/FeedPage.css";
 import type { Coordinates } from "../data/@types/Coordinates";
 import type { Post } from "../data/@types/Post";
@@ -169,7 +168,7 @@ const FeedPage: React.FC = () => {
     lng: -46.6333,
   });
   const [isMapExpanded, setIsMapExpanded] = useState<boolean>(false);
-  const [selectedItem, setSelectedItem] = useState<FeedItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Post | null>(null);
   const [highlightedFeedItem, setHighlightedFeedItem] = useState<string | null>(
     null
   );
@@ -233,18 +232,12 @@ const FeedPage: React.FC = () => {
               post={item}
               onLike={handlePostLike}
               onComment={loadPostComments}
-              // content={item}
-              // highlightedFeedItem={highlightedFeedItem}
-              // setCenter={setCenter}
-              // setZoom={setZoom}
-              // setSelectedItem={setSelectedItem}
-              // setIsMapExpanded={setIsMapExpanded}
             />
           ))}
         </div>
 
         {/* Mapa */}
-        <div
+        {/* <div
           className={`map-wrapper ${isMapExpanded ? "expanded" : "collapsed"}`}
         >
           <MapComponent
@@ -264,7 +257,7 @@ const FeedPage: React.FC = () => {
             newItemPos={newItemPos}
             // onItemPreviewClick={handleItemPreviewClick}
           />
-        </div>
+        </div> */}
       </main>
     </div>
   );
