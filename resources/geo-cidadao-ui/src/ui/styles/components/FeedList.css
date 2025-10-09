@@ -1,6 +1,5 @@
 .feed-list {
   flex: 1;
-  overflow-y: auto;
   overflow-x: hidden;
   padding: 1rem;
   transition: opacity 0.5s ease, transform 0.5s ease;
@@ -11,6 +10,14 @@
   gap: 1rem;
   padding-left: var(--horizontal-padding);
   padding-right: var(--horizontal-padding);
+}
+
+.scroll-in {
+  overflow-y: auto;
+}
+
+.scroll-out {
+  overflow: hidden;
 }
 
 /* Animações de fade para a lista de posts */

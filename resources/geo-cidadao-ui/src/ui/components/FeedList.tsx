@@ -167,6 +167,7 @@ interface FeedListProps {
 const FeedList: React.FC<FeedListProps> = ({ isMapExpanded, feedRef }) => {
   const [items, setItems] = useState<Post[]>(POSTS);
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isMediaExpanded, setIsMediaExpanded] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -180,14 +181,15 @@ const FeedList: React.FC<FeedListProps> = ({ isMapExpanded, feedRef }) => {
       ref={feedRef}
       className={`feed-list ${
         isMapExpanded && isMobile ? "fade-out" : "fade-in"
-      }`}
+      } ${isMediaExpanded ? "scroll-out" : "scroll-in"}`}
     >
       {items.map((item) => (
         <PostCard
           key={item.id}
           post={item}
-        //   onLike={handlePostLike}
-        //   onComment={loadPostComments}
+          onMediaExpand={setIsMediaExpanded}
+          //   onLike={handlePostLike}
+          //   onComment={loadPostComments}
         />
       ))}
     </div>
