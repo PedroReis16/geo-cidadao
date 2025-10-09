@@ -1,11 +1,7 @@
 import React from "react";
 import "../../styles/components/PostCard/PostHeader.css";
+import type { User } from "../../../data/@types/User";
 
-interface User {
-  name: string;
-  avatar: string;
-  username: string;
-}
 
 interface PostHeaderProps {
   user: User;
