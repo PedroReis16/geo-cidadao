@@ -22,12 +22,12 @@
   background-color: var(--color-card);
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 0; /* Removido margin já que usamos gap no container */
+  margin-bottom: 0; 
   box-shadow: var(--shadow);
   border: 1px solid var(--color-border);
   transition: all 0.3s ease;
-  flex-shrink: 0; /* Evita que o card seja comprimido */
-  width: 100%; /* Garante largura total */
+  flex-shrink: 0; 
+  width: 100%; 
 }
 
 .post-text {

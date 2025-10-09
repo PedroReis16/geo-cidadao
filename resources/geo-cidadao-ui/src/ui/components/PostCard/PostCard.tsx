@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Heart, MessageCircle, MapPin } from "lucide-react";
 import PostHeader from "./PostHeader";
 import MediaCarousel from "./MediaCarousel";
@@ -11,7 +11,6 @@ interface PostCardProps {
   onLike?: (postId: string) => void;
   onComment?: (postId: string) => void;
   onMap?: (postId: string) => void;
-  onMediaExpand?: (isExpanded: boolean) => void;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -19,7 +18,6 @@ const PostCard: React.FC<PostCardProps> = ({
   onLike,
   onComment,
   onMap,
-  onMediaExpand: onMediaClick,
 }) => {
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [isMediaExpanded, setIsMediaExpanded] = useState(false);
@@ -29,10 +27,6 @@ const PostCard: React.FC<PostCardProps> = ({
   const handleLike = () => onLike?.(post.id);
   const handleComment = () => onComment?.(post.id);
   const handleMap = () => onMap?.(post.id);
-
-  useEffect(() => {
-    onMediaClick?.(isMediaExpanded);
-  }, [isMediaExpanded, onMediaClick]);
 
   return (
     <>
@@ -82,10 +76,12 @@ const PostCard: React.FC<PostCardProps> = ({
         </div>
       </article>
 
-      {isMediaExpanded && hasMedia && (
+      {isMediaExpanded && hasMedia && post.media && post.media.length > 0 && (
         <MediaModal
-          media={post.media![currentMediaIndex]}
+          mediaItems={post.media}
+          currentIndex={currentMediaIndex}
           onClose={() => setIsMediaExpanded(false)}
+          onIndexChange={setCurrentMediaIndex}
         />
       )}
     </>

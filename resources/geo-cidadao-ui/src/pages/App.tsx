@@ -46,7 +46,7 @@ function App() {
   return (
     <>
       <ThemeProvider>
-        <Header />
+        {/* <Header /> */}
         <main className="content">
           <RouterProvider router={router} />
         </main>

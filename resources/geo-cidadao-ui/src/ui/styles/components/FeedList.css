@@ -12,16 +12,9 @@
   padding-right: var(--horizontal-padding);
 }
 
-.scroll-in {
-  overflow-y: auto;
-}
-
-.scroll-out {
-  overflow: hidden;
-}
 
 /* Animações de fade para a lista de posts */
-.fade-in {
+/* .fade-in {
   opacity: 1;
   transform: translateX(0);
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -38,4 +31,4 @@
   opacity: 0;
   pointer-events: none;
   transform: scale(0.98);
-}
+}  */

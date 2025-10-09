@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import "../../styles/components/PostCard/MediaCarousel.css";
 import type { MediaItem } from "../../../data/@types/MediaItem";
-
 
 interface MediaCarouselProps {
   media: MediaItem[];
@@ -17,8 +16,8 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
   onIndexChange,
   onMediaClick,
 }) => {
-  const [touchStart, setTouchStart] = React.useState(0);
-  const [touchEnd, setTouchEnd] = React.useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   const nextMedia = () => {
     onIndexChange((currentIndex + 1) % media.length);
