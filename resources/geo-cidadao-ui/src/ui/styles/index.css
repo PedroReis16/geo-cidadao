@@ -12,6 +12,8 @@
   -moz-osx-font-smoothing: grayscale;
   overflow-y: hidden;
 
+  --horizontal-padding: 20%;
+
   /* Tema claro */
   --color-bg: #f9fafb;
   --color-text: #1c1c1c;
@@ -38,7 +40,6 @@
 }
 
 .content {
-  padding: 0 10%;
   background-color: var(--color-bg);
   transition: background 0.3s;
 }
