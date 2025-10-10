@@ -10,7 +10,7 @@ interface PostCardProps {
   post: Post;
   onLike?: (postId: string) => void;
   onComment?: (postId: string) => void;
-  onMap?: (postId: string) => void;
+  onMap?: (post: Post) => void;
 }
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -26,7 +26,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const handleLike = () => onLike?.(post.id);
   const handleComment = () => onComment?.(post.id);
-  const handleMap = () => onMap?.(post.id);
+  const handleMap = () => onMap?.(post);
 
   return (
     <>
