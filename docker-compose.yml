@@ -87,16 +87,16 @@ services:
   gerenciamento-usuarios:
     container_name: gerenciamento-usuarios
     build:
-      context: ..
-      dockerfile: /dockerfiles/gerenciamento-usuarios-api.dockerfile
+      context: .
+      dockerfile: docker-compose/dockerfiles/gerenciamento-usuarios-api.dockerfile
     ports:
       - "8090:8080"
     depends_on:
       rabbitmq:
         condition: service_healthy
     env_file:
-      - default.env
-      - gerenciamento-usuarios.env
+      - docker-compose/default.env
+      - docker-compose/gerenciamento-usuarios.env
     labels:
       - traefik.http.routers.gerenciamento-usuarios.rule=PathPrefix(`/gerenciamento-usuarios`)
       - traefik.http.services.gerenciamento-usuarios.loadbalancer.server.port=8080
