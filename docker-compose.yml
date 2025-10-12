@@ -103,6 +103,34 @@ services:
       - geo-network
     restart: always
 
+  geo-cidadao-ui:
+    container_name: geo-cidadao-ui
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/geo-cidadao-ui.dockerfile
+    ports:
+      - "5173:80"
+    env_file:
+      - docker-compose/default.env
+      - docker-compose/geo-cidadao-ui.env
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.geo-cidadao-ui.rule=PathPrefix(`/`)
+      - traefik.http.routers.geo-cidadao-ui.entrypoints=web
+      - traefik.http.routers.geo-cidadao-ui.priority=1
+      - traefik.http.services.geo-cidadao-ui.loadbalancer.server.port=80
+      - traefik.http.middlewares.ui-cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.ui-cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.ui-cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.ui-cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.ui-cors.headers.addvaryheader=true
+      - traefik.http.routers.geo-cidadao-ui.middlewares=ui-cors
+    networks:
+      - geo-network
+    restart: always
+    depends_on:
+      - traefik
+
   traefik:
     image: traefik:v2.10
     command: --api.insecure=true --providers.docker
