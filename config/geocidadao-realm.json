@@ -715,6 +715,9 @@
       "realmRoles": [
         "MANAGER_USER"
       ],
+      "realmRoles": [
+        "MANAGER_USER"
+      ],
       "clientRoles": {}
     },
     {
@@ -736,6 +739,9 @@
       "path": "/users",
       "subGroups": [],
       "attributes": {},
+      "realmRoles": [
+        "USER"
+      ],
       "realmRoles": [
         "USER"
       ],
@@ -1209,9 +1215,11 @@
       "nodeReRegistrationTimeout": -1,
       "defaultClientScopes": [
         "aud-geocidadao-users-api",
+        "aud-geocidadao-users-api",
         "web-origins",
         "acr",
         "profile",
+        "aud-geocidadao-posts-api",
         "aud-geocidadao-posts-api",
         "roles",
         "basic",
@@ -1224,6 +1232,7 @@
         "phone",
         "offline_access",
         "organization",
+        "microprofile-jwt"
         "microprofile-jwt"
       ]
     },
