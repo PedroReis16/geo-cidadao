@@ -28,7 +28,6 @@ dotnet add $PROJECT_NAME package Microsoft.Extensions.Http.Polly --version 8.2.0
 dotnet add $PROJECT_NAME reference GeoCidadao.Model
 dotnet add $PROJECT_NAME reference GeoCidadao.Caching
 dotnet add $PROJECT_NAME reference GeoCidadao.Database
-dotnet add $PROJECT_NAME reference GeoCidadao.DICOM
 dotnet add $PROJECT_NAME reference GeoCidadao.AMQP
 dotnet add $PROJECT_NAME reference GeoCidadao.Jobs
 
@@ -66,12 +65,12 @@ Copy-Item -Path "Templates\appsettings.json" -Destination "$PROJECT_NAME\appsett
 Copy-Item -Path "Templates\appsettings.Development.json" -Destination "$PROJECT_NAME\appsettings.Development.json"
 (Get-Content "$PROJECT_NAME\appsettings.Development.json") -replace '<API_NAME>', $API_NAME -replace '<LOG_NAME>', ( -join ($API_NAME -split '[-_\s]+' | ForEach-Object { if ($_.Length -gt 0) { $_.Substring(0, 1).ToUpper() + $_.Substring(1).ToLower() } })) | Set-Content "$PROJECT_NAME\appsettings.Development.json"
 
-Copy-Item -Path "Templates\Template.env" -Destination "docker-compose/$API_NAME.env"
-(Get-Content "docker-compose/$API_NAME.env") -replace '<API_NAME>', $API_NAME | Set-Content "docker-compose/$API_NAME.env" 
+Copy-Item -Path "Templates\Template.env" -Destination "../../../docker-compose/$API_NAME.env"
+(Get-Content "docker-compose/$API_NAME.env") -replace '<API_NAME>', $API_NAME | Set-Content "../../../docker-compose/$API_NAME.env" 
 
 # Cria arquivos para deploy
-Copy-Item -Path "Templates\Template.dockerfile" -Destination "dockerfiles\$API_NAME-api.dockerfile"
-(Get-Content "dockerfiles\$API_NAME-api.dockerfile") -replace '<PROJECT_NAME>', $PROJECT_NAME | Set-Content "dockerfiles\$API_NAME-api.dockerfile"
+Copy-Item -Path "Templates\Template.dockerfile" -Destination "../../../docker-compose/dockerfiles/$API_NAME-api.dockerfile"
+(Get-Content "docker-compose/dockerfiles/$API_NAME-api.dockerfile") -replace '<PROJECT_NAME>', $PROJECT_NAME | Set-Content "docker-compose/dockerfiles/$API_NAME-api.dockerfile"
 
 # Exclui arquivos sem uso
 Remove-Item "$PROJECT_NAME\$PROJECT_NAME.http"

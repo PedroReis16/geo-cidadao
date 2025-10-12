@@ -54,24 +54,13 @@
   position: relative;
   display: flex;
   transition: all 0.5s ease;
+  height: calc(100vh - 0px); /* Garante altura total disponível */
+  overflow: hidden; /* Evita overflow no container principal */
 }
 
 /* ===========================
    FEED LISTA E ITENS
    =========================== */
-
-.feed-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1rem;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.feed-container.map-open .feed-list {
-  opacity: 0;
-  pointer-events: none;
-  transform: scale(0.98);
-}
 
 /* ===========================
    MODAL (Adicionar item)

@@ -1,0 +1,153 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: geodb
+      POSTGRES_USER: geo
+      POSTGRES_PASSWORD: geo
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - geo-network
+  rabbitmq:
+    image: rabbitmq:4.1.4-management
+    container_name: rabbitmq
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    networks:
+      - geo-network
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - geo-network
+  mongodb:
+    image: mongo:8.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - geo-network
+  keycloak:
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/keycloak.dockerfile
+    container_name: keycloak
+    ports:
+      - "8082:8180"
+    depends_on:
+      - db
+      - rabbitmq
+      - mailhog
+    environment:
+      KC_HTTP_RELATIVE_PATH: /keycloak
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.keycloak.rule=PathPrefix(`/keycloak`)
+      - traefik.http.routers.keycloak.entrypoints=web
+      - traefik.http.middlewares.kc-strip.stripprefix.prefixes=/keycloak
+      - traefik.http.routers.keycloak.middlewares=kc-strip
+      - traefik.http.services.keycloak.loadbalancer.server.port=8180
+    networks:
+      - geo-network
+    volumes:
+      - ./docker-compose/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
+      - ./docker-compose/keycloak/themes:/opt/keycloak/themes/custom-theme
+      - keycloak_data:/opt/keycloak/data
+  gerenciamento-usuarios:
+    container_name: gerenciamento-usuarios
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/gerenciamento-usuarios-api.dockerfile
+    ports:
+      - "8090:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - docker-compose/default.env
+      - docker-compose/gerenciamento-usuarios.env
+    labels:
+      - traefik.http.routers.gerenciamento-usuarios.rule=PathPrefix(`/gerenciamento-usuarios`)
+      - traefik.http.services.gerenciamento-usuarios.loadbalancer.server.port=8080
+      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.cors.headers.addvaryheader=true
+      - traefik.http.routers.gerenciamento-usuarios.middlewares=cors
+    networks:
+      - geo-network
+    restart: always
+
+  geo-cidadao-ui:
+    container_name: geo-cidadao-ui
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/geo-cidadao-ui.dockerfile
+    ports:
+      - "5173:80"
+    env_file:
+      - docker-compose/default.env
+      - docker-compose/geo-cidadao-ui.env
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.geo-cidadao-ui.rule=PathPrefix(`/`)
+      - traefik.http.routers.geo-cidadao-ui.entrypoints=web
+      - traefik.http.routers.geo-cidadao-ui.priority=1
+      - traefik.http.services.geo-cidadao-ui.loadbalancer.server.port=80
+      - traefik.http.middlewares.ui-cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.ui-cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.ui-cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.ui-cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.ui-cors.headers.addvaryheader=true
+      - traefik.http.routers.geo-cidadao-ui.middlewares=ui-cors
+    networks:
+      - geo-network
+    restart: always
+    depends_on:
+      - traefik
+
+  traefik:
+    image: traefik:v2.10
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "${TRAEFIK_SERVICES_PORT}:80"
+      - "${TRAEFIK_DASHBOARD_PORT}:8080"
+    volumes:
+      - ./docker-compose/traefik:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - geo-network
+networks:
+  geo-network:
+    driver: bridge
+volumes:
+  postgres_data:
+  rabbitmq_data:
+  localstack_data:
+  mongo_data:
+  keycloak_data:

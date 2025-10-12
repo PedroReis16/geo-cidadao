@@ -1,24 +1,24 @@
 import React, { useRef, useState, useEffect } from "react";
-import { MapPin, Maximize2, ZoomIn, ZoomOut, X, Heart, MessageCircle, ExternalLink } from "lucide-react";
+import { MapPin, Maximize2, ZoomIn, ZoomOut, X } from "lucide-react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/components/MapComponent.css";
-import type { FeedItem } from "../../data/@types/FeedItem";
 import type { Coordinates } from "../../data/@types/Coordinates";
+import type { Post } from "../../data/@types/Post";
 
 interface MapComponentProps {
-  items: FeedItem[];
+  items: Post[];
   center: Coordinates;
   zoom: number;
   setZoom: React.Dispatch<React.SetStateAction<number>>;
   setCenter: React.Dispatch<React.SetStateAction<Coordinates>>;
   isMapExpanded: boolean;
   setIsMapExpanded: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedItem: FeedItem | null;
-  setSelectedItem: React.Dispatch<React.SetStateAction<FeedItem | null>>;
+  selectedItem: Post | null;
+  setSelectedItem: React.Dispatch<React.SetStateAction<Post | null>>;
   onMapClick?: (coords: Coordinates) => void;
   newItemPos?: Coordinates | null;
-  onItemPreviewClick?: (item: FeedItem) => void; // Callback para abrir detalhes
+  onItemPreviewClick?: (item: Post) => void; // Callback para abrir detalhes
 }
 
 const MapComponent: React.FC<MapComponentProps> = ({
@@ -42,13 +42,18 @@ const MapComponent: React.FC<MapComponentProps> = ({
   const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const popupRef = useRef<L.Popup | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
-  const [visibleItems, setVisibleItems] = useState<FeedItem[]>([]);
+  const [visibleItems, setVisibleItems] = useState<Post[]>([]);
 
   const MIN_ZOOM_TO_SHOW_ITEMS = 13; // Zoom mínimo para mostrar marcadores
   const MAX_DISTANCE_KM = 10; // Distância máxima em km do centro para mostrar items
 
   // Calcula distância entre dois pontos (fórmula de Haversine)
-  const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+  const calculateDistance = (
+    lat1: number,
+    lng1: number,
+    lat2: number,
+    lng2: number
+  ): number => {
     const R = 6371; // Raio da Terra em km
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
     const dLng = ((lng2 - lng1) * Math.PI) / 180;
@@ -74,7 +79,12 @@ const MapComponent: React.FC<MapComponentProps> = ({
     const maxDistance = MAX_DISTANCE_KM * (2 - zoomFactor);
 
     const filtered = items.filter((item) => {
-      const distance = calculateDistance(center.lat, center.lng, item.lat, item.lng);
+      const distance = calculateDistance(
+        center.lat,
+        center.lng,
+        item.coordinates.lat,
+        item.coordinates.lng
+      );
       return distance <= maxDistance;
     });
 
@@ -82,17 +92,21 @@ const MapComponent: React.FC<MapComponentProps> = ({
   }, [items, center, zoom]);
 
   // Cria o HTML do popup personalizado
-  const createPopupContent = (item: FeedItem): HTMLDivElement => {
+  const createPopupContent = (item: Post): HTMLDivElement => {
     const container = document.createElement("div");
     container.className = "custom-popup";
-    
+
     container.innerHTML = `
       <div class="popup-content">
-        ${item.image ? `<img src="${item.image}" alt="${item.title}" class="popup-image" />` : ''}
+        ${
+          item.media
+            ? `<img src="${item.image}" alt="${item.title}" class="popup-image" />`
+            : ""
+        }
         <div class="popup-body">
           <h3 class="popup-title">${item.title}</h3>
-          <p class="popup-author">Por ${item.author}</p>
-          <p class="popup-description">${item.description}</p>
+          <p class="popup-author">Por ${item.user.name}</p>
+          <p class="popup-description">${item.text}</p>
           <div class="popup-stats">
             <span class="popup-stat">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -120,9 +134,9 @@ const MapComponent: React.FC<MapComponentProps> = ({
     `;
 
     // Adiciona listener ao botão
-    const button = container.querySelector('.popup-button');
+    const button = container.querySelector(".popup-button");
     if (button) {
-      button.addEventListener('click', (e) => {
+      button.addEventListener("click", (e) => {
         e.stopPropagation();
         if (onItemPreviewClick) {
           onItemPreviewClick(item);
@@ -146,7 +160,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
-      attribution: '© OpenStreetMap contributors',
+      attribution: "© OpenStreetMap contributors",
     }).addTo(map);
 
     map.on("moveend", () => {
@@ -177,7 +191,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
   // Atualiza centro e zoom quando props mudam
   useEffect(() => {
     if (!mapInstanceRef.current) return;
-    
+
     const map = mapInstanceRef.current;
     const currentCenter = map.getCenter();
     const currentZoom = map.getZoom();
@@ -250,31 +264,41 @@ const MapComponent: React.FC<MapComponentProps> = ({
         const icon = L.divIcon({
           className: "custom-marker-icon",
           html: `
-            <svg width="${isMapExpanded && zoom >= 15 ? '36' : '24'}" height="${isMapExpanded && zoom >= 15 ? '36' : '24'}" viewBox="0 0 24 24" fill="${isSelected ? '#dc2626' : '#2563eb'}" stroke="${isSelected ? '#dc2626' : '#2563eb'}" stroke-width="2">
+            <svg width="${isMapExpanded && zoom >= 15 ? "36" : "24"}" height="${
+            isMapExpanded && zoom >= 15 ? "36" : "24"
+          }" viewBox="0 0 24 24" fill="${
+            isSelected ? "#dc2626" : "#2563eb"
+          }" stroke="${isSelected ? "#dc2626" : "#2563eb"}" stroke-width="2">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
               <circle cx="12" cy="10" r="3" fill="white"></circle>
             </svg>
           `,
-          iconSize: [isMapExpanded && zoom >= 15 ? 36 : 24, isMapExpanded && zoom >= 15 ? 36 : 24],
-          iconAnchor: [isMapExpanded && zoom >= 15 ? 18 : 12, isMapExpanded && zoom >= 15 ? 36 : 24],
+          iconSize: [
+            isMapExpanded && zoom >= 15 ? 36 : 24,
+            isMapExpanded && zoom >= 15 ? 36 : 24,
+          ],
+          iconAnchor: [
+            isMapExpanded && zoom >= 15 ? 18 : 12,
+            isMapExpanded && zoom >= 15 ? 36 : 24,
+          ],
         });
 
-        marker = L.marker([item.lat, item.lng], { icon })
+        marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon })
           .addTo(map)
           .on("click", () => {
             if (isMapExpanded) {
               setSelectedItem(item);
-              
+
               // Cria e abre popup personalizado
               const popupContent = createPopupContent(item);
               const popup = L.popup({
                 maxWidth: 300,
-                className: 'custom-leaflet-popup'
+                className: "custom-leaflet-popup",
               })
-                .setLatLng([item.lat, item.lng])
+                .setLatLng([item.coordinates.lat, item.coordinates.lng])
                 .setContent(popupContent)
                 .openOn(map);
-              
+
               popupRef.current = popup;
             }
           });
@@ -282,15 +306,19 @@ const MapComponent: React.FC<MapComponentProps> = ({
         markersRef.current.set(item.id, marker);
       } else {
         const currentPos = marker.getLatLng();
-        if (currentPos.lat !== item.lat || currentPos.lng !== item.lng) {
-          marker.setLatLng([item.lat, item.lng]);
+        if (currentPos.lat !== item.coordinates.lat || currentPos.lng !== item.coordinates.lng) {
+          marker.setLatLng([item.coordinates.lat, item.coordinates.lng]);
         }
       }
 
       // Atualiza ícone do marcador selecionado
       const isSelected = selectedItem?.id === item.id;
       const iconHtml = `
-        <svg width="${isMapExpanded && zoom >= 15 ? '36' : '24'}" height="${isMapExpanded && zoom >= 15 ? '36' : '24'}" viewBox="0 0 24 24" fill="${isSelected ? '#dc2626' : '#2563eb'}" stroke="${isSelected ? '#dc2626' : '#2563eb'}" stroke-width="2">
+        <svg width="${isMapExpanded && zoom >= 15 ? "36" : "24"}" height="${
+        isMapExpanded && zoom >= 15 ? "36" : "24"
+      }" viewBox="0 0 24 24" fill="${
+        isSelected ? "#dc2626" : "#2563eb"
+      }" stroke="${isSelected ? "#dc2626" : "#2563eb"}" stroke-width="2">
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
           <circle cx="12" cy="10" r="3" fill="white"></circle>
         </svg>
@@ -299,8 +327,14 @@ const MapComponent: React.FC<MapComponentProps> = ({
       const newIcon = L.divIcon({
         className: "custom-marker-icon",
         html: iconHtml,
-        iconSize: [isMapExpanded && zoom >= 15 ? 36 : 24, isMapExpanded && zoom >= 15 ? 36 : 24],
-        iconAnchor: [isMapExpanded && zoom >= 15 ? 18 : 12, isMapExpanded && zoom >= 15 ? 36 : 24],
+        iconSize: [
+          isMapExpanded && zoom >= 15 ? 36 : 24,
+          isMapExpanded && zoom >= 15 ? 36 : 24,
+        ],
+        iconAnchor: [
+          isMapExpanded && zoom >= 15 ? 18 : 12,
+          isMapExpanded && zoom >= 15 ? 36 : 24,
+        ],
       });
 
       marker.setIcon(newIcon);
@@ -327,7 +361,9 @@ const MapComponent: React.FC<MapComponentProps> = ({
           iconAnchor: [18, 36],
         });
 
-        newMarkerRef.current = L.marker([newItemPos.lat, newItemPos.lng], { icon }).addTo(map);
+        newMarkerRef.current = L.marker([newItemPos.lat, newItemPos.lng], {
+          icon,
+        }).addTo(map);
       } else {
         newMarkerRef.current.setLatLng([newItemPos.lat, newItemPos.lng]);
       }
@@ -368,7 +404,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
       {isMapExpanded && zoom >= MIN_ZOOM_TO_SHOW_ITEMS && (
         <div className="items-counter">
           <MapPin size={16} />
-          <span>{visibleItems.length} {visibleItems.length === 1 ? 'ponto' : 'pontos'} visíveis</span>
+          <span>
+            {visibleItems.length}{" "}
+            {visibleItems.length === 1 ? "ponto" : "pontos"} visíveis
+          </span>
         </div>
       )}
 
