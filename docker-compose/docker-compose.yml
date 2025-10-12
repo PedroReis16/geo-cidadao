@@ -87,8 +87,8 @@ services:
   gerenciamento-usuarios:
     container_name: gerenciamento-usuarios
     build:
-      context: ../dockerfiles
-      dockerfile: gerenciamento-usuarios-api.dockerfile
+      context: ..
+      dockerfile: /dockerfiles/gerenciamento-usuarios-api.dockerfile
     ports:
       - "8090:8080"
     depends_on:
