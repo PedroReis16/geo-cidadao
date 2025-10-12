@@ -594,18 +594,114 @@
       "name": "cities",
       "description": "",
       "path": "/cities",
-      "subGroups": [],
-      "attributes": {
-        "city": [
-          "SAO_BERNARDO",
-          "SANTO_ANDRE",
-          "MAUA",
-          "SAO_CAETANO",
-          "RIBEIRAO_PIRES",
-          "DIADEMA",
-          "RIO_GRANDE_DA_SERRA"
-        ]
-      },
+      "subGroups": [
+        {
+          "id": "1c9507ce-44ae-478d-89c0-6c580705de22",
+          "name": "DIADEMA",
+          "description": "",
+          "path": "/cities/DIADEMA",
+          "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
+          "subGroups": [],
+          "attributes": {
+            "city": [
+              "DIADEMA"
+            ]
+          },
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "9c3304b4-c6c1-4a1e-bb7b-7bcd85b6149f",
+          "name": "MAUA",
+          "description": "",
+          "path": "/cities/MAUA",
+          "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
+          "subGroups": [],
+          "attributes": {
+            "city": [
+              "MAUA"
+            ]
+          },
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "f1b141b2-b52f-4827-b106-7626a10ea68a",
+          "name": "RIBEIRAO_PIRES",
+          "description": "",
+          "path": "/cities/RIBEIRAO_PIRES",
+          "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
+          "subGroups": [],
+          "attributes": {
+            "city": [
+              "RIBEIRAO_PIRES"
+            ]
+          },
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "d85e13c9-9e29-402b-b25b-0e051d0ca3b2",
+          "name": "RIO_GRANDE_DA_SERRA",
+          "description": "",
+          "path": "/cities/RIO_GRANDE_DA_SERRA",
+          "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
+          "subGroups": [],
+          "attributes": {
+            "city": [
+              "RIO_GRANDE_DA_SERRA"
+            ]
+          },
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "8dcc3a38-353d-4a41-a0a1-b5a0dcecc487",
+          "name": "SANTO_ANDRE",
+          "description": "",
+          "path": "/cities/SANTO_ANDRE",
+          "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
+          "subGroups": [],
+          "attributes": {
+            "city": [
+              "SANTO_ANDRE"
+            ]
+          },
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "bdd6a1ff-1956-4bb8-a857-e2ffdf9df088",
+          "name": "SAO_BERNARDO",
+          "description": "",
+          "path": "/cities/SAO_BERNARDO",
+          "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
+          "subGroups": [],
+          "attributes": {
+            "city": [
+              "SAO_BERNARDO"
+            ]
+          },
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "6076196f-30b1-4cfd-8a1d-3a09ad80dcf9",
+          "name": "SAO_CAETANO",
+          "description": "",
+          "path": "/cities/SAO_CAETANO",
+          "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
+          "subGroups": [],
+          "attributes": {
+            "city": [
+              "SAO_CAETANO"
+            ]
+          },
+          "realmRoles": [],
+          "clientRoles": {}
+        }
+      ],
+      "attributes": {},
       "realmRoles": [],
       "clientRoles": {}
     },
@@ -616,7 +712,9 @@
       "path": "/managers",
       "subGroups": [],
       "attributes": {},
-      "realmRoles": [],
+      "realmRoles": [
+        "MANAGER_USER"
+      ],
       "clientRoles": {}
     },
     {
@@ -626,7 +724,9 @@
       "path": "/moderators",
       "subGroups": [],
       "attributes": {},
-      "realmRoles": [],
+      "realmRoles": [
+        "MANAGER_USER"
+      ],
       "clientRoles": {}
     },
     {
@@ -636,7 +736,9 @@
       "path": "/users",
       "subGroups": [],
       "attributes": {},
-      "realmRoles": [],
+      "realmRoles": [
+        "USER"
+      ],
       "clientRoles": {}
     }
   ],
@@ -1106,22 +1208,22 @@
       "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": -1,
       "defaultClientScopes": [
+        "aud-geocidadao-users-api",
         "web-origins",
         "acr",
         "profile",
+        "aud-geocidadao-posts-api",
         "roles",
         "basic",
-        "email"
+        "email",
+        "aud-comments-service"
       ],
       "optionalClientScopes": [
-        "aud-geocidadao-users-api",
         "address",
         "phone",
         "offline_access",
         "organization",
-        "aud-geocidadao-posts-api",
-        "microprofile-jwt",
-        "aud-comments-service"
+        "microprofile-jwt"
       ]
     },
     {
@@ -2179,17 +2281,17 @@
     "roles",
     "web-origins",
     "acr",
-    "basic"
+    "basic",
+    "aud-comments-service",
+    "aud-geocidadao-posts-api",
+    "aud-geocidadao-users-api"
   ],
   "defaultOptionalClientScopes": [
     "offline_access",
     "address",
     "phone",
     "microprofile-jwt",
-    "organization",
-    "aud-geocidadao-users-api",
-    "aud-geocidadao-posts-api",
-    "aud-comments-service"
+    "organization"
   ],
   "browserSecurityHeaders": {
     "contentSecurityPolicyReportOnly": "",
