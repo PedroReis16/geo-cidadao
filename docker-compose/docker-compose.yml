@@ -74,8 +74,6 @@ services:
       - ./keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
       - ./keycloak/themes:/opt/keycloak/themes/custom-theme
       - keycloak_data:/opt/keycloak/data
-  
-
   mongodb:
     image: mongo:8.0
     container_name: mongodb
@@ -86,6 +84,31 @@ services:
       - mongo_data:/data/db
     networks:
       - geo-network
+  gerenciamento-usuarios:
+    container_name: gerenciamento-usuarios
+    build:
+      context: ../dockerfiles
+      dockerfile: gerenciamento-usuarios-api.dockerfile
+    ports:
+      - "8090:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - default.env
+      - gerenciamento-usuarios.env
+    labels:
+      - traefik.http.routers.gerenciamento-usuarios.rule=PathPrefix(`/gerenciamento-usuarios`)
+      - traefik.http.services.gerenciamento-usuarios.loadbalancer.server.port=8080
+      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.cors.headers.addvaryheader=true
+      - traefik.http.routers.gerenciamento-usuarios.middlewares=cors
+    networks:
+      - geo-network
+    restart: always
 
   traefik:
     image: traefik:v2.10
