@@ -62,15 +62,6 @@ services:
       - db
       - rabbitmq
       - mailhog
-    environment:
-      KC_HTTP_RELATIVE_PATH: /keycloak
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.keycloak.rule=PathPrefix(`/keycloak`)
-      - traefik.http.routers.keycloak.entrypoints=web
-      - traefik.http.middlewares.kc-strip.stripprefix.prefixes=/keycloak
-      - traefik.http.routers.keycloak.middlewares=kc-strip
-      - traefik.http.services.keycloak.loadbalancer.server.port=8180
     networks:
       - geo-network
     volumes:
