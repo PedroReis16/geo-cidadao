@@ -28,7 +28,6 @@ dotnet add $PROJECT_NAME package Microsoft.Extensions.Http.Polly --version 8.2.0
 dotnet add $PROJECT_NAME reference GeoCidadao.Model
 dotnet add $PROJECT_NAME reference GeoCidadao.Caching
 dotnet add $PROJECT_NAME reference GeoCidadao.Database
-dotnet add $PROJECT_NAME reference GeoCidadao.DICOM
 dotnet add $PROJECT_NAME reference GeoCidadao.AMQP
 dotnet add $PROJECT_NAME reference GeoCidadao.Jobs
 
