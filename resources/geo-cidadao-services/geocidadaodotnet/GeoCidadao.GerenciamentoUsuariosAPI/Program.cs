@@ -15,6 +15,8 @@ using GeoCidadao.Jobs.Listeners;
 using GeoCidadao.GerenciamentoUsuariosAPI.Model.Jobs.QueueJobs;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices;
+using GeoCidadao.GerenciamentoUsuariosAPI.Contracts;
+using GeoCidadao.GerenciamentoUsuariosAPI.Services;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -46,6 +48,7 @@ builder.Services.AddResponseCaching();
 builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
+builder.Services.AddTransient<IProfileService, ProfileService>();
 
 // DAOs
 
