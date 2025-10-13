@@ -3,7 +3,7 @@ using GeoCidadao.Jobs;
 using GeoCidadao.Model.Helpers;
 using Quartz;
 
-namespace GeoCidadao.GerenciamentoUsuariosAPI.Model.Jobs.QueueJobs
+namespace GeoCidadao.GerenciamentoUsuariosAPI.Models.Jobs.QueueJobs
 {
     public class NewUserQueueJob(ILogger<NewUserQueueJob> logger, INewUserQueueJobService service) : BaseJob(logger), IJob
     {

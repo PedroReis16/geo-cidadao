@@ -12,7 +12,7 @@ using GeoCidadao.Model.Config;
 using Quartz;
 using GeoCidadao.Jobs.Config;
 using GeoCidadao.Jobs.Listeners;
-using GeoCidadao.GerenciamentoUsuariosAPI.Model.Jobs.QueueJobs;
+using GeoCidadao.GerenciamentoUsuariosAPI.Models.Jobs.QueueJobs;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts;

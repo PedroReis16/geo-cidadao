@@ -1,0 +1,12 @@
+using GeoCidadao.Model.Entities;
+
+namespace GeoCidadao.Model.Entities
+{
+    public class UserProfile : BaseEntity
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
+        public Uri? ProfilePicture { get; set; }
+    }
+}
