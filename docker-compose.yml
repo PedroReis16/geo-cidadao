@@ -1,5 +1,23 @@
 version: "3.8"
 services:
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+    environment:
+      - SERVICES=s3,ec2
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - DEFAULT_REGION=us-east-1
+    volumes:
+      - localstack_data:/var/lib/localstack/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - geo-network
   db:
     image: postgres:15-alpine
     ports:
