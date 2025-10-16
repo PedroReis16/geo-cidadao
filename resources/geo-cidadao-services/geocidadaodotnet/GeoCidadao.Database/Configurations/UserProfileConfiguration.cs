@@ -24,9 +24,13 @@ namespace GeoCidadao.Database.Configurations
                 .IsRequired();
 
             _ = builder
-                .Property(x => x.FullName)
-                .HasColumnName("full_name")
-                .HasMaxLength(100)
+                .Property(x => x.FirstName)
+                .HasColumnName("first_name")
+                .IsRequired();
+
+            _ = builder
+                .Property(x => x.LastName)
+                .HasColumnName("last_name")
                 .IsRequired();
 
             _ = builder
