@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
 using GeoCidadao.Model.OAuth;
 
-namespace GeoCidadao.Model.Helpers
+namespace GeoCidadao.Model.Extensions
 {
     public static class RequestLogsExtensions
     {

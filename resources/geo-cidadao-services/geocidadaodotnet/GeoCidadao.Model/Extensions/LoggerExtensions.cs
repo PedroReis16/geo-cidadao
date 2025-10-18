@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using GeoCidadao.Model.Constants;
 
-namespace GeoCidadao.Model.Helpers
+namespace GeoCidadao.Model.Extensions
 {
     public static class LoggerExtensions
     {
