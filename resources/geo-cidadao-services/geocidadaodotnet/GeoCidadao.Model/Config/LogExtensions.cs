@@ -1,5 +1,5 @@
 using GeoCidadao.Model.Constants;
-using GeoCidadao.Model.Helpers;
+using GeoCidadao.Model.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;

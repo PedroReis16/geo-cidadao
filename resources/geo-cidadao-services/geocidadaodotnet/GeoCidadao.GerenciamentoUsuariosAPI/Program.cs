@@ -21,7 +21,7 @@ using GeoCidadao.GerenciamentoUsuariosAPI.Database.Cache;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.CacheContracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao;
-using GeoCidadao.Model.OAuth;
+using GeoCidadao.Cloud.Extensions;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

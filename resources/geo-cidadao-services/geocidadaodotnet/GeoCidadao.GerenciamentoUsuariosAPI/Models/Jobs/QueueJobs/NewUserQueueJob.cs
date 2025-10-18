@@ -1,6 +1,6 @@
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices;
 using GeoCidadao.Jobs;
-using GeoCidadao.Model.Helpers;
+using GeoCidadao.Model.Extensions;
 using Quartz;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Models.Jobs.QueueJobs
