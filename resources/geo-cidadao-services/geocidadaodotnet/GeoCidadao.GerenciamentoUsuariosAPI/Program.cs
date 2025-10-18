@@ -17,6 +17,11 @@ using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Services;
+using GeoCidadao.GerenciamentoUsuariosAPI.Database.Cache;
+using GeoCidadao.GerenciamentoUsuariosAPI.Database.CacheContracts;
+using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
+using GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao;
+using GeoCidadao.Model.OAuth;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -51,6 +56,10 @@ builder.Services.AddTransient<HttpResponseCacheHandler>();
 builder.Services.AddTransient<IProfileService, ProfileService>();
 
 // DAOs
+builder.Services.AddTransient<IProfileUserDao, ProfileUsersDao>();
+
+// Dao Cache
+builder.Services.AddTransient<IProfileUserDaoCache, ProfileUserDaoCache>();
 
 // Queue Services
 builder.Services.AddSingleton<INewUserQueueJobService, NewUserQueueJobService>();
@@ -122,7 +131,6 @@ builder.Services.AddQuartz(q =>
     q.AddJob<NewUserQueueJob>(j =>
     {
         j.WithIdentity(nameof(NewUserQueueJob));
-        j.DisallowConcurrentExecution();
     });
 
     q.AddTrigger(t =>
