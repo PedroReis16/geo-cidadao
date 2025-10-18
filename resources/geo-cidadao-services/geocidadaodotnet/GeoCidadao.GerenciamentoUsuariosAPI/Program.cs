@@ -54,6 +54,7 @@ builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
 builder.Services.AddTransient<IProfileService, ProfileService>();
+builder.Services.AddTransient<IProfilePictureService, ProfilePictureService>();
 
 // DAOs
 builder.Services.AddTransient<IProfileUserDao, ProfileUsersDao>();

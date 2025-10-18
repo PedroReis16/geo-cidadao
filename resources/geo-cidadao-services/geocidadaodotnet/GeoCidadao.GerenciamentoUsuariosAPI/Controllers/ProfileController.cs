@@ -17,18 +17,6 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("{userId}/photo")]
-        public async Task<IActionResult> GetUserPhoto(Guid userId)
-        {
-            return Ok();
-        }
-
-        [HttpPatch("{userId}/photo")]
-        public async Task<IActionResult> UpdateUserPhoto(Guid userId, [FromBody] string photoBase64)
-        {
-            return NoContent();
-        }
-
         [HttpPut("{userId}")]
         public async Task<IActionResult> UpdateUserProfile(Guid userId, [FromBody] object updatedProfile)
         {
