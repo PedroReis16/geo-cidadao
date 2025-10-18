@@ -1,3 +1,5 @@
+using Amazon;
+using Amazon.Runtime;
 using Amazon.S3;
 using GeoCidadao.Cloud.Config;
 
@@ -7,28 +9,24 @@ namespace GeoCidadao.Cloud.Models
     {
         public string BucketName { get; set; } = null!;
 
-        public BucketCredentials(string bucketName, string region, CloudCredentials credentials)
+        public BucketCredentials(string bucketName, CloudCredentials credentials)
         {
             BucketName = bucketName;
             AccessKey = credentials.AccessKey;
             SecretKey = credentials.SecretKey;
-            Region = region;
-        }
-
-        public AmazonS3Config GetBucketConfig()
-        {
-            return new AmazonS3Config
-            {
-                RegionEndpoint = Amazon.RegionEndpoint.GetBySystemName(Region)
-            };
+            ServiceURL = credentials.ServiceURL;
+            Region = credentials.Region;
         }
 
         public AmazonS3Client GetClient()
         {
-            if (string.IsNullOrEmpty(BucketName))
-                throw new ArgumentException("Bucket name cannot be null or empty.", nameof(BucketName));
-
-            return new AmazonS3Client(GetCredentials(), GetBucketConfig());
+            return new AmazonS3Client(new BasicAWSCredentials("test", "test"), new AmazonS3Config
+            {
+                ServiceURL = ServiceURL, // endpoint from localstack
+                ForcePathStyle = true, // for localstack compatibility
+                UseHttp = ServiceURL.StartsWith("http://", StringComparison.OrdinalIgnoreCase),
+                AuthenticationRegion = Region
+            });
         }
     }
 }

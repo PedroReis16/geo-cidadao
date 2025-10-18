@@ -1,6 +1,3 @@
-using System.Buffers;
-using System.Collections.Concurrent;
-using System.Threading.Channels;
 using Amazon.S3;
 using Amazon.S3.Model;
 using GeoCidadao.Cloud.Contracts;
@@ -14,12 +11,12 @@ namespace GeoCidadao.Cloud.Services
     {
         private readonly IConfiguration _configuration = configuration;
 
-        private AmazonS3Client GetClient(string bucketName, string region) =>
-        new BucketCredentials(bucketName: bucketName, region: region, credentials: CloudHelpers.GetAwsCredentials(_configuration)).GetClient();
+        private AmazonS3Client GetClient(string bucketName) =>
+        new BucketCredentials(bucketName: bucketName, credentials: CloudHelpers.GetAwsCredentials(_configuration)).GetClient();
 
         public Task<List<string>> ListObjectsAsync(Models.BucketRequests.ListObjectsRequest request)
         {
-            using AmazonS3Client client = GetClient(request.BucketName, request.Region);
+            using AmazonS3Client client = GetClient(request.BucketName);
 
             ListObjectsV2Request amazonRequest = new()
             {
@@ -31,7 +28,7 @@ namespace GeoCidadao.Cloud.Services
 
         public async Task GetObjectAsync(Models.BucketRequests.GetObjectRequest request)
         {
-            using AmazonS3Client client = GetClient(request.BucketName, request.Region);
+            using AmazonS3Client client = GetClient(request.BucketName);
 
             Amazon.S3.Model.GetObjectRequest amazonRequest = new()
             {
@@ -50,113 +47,126 @@ namespace GeoCidadao.Cloud.Services
                 await response.WriteResponseStreamToFileAsync(request.FilePath, false, default);
             }
         }
-
-        public async Task PutObjectAsync(Models.BucketRequests.PutObjectRequest request)
+        public Task PutObjectAsync(Models.BucketRequests.PutObjectRequest request)
         {
-            using AmazonS3Client client = GetClient(request.BucketName, request.Region);
+            AmazonS3Client client = GetClient(request.BucketName);
 
-            InitiateMultipartUploadRequest initiateRequest = new InitiateMultipartUploadRequest
+            Amazon.S3.Model.PutObjectRequest amazonRequest = new()
             {
                 BucketName = request.BucketName,
-                Key = request.ToString(),
-                StorageClass = S3StorageClass.Standard,
+                Key = request.ObjectKey,
+                InputStream = request.FileContent,
             };
 
-            InitiateMultipartUploadResponse initiateResponse = await client.InitiateMultipartUploadAsync(initiateRequest);
-            string uploadId = initiateResponse.UploadId;
-
-            const int partSize = 10 * 1024 * 1024; // mínimo S3 = 5 MB (exceto última)
-            const int maxParallel = 6;
-            const int channelCapacity = maxParallel * 2;
-
-            ArrayPool<byte> pool = ArrayPool<byte>.Shared;
-            Channel<(int part, byte[] buffer, int count)> channel = Channel.CreateBounded<(int part, byte[] buffer, int count)>(
-                new BoundedChannelOptions(channelCapacity) { SingleWriter = true, SingleReader = false });
-            ConcurrentBag<PartETag> partETags = new ConcurrentBag<PartETag>();
-
-            try
-            {
-
-                Task producer = Task.Run(async () =>
-                {
-                    Stream input = request.FileContent ?? throw new ArgumentException("FileContent não informado.");
-                    if (input.CanSeek) input.Seek(0, SeekOrigin.Begin);
-
-                    int partNum = 1;
-                    while (true)
-                    {
-                        var buffer = pool.Rent(partSize);
-                        int bytesRead = await input.ReadAsync(buffer.AsMemory(0, partSize));
-                        if (bytesRead <= 0)
-                        {
-                            pool.Return(buffer);
-                            break;
-                        }
-                        await channel.Writer.WriteAsync((partNum++, buffer, bytesRead));
-                    }
-                    channel.Writer.Complete();
-                });
-
-                Task[] consumers = Enumerable.Range(0, maxParallel).Select(async _ =>
-                {
-                    ChannelReader<(int part, byte[] buffer, int count)> reader = channel.Reader;
-                    while (await reader.WaitToReadAsync())
-                    {
-                        while (reader.TryRead(out var item))
-                        {
-                            var (partNum, buffer, count) = item;
-                            try
-                            {
-                                using var partStream = new MemoryStream(buffer, 0, count, writable: false);
-                                var uploadRequest = new UploadPartRequest
-                                {
-                                    BucketName = request.BucketName,
-                                    Key = request.ToString(),
-                                    UploadId = uploadId,
-                                    PartNumber = partNum,
-                                    PartSize = count, // importante: usar bytes reais lidos
-                                    InputStream = partStream,
-                                    UseChunkEncoding = false,
-                                };
-
-                                var resp = await client.UploadPartAsync(uploadRequest);
-                                partETags.Add(new PartETag(resp.PartNumber, resp.ETag));
-                            }
-                            finally
-                            {
-                                pool.Return(buffer);
-                            }
-                        }
-                    }
-                }).ToArray();
-
-                await producer;
-                await Task.WhenAll(consumers);
-
-                await client.CompleteMultipartUploadAsync(new CompleteMultipartUploadRequest
-                {
-                    BucketName = request.BucketName,
-                    Key = request.ToString(),
-                    UploadId = uploadId,
-                    PartETags = partETags.OrderBy(p => p.PartNumber).ToList()
-                });
-            }
-            catch (Exception ex)
-            {
-                await client.AbortMultipartUploadAsync(new AbortMultipartUploadRequest
-                {
-                    BucketName = request.BucketName,
-                    Key = request.ToString(),
-                    UploadId = uploadId
-                });
-
-                throw new Exception(ex.Message, ex);
-            }
+            return client.PutObjectAsync(amazonRequest);
         }
+
+        // public async Task PutObjectAsync(Models.BucketRequests.PutObjectRequest request)
+        // {
+        //     using AmazonS3Client client = GetClient(request.BucketName);
+
+        //     InitiateMultipartUploadRequest initiateRequest = new InitiateMultipartUploadRequest
+        //     {
+        //         BucketName = request.BucketName,
+        //         Key = request.ToString(),
+        //         StorageClass = S3StorageClass.Standard,
+        //     };
+
+        //     InitiateMultipartUploadResponse initiateResponse = await client.InitiateMultipartUploadAsync(initiateRequest);
+        //     string uploadId = initiateResponse.UploadId;
+
+        //     const int partSize = 10 * 1024 * 1024; // mínimo S3 = 5 MB (exceto última)
+        //     const int maxParallel = 6;
+        //     const int channelCapacity = maxParallel * 2;
+
+        //     ArrayPool<byte> pool = ArrayPool<byte>.Shared;
+        //     Channel<(int part, byte[] buffer, int count)> channel = Channel.CreateBounded<(int part, byte[] buffer, int count)>(
+        //         new BoundedChannelOptions(channelCapacity) { SingleWriter = true, SingleReader = false });
+        //     ConcurrentBag<PartETag> partETags = new ConcurrentBag<PartETag>();
+
+        //     try
+        //     {
+
+        //         Task producer = Task.Run(async () =>
+        //         {
+        //             Stream input = request.FileContent ?? throw new ArgumentException("FileContent não informado.");
+        //             if (input.CanSeek) input.Seek(0, SeekOrigin.Begin);
+
+        //             int partNum = 1;
+        //             while (true)
+        //             {
+        //                 var buffer = pool.Rent(partSize);
+        //                 int bytesRead = await input.ReadAsync(buffer.AsMemory(0, partSize));
+        //                 if (bytesRead <= 0)
+        //                 {
+        //                     pool.Return(buffer);
+        //                     break;
+        //                 }
+        //                 await channel.Writer.WriteAsync((partNum++, buffer, bytesRead));
+        //             }
+        //             channel.Writer.Complete();
+        //         });
+
+        //         Task[] consumers = Enumerable.Range(0, maxParallel).Select(async _ =>
+        //         {
+        //             ChannelReader<(int part, byte[] buffer, int count)> reader = channel.Reader;
+        //             while (await reader.WaitToReadAsync())
+        //             {
+        //                 while (reader.TryRead(out var item))
+        //                 {
+        //                     var (partNum, buffer, count) = item;
+        //                     try
+        //                     {
+        //                         using var partStream = new MemoryStream(buffer, 0, count, writable: false);
+        //                         var uploadRequest = new UploadPartRequest
+        //                         {
+        //                             BucketName = request.BucketName,
+        //                             Key = request.ToString(),
+        //                             UploadId = uploadId,
+        //                             PartNumber = partNum,
+        //                             PartSize = count, // importante: usar bytes reais lidos
+        //                             InputStream = partStream,
+        //                             UseChunkEncoding = false,
+        //                         };
+
+        //                         var resp = await client.UploadPartAsync(uploadRequest);
+        //                         partETags.Add(new PartETag(resp.PartNumber, resp.ETag));
+        //                     }
+        //                     finally
+        //                     {
+        //                         pool.Return(buffer);
+        //                     }
+        //                 }
+        //             }
+        //         }).ToArray();
+
+        //         await producer;
+        //         await Task.WhenAll(consumers);
+
+        //         await client.CompleteMultipartUploadAsync(new CompleteMultipartUploadRequest
+        //         {
+        //             BucketName = request.BucketName,
+        //             Key = request.ToString(),
+        //             UploadId = uploadId,
+        //             PartETags = partETags.OrderBy(p => p.PartNumber).ToList()
+        //         });
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         await client.AbortMultipartUploadAsync(new AbortMultipartUploadRequest
+        //         {
+        //             BucketName = request.BucketName,
+        //             Key = request.ToString(),
+        //             UploadId = uploadId
+        //         });
+
+        //         throw new Exception(ex.Message, ex);
+        //     }
+        // }
 
         public Task<string> GetPreSignedUrlAsync(Models.BucketRequests.GetPreSignedUrlRequest request)
         {
-            using AmazonS3Client client = GetClient(request.BucketName, request.Region);
+            using AmazonS3Client client = GetClient(request.BucketName);
 
             GetPreSignedUrlRequest amazonRequest = new()
             {
@@ -172,7 +182,7 @@ namespace GeoCidadao.Cloud.Services
 
         public Task DeleteObjectAsync(Models.BucketRequests.DeleteObjectRequest request)
         {
-            using AmazonS3Client client = GetClient(request.BucketName, request.Region);
+            using AmazonS3Client client = GetClient(request.BucketName);
 
             Amazon.S3.Model.DeleteObjectRequest amazonRequest = new()
             {

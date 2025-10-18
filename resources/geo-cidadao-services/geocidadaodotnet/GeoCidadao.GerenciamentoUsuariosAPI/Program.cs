@@ -53,6 +53,7 @@ builder.Services.AddResponseCaching();
 builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
+builder.Services.AddBucketServices(); // -> Injeta a dependencia dos serviços de Bucket 
 builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<IProfilePictureService, ProfilePictureService>();
 

@@ -1,3 +1,5 @@
+using GeoCidadao.Cloud.Contracts;
+using GeoCidadao.Cloud.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GeoCidadao.Cloud.Extensions
@@ -6,11 +8,7 @@ namespace GeoCidadao.Cloud.Extensions
     {
         public static IServiceCollection AddBucketServices(this IServiceCollection services)
         {
-            // services.AddTransient<IAmazonBucketService, AmazonBucketService>();
-            // services.AddTransient<IOracleBucketService, OracleBucketService>();
-            // services.AddTransient<IBucketService, BucketService>();
-
-            // services.AddTransient<BucketServiceFactory>();
+            services.AddTransient<ICloudBucketService, CloudBucketService>();
 
             return services;
         }
