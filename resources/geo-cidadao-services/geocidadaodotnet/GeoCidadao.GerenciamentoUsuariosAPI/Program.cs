@@ -65,6 +65,10 @@ builder.Services.AddTransient<IProfileUserDaoCache, ProfileUserDaoCache>();
 
 // Queue Services
 builder.Services.AddSingleton<INewUserQueueJobService, NewUserQueueJobService>();
+builder.Services.AddSingleton<INotifyUserChangedService, NotifyUserChangedService>();
+
+// Cache Services
+builder.Services.AddSingleton<IUserPictureCacheService, UserPictureCacheService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();
