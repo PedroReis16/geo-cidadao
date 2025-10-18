@@ -94,6 +94,8 @@ services:
     ports:
       - "8090:8080"
     depends_on:
+      keycloak:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     env_file:
