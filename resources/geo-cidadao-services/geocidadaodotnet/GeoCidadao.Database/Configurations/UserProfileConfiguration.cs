@@ -34,7 +34,7 @@ namespace GeoCidadao.Database.Configurations
                 .IsRequired();
 
             _ = builder
-                .Property(x => x.ProfilePicture)
+                .Property(x => x.ProfilePictureId)
                 .HasColumnName("profile_picture")
                 .HasMaxLength(200)
                 .IsRequired(false);

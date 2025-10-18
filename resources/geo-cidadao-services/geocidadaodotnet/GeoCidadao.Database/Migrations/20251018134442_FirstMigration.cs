@@ -20,7 +20,7 @@ namespace GeoCidadao.Database.Migrations
                     email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     first_name = table.Column<string>(type: "text", nullable: false),
                     last_name = table.Column<string>(type: "text", nullable: false),
-                    profile_picture = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    profile_picture = table.Column<Guid>(type: "uuid", maxLength: 200, nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "now()"),
                     updated_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     deleted_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)

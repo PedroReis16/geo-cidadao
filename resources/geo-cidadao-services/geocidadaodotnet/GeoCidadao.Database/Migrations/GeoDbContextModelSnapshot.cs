@@ -55,9 +55,9 @@ namespace GeoCidadao.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("last_name");
 
-                    b.Property<string>("ProfilePicture")
+                    b.Property<Guid?>("ProfilePictureId")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
+                        .HasColumnType("uuid")
                         .HasColumnName("profile_picture");
 
                     b.Property<DateTime?>("UpdatedAt")

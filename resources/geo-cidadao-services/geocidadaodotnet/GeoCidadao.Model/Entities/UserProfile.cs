@@ -8,6 +8,6 @@ namespace GeoCidadao.Model.Entities
         public string Email { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
-        public Uri? ProfilePicture { get; set; }
+        public Guid? ProfilePictureId { get; set; }
     }
 }

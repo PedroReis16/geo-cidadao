@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GeoCidadao.Database.Migrations
 {
     [DbContext(typeof(GeoDbContext))]
-    [Migration("20251016231643_FirstMigration")]
+    [Migration("20251018134442_FirstMigration")]
     partial class FirstMigration
     {
         /// <inheritdoc />
@@ -58,9 +58,9 @@ namespace GeoCidadao.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("last_name");
 
-                    b.Property<string>("ProfilePicture")
+                    b.Property<Guid?>("ProfilePictureId")
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
+                        .HasColumnType("uuid")
                         .HasColumnName("profile_picture");
 
                     b.Property<DateTime?>("UpdatedAt")
