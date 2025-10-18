@@ -66,6 +66,18 @@ services:
       - mongo_data:/data/db
     networks:
       - geo-network
+  init-keycloak-db:
+    image: postgres:15-alpine
+    depends_on:
+      - db
+    command: >
+      sh -c "psql -h db -U geo -d geodb -c \"CREATE DATABASE keycloakdb;\" &&
+           psql -h db -U geo -d geodb -c \"CREATE USER keycloak WITH PASSWORD 'keycloak';\" &&
+           psql -h db -U geo -d geodb -c \"GRANT ALL PRIVILEGES ON DATABASE keycloakdb TO keycloak;\""
+    environment:
+      PGPASSWORD: geo
+    networks:
+      - geo-network
   keycloak:
     build:
       context: .
@@ -75,6 +87,7 @@ services:
       - "8082:8180"
     depends_on:
       - db
+      - init-keycloak-db
       - rabbitmq
       - mailhog
     networks:
