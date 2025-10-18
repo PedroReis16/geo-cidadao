@@ -1,3 +1,6 @@
+using System.Buffers;
+using System.Collections.Concurrent;
+using System.Threading.Channels;
 using Amazon.S3;
 using Amazon.S3.Model;
 using GeoCidadao.Cloud.Contracts;
@@ -11,16 +14,18 @@ namespace GeoCidadao.Cloud.Services
     {
         private readonly IConfiguration _configuration = configuration;
 
-        private AmazonS3Client GetClient(string bucketName) =>
-        new BucketCredentials(bucketName: bucketName, credentials: CloudHelpers.GetAwsCredentials(_configuration)).GetClient();
+        private BucketCredentials GetCredentials() =>
+        CloudHelpers.GetAwsCredentials(_configuration);
 
         public Task<List<string>> ListObjectsAsync(Models.BucketRequests.ListObjectsRequest request)
         {
-            using AmazonS3Client client = GetClient(request.BucketName);
+            BucketCredentials credentials = GetCredentials();
+
+            using AmazonS3Client client = credentials.GetClient();
 
             ListObjectsV2Request amazonRequest = new()
             {
-                BucketName = request.BucketName,
+                BucketName = credentials.BucketName,
             };
             ListObjectsV2Response response = client.ListObjectsV2Async(amazonRequest).Result;
             return Task.FromResult(response.S3Objects.Select(o => o.Key).ToList());
@@ -28,11 +33,13 @@ namespace GeoCidadao.Cloud.Services
 
         public async Task GetObjectAsync(Models.BucketRequests.GetObjectRequest request)
         {
-            using AmazonS3Client client = GetClient(request.BucketName);
+            BucketCredentials credentials = GetCredentials();
+
+            using AmazonS3Client client = credentials.GetClient();
 
             Amazon.S3.Model.GetObjectRequest amazonRequest = new()
             {
-                BucketName = request.BucketName,
+                BucketName = credentials.BucketName,
                 Key = request.ObjectKey,
             };
 
@@ -47,13 +54,16 @@ namespace GeoCidadao.Cloud.Services
                 await response.WriteResponseStreamToFileAsync(request.FilePath, false, default);
             }
         }
+        
         public Task PutObjectAsync(Models.BucketRequests.PutObjectRequest request)
         {
-            AmazonS3Client client = GetClient(request.BucketName);
+            BucketCredentials credentials = GetCredentials();
+
+            using AmazonS3Client client = credentials.GetClient();
 
             Amazon.S3.Model.PutObjectRequest amazonRequest = new()
             {
-                BucketName = request.BucketName,
+                BucketName = credentials.BucketName,
                 Key = request.ObjectKey,
                 InputStream = request.FileContent,
             };
@@ -63,7 +73,9 @@ namespace GeoCidadao.Cloud.Services
 
         // public async Task PutObjectAsync(Models.BucketRequests.PutObjectRequest request)
         // {
-        //     using AmazonS3Client client = GetClient(request.BucketName);
+        //     BucketCredentials credentials = GetCredentials();
+
+        //     using AmazonS3Client client = credentials.GetClient();
 
         //     InitiateMultipartUploadRequest initiateRequest = new InitiateMultipartUploadRequest
         //     {
@@ -120,7 +132,7 @@ namespace GeoCidadao.Cloud.Services
         //                         using var partStream = new MemoryStream(buffer, 0, count, writable: false);
         //                         var uploadRequest = new UploadPartRequest
         //                         {
-        //                             BucketName = request.BucketName,
+        //                             BucketName = credentials.BucketName,
         //                             Key = request.ToString(),
         //                             UploadId = uploadId,
         //                             PartNumber = partNum,
@@ -145,7 +157,7 @@ namespace GeoCidadao.Cloud.Services
 
         //         await client.CompleteMultipartUploadAsync(new CompleteMultipartUploadRequest
         //         {
-        //             BucketName = request.BucketName,
+        //             BucketName = credentials.BucketName,
         //             Key = request.ToString(),
         //             UploadId = uploadId,
         //             PartETags = partETags.OrderBy(p => p.PartNumber).ToList()
@@ -155,7 +167,7 @@ namespace GeoCidadao.Cloud.Services
         //     {
         //         await client.AbortMultipartUploadAsync(new AbortMultipartUploadRequest
         //         {
-        //             BucketName = request.BucketName,
+        //             BucketName = credentials.BucketName,
         //             Key = request.ToString(),
         //             UploadId = uploadId
         //         });
@@ -166,11 +178,13 @@ namespace GeoCidadao.Cloud.Services
 
         public Task<string> GetPreSignedUrlAsync(Models.BucketRequests.GetPreSignedUrlRequest request)
         {
-            using AmazonS3Client client = GetClient(request.BucketName);
+            BucketCredentials credentials = GetCredentials();
+
+            using AmazonS3Client client = credentials.GetClient();
 
             GetPreSignedUrlRequest amazonRequest = new()
             {
-                BucketName = request.BucketName,
+                BucketName = credentials.BucketName,
                 Key = request.ObjectKey,
                 Expires = DateTime.Now.AddHours(1),
                 Verb = HttpVerb.GET
@@ -182,11 +196,13 @@ namespace GeoCidadao.Cloud.Services
 
         public Task DeleteObjectAsync(Models.BucketRequests.DeleteObjectRequest request)
         {
-            using AmazonS3Client client = GetClient(request.BucketName);
+            BucketCredentials credentials = GetCredentials();
+
+            using AmazonS3Client client = credentials.GetClient();
 
             Amazon.S3.Model.DeleteObjectRequest amazonRequest = new()
             {
-                BucketName = request.BucketName,
+                BucketName = credentials.BucketName,
                 Key = request.ObjectKey,
             };
 

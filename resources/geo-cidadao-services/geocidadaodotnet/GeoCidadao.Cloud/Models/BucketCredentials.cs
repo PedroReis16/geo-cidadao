@@ -9,15 +9,6 @@ namespace GeoCidadao.Cloud.Models
     {
         public string BucketName { get; set; } = null!;
 
-        public BucketCredentials(string bucketName, CloudCredentials credentials)
-        {
-            BucketName = bucketName;
-            AccessKey = credentials.AccessKey;
-            SecretKey = credentials.SecretKey;
-            ServiceURL = credentials.ServiceURL;
-            Region = credentials.Region;
-        }
-
         public AmazonS3Client GetClient()
         {
             return new AmazonS3Client(new BasicAWSCredentials("test", "test"), new AmazonS3Config
