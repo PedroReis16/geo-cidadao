@@ -8,6 +8,8 @@ namespace GeoCidadao.Model.Enums
         USERNAME_REQUIRED = 3,
         EMAIL_REQUIRED = 4,
         NAME_REQUIRED = 5,
+        USER_NOT_FOUND = 6,
+        INVALID_MEDIA = 7,
         UNKNOWN_ERROR = 999,
     }
 }

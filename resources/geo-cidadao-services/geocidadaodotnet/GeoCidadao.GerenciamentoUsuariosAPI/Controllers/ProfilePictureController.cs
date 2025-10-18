@@ -10,16 +10,22 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Controllers
         private readonly IProfilePictureService _service = service;
 
 
-        [HttpGet("{userId}/photo")]
+        [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserPhoto(Guid userId)
         {
             return Ok();
         }
 
-        [HttpPatch("{userId}/photo")]
-        public async Task<IActionResult> UpdateUserPhoto(Guid userId, [FromBody] string photoBase64)
+        [HttpPatch("{userId}")]
+        public async Task<IActionResult> UpdateUserPhoto(Guid userId, [FromForm] IFormFile photo)
         {
-            await _service.UpdateUserPhotoAsync(userId, photoBase64);
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+            var extension = Path.GetExtension(photo.FileName).ToLowerInvariant();
+
+            if (!allowedExtensions.Contains(extension))
+                return new ContentResult { StatusCode = 406 };
+
+            await _service.UpdateUserPhotoAsync(userId, photo);
 
             return NoContent();
         }

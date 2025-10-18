@@ -9,7 +9,7 @@ using GeoCidadao.Model.Exceptions;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
 {
-    public class ProfileUsersDao(GeoDbContext context, IRepositoryCache<UserProfile>? cache = null) : BaseDao<UserProfile>(context, cache), IProfileUserDao
+    public class ProfileUsersDao(GeoDbContext context, IProfileUserDaoCache? cache = null) : BaseDao<UserProfile>(context, cache), IProfileUserDao
     {
         protected override IRepositoryCache<UserProfile>? GetCache() => _cache as IProfileUserDaoCache;
 
