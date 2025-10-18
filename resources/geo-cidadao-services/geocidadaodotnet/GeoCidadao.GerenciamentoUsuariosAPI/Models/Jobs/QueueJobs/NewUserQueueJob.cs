@@ -13,7 +13,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Models.Jobs.QueueJobs
         {
             try
             {
-                await base.Execute(context);
+                _ = base.Execute(context);
 
                 _service.ConsumeQueue();
             }
