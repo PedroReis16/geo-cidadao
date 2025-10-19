@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GeoCidadao.Database.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,21 +33,36 @@ namespace GeoCidadao.Database.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    file_hash = table.Column<string>(type: "text", nullable: false),
-                    file_extension = table.Column<string>(type: "text", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    FileHash = table.Column<string>(type: "text", nullable: false),
+                    FileExtension = table.Column<string>(type: "text", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "now()"),
                     updated_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_user_picture", x => x.id);
                     table.ForeignKey(
-                        name: "FK_UserPicture_user_profile_Id",
+                        name: "FK_user_picture_user_profile_id",
                         column: x => x.id,
                         principalTable: "user_profile",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_picture_created_at",
+                table: "user_picture",
+                column: "created_at");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_picture_FileHash",
+                table: "user_picture",
+                column: "FileHash");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_picture_updated_at",
+                table: "user_picture",
+                column: "updated_at");
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_profile_created_at",
@@ -75,7 +90,7 @@ namespace GeoCidadao.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UserPicture");
+                name: "user_picture");
 
             migrationBuilder.DropTable(
                 name: "user_profile");

@@ -25,10 +25,14 @@ namespace GeoCidadao.Database.Migrations
             modelBuilder.Entity("GeoCidadao.Model.Entities.UserPicture", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
 
                     b.Property<string>("FileExtension")
                         .IsRequired()
@@ -39,11 +43,18 @@ namespace GeoCidadao.Database.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserPicture");
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("FileHash");
+
+                    b.HasIndex("UpdatedAt");
+
+                    b.ToTable("user_picture", (string)null);
                 });
 
             modelBuilder.Entity("GeoCidadao.Model.Entities.UserProfile", b =>
