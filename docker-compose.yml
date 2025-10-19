@@ -79,12 +79,35 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: >
-      sh -c "psql -h db -U geo -d geodb -c \"CREATE DATABASE keycloakdb;\" &&
-           psql -h db -U geo -d geodb -c \"CREATE USER keycloak WITH PASSWORD 'keycloak';\" &&
-           psql -h db -U geo -d geodb -c \"GRANT ALL PRIVILEGES ON DATABASE keycloakdb TO keycloak;\""
     environment:
       PGPASSWORD: geo
+    command: >
+      sh -c '
+        # 1) Garante usuário com a senha correta
+        UE=$(psql -h db -U geo -d geodb -Atc "SELECT 1 FROM pg_roles WHERE rolname='\''keycloak'\''")
+        if [ "$UE" = "1" ]; then
+          echo "[init] Usuário keycloak já existe; ajustando senha..."
+          psql -h db -U geo -d geodb -v ON_ERROR_STOP=1 -c "ALTER USER keycloak WITH PASSWORD '\''keycloak'\''";
+        else
+          echo "[init] Criando usuário keycloak..."
+          psql -h db -U geo -d geodb -v ON_ERROR_STOP=1 -c "CREATE USER keycloak WITH PASSWORD '\''keycloak'\''";
+        fi
+
+        # 2) Garante database
+        DE=$(psql -h db -U geo -d geodb -Atc "SELECT 1 FROM pg_database WHERE datname='\''keycloakdb'\''")
+        if [ "$DE" = "1" ]; then
+          echo "[init] Database keycloakdb já existe."
+        else
+          echo "[init] Criando database keycloakdb (OWNER keycloak)..."
+          psql -h db -U geo -d geodb -v ON_ERROR_STOP=1 -c "CREATE DATABASE keycloakdb OWNER keycloak";
+        fi
+
+        # 3) Garante schema (e ownership) dentro do keycloakdb
+        echo "[init] Garantindo schema keycloak..."
+        psql -h db -U geo -d keycloakdb -v ON_ERROR_STOP=1 -c "CREATE SCHEMA IF NOT EXISTS keycloak AUTHORIZATION keycloak";
+
+        # Observação: como você já usa KC_DB_SCHEMA=keycloak, não precisamos setar search_path.
+        echo "[init] OK"      '
     networks:
       - geo-network
   keycloak:

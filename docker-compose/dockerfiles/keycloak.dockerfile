@@ -7,6 +7,7 @@ ENV KEYCLOAK_ADMIN=admin \
     KC_DB_URL=jdbc:postgresql://db:5432/keycloakdb  \
     KC_DB_USERNAME=keycloak \
     KC_DB_PASSWORD=keycloak \
+    KC_DB_SCHEMA=keycloak \
     KC_HOSTNAME=localhost \
     KC_HTTP_PORT=8180 \
     RABBITMQ_HOST=rabbitmq \
