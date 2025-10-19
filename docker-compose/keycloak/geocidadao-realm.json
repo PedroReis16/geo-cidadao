@@ -55,9 +55,15 @@
         "description": "${role_default-roles}",
         "composite": true,
         "composites": {
-          "realm": ["offline_access", "uma_authorization"],
+          "realm": [
+            "offline_access",
+            "uma_authorization"
+          ],
           "client": {
-            "account": ["manage-account", "view-profile"]
+            "account": [
+              "manage-account",
+              "view-profile"
+            ]
           }
         },
         "clientRole": false,
@@ -70,9 +76,13 @@
         "description": "Usuário com permissões de admnistrador referente a uma cidade, por exemplo, prefeitos, vereadores, etc",
         "composite": true,
         "composites": {
-          "realm": ["USER"],
+          "realm": [
+            "USER"
+          ],
           "client": {
-            "geocidadao-posts-api": ["post:mark-concluded"]
+            "geocidadao-posts-api": [
+              "post:mark-concluded"
+            ]
           }
         },
         "clientRole": false,
@@ -110,10 +120,17 @@
         "description": "Usuários com permissões de administradores na plataforma, podendo fazer qualquer coisa que os outros tipos de usuários podem realizar",
         "composite": true,
         "composites": {
-          "realm": ["MANAGER_USER"],
+          "realm": [
+            "MANAGER_USER"
+          ],
           "client": {
-            "geocidadao-interation-api": ["comment:delete:any"],
-            "geocidadao-posts-api": ["post:delete:any", "post:edit:any"]
+            "geocidadao-interation-api": [
+              "comment:delete:any"
+            ],
+            "geocidadao-posts-api": [
+              "post:delete:any",
+              "post:edit:any"
+            ]
           }
         },
         "clientRole": false,
@@ -140,7 +157,6 @@
       }
     ],
     "client": {
-      "geocidadao-user-api-caller": [],
       "geocidadao-interation-api": [
         {
           "id": "ac29cddc-1e14-43bf-928c-bc0a9306ce29",
@@ -205,7 +221,10 @@
           "composite": true,
           "composites": {
             "client": {
-              "realm-management": ["query-users", "query-groups"]
+              "realm-management": [
+                "query-users",
+                "query-groups"
+              ]
             }
           },
           "clientRole": true,
@@ -309,7 +328,9 @@
           "composite": true,
           "composites": {
             "client": {
-              "realm-management": ["query-clients"]
+              "realm-management": [
+                "query-clients"
+              ]
             }
           },
           "clientRole": true,
@@ -462,6 +483,7 @@
         }
       ],
       "security-admin-console": [],
+      "geocidadao-user-management-admin": [],
       "admin-cli": [],
       "account-console": [],
       "broker": [
@@ -502,7 +524,9 @@
           "composite": true,
           "composites": {
             "client": {
-              "account": ["view-consent"]
+              "account": [
+                "view-consent"
+              ]
             }
           },
           "clientRole": true,
@@ -534,7 +558,9 @@
           "composite": true,
           "composites": {
             "client": {
-              "account": ["manage-account-links"]
+              "account": [
+                "manage-account-links"
+              ]
             }
           },
           "clientRole": true,
@@ -575,7 +601,9 @@
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
           "attributes": {
-            "city": ["DIADEMA"]
+            "city": [
+              "DIADEMA"
+            ]
           },
           "realmRoles": [],
           "clientRoles": {}
@@ -587,7 +615,9 @@
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
           "attributes": {
-            "city": ["MAUA"]
+            "city": [
+              "MAUA"
+            ]
           },
           "realmRoles": [],
           "clientRoles": {}
@@ -599,7 +629,9 @@
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
           "attributes": {
-            "city": ["RIBEIRAO_PIRES"]
+            "city": [
+              "RIBEIRAO_PIRES"
+            ]
           },
           "realmRoles": [],
           "clientRoles": {}
@@ -611,7 +643,9 @@
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
           "attributes": {
-            "city": ["RIO_GRANDE_DA_SERRA"]
+            "city": [
+              "RIO_GRANDE_DA_SERRA"
+            ]
           },
           "realmRoles": [],
           "clientRoles": {}
@@ -623,7 +657,9 @@
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
           "attributes": {
-            "city": ["SANTO_ANDRE"]
+            "city": [
+              "SANTO_ANDRE"
+            ]
           },
           "realmRoles": [],
           "clientRoles": {}
@@ -635,7 +671,9 @@
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
           "attributes": {
-            "city": ["SAO_BERNARDO"]
+            "city": [
+              "SAO_BERNARDO"
+            ]
           },
           "realmRoles": [],
           "clientRoles": {}
@@ -647,7 +685,9 @@
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
           "attributes": {
-            "city": ["SAO_CAETANO"]
+            "city": [
+              "SAO_CAETANO"
+            ]
           },
           "realmRoles": [],
           "clientRoles": {}
@@ -663,7 +703,9 @@
       "path": "/managers",
       "subGroups": [],
       "attributes": {},
-      "realmRoles": ["MANAGER_USER"],
+      "realmRoles": [
+        "MANAGER_USER"
+      ],
       "clientRoles": {}
     },
     {
@@ -672,7 +714,9 @@
       "path": "/moderators",
       "subGroups": [],
       "attributes": {},
-      "realmRoles": ["MODERATOR"],
+      "realmRoles": [
+        "MODERATOR"
+      ],
       "clientRoles": {}
     },
     {
@@ -681,7 +725,9 @@
       "path": "/users",
       "subGroups": [],
       "attributes": {},
-      "realmRoles": ["USER"],
+      "realmRoles": [
+        "USER"
+      ],
       "clientRoles": {}
     }
   ],
@@ -693,8 +739,12 @@
     "clientRole": false,
     "containerId": "aafad211-0cd1-44d4-a56d-a3bb324d6ec7"
   },
-  "defaultGroups": ["/users"],
-  "requiredCredentials": ["password"],
+  "defaultGroups": [
+    "/users"
+  ],
+  "requiredCredentials": [
+    "password"
+  ],
   "otpPolicyType": "totp",
   "otpPolicyAlgorithm": "HmacSHA1",
   "otpPolicyInitialCounter": 0,
@@ -709,7 +759,10 @@
   ],
   "localizationTexts": {},
   "webAuthnPolicyRpEntityName": "keycloak",
-  "webAuthnPolicySignatureAlgorithms": ["ES256", "RS256"],
+  "webAuthnPolicySignatureAlgorithms": [
+    "ES256",
+    "RS256"
+  ],
   "webAuthnPolicyRpId": "",
   "webAuthnPolicyAttestationConveyancePreference": "not specified",
   "webAuthnPolicyAuthenticatorAttachment": "not specified",
@@ -720,7 +773,10 @@
   "webAuthnPolicyAcceptableAaguids": [],
   "webAuthnPolicyExtraOrigins": [],
   "webAuthnPolicyPasswordlessRpEntityName": "keycloak",
-  "webAuthnPolicyPasswordlessSignatureAlgorithms": ["ES256", "RS256"],
+  "webAuthnPolicyPasswordlessSignatureAlgorithms": [
+    "ES256",
+    "RS256"
+  ],
   "webAuthnPolicyPasswordlessRpId": "",
   "webAuthnPolicyPasswordlessAttestationConveyancePreference": "not specified",
   "webAuthnPolicyPasswordlessAuthenticatorAttachment": "not specified",
@@ -732,31 +788,47 @@
   "webAuthnPolicyPasswordlessExtraOrigins": [],
   "users": [
     {
-      "id": "7527b211-bd3f-426f-9a83-4ef7ec393a80",
-      "username": "service-account-geocidadao-user-api-caller",
+      "id": "b199ace9-9fb3-4ac3-9b46-8c2e9f539fb4",
+      "username": "service-account-geocidadao-user-management-admin",
       "emailVerified": false,
       "enabled": true,
-      "createdTimestamp": 1760303079589,
+      "createdTimestamp": 1760892429154,
       "totp": false,
-      "serviceAccountClientId": "geocidadao-user-api-caller",
+      "serviceAccountClientId": "geocidadao-user-management-admin",
       "disableableCredentialTypes": [],
       "requiredActions": [],
-      "realmRoles": ["default-roles-geo-cidadao"],
+      "realmRoles": [
+        "default-roles-geo-cidadao"
+      ],
+      "clientRoles": {
+        "realm-management": [
+          "view-users",
+          "manage-users",
+          "query-users"
+        ]
+      },
       "notBefore": 0,
-      "groups": ["/users"]
+      "groups": [
+        "/users"
+      ]
     }
   ],
   "scopeMappings": [
     {
       "clientScope": "offline_access",
-      "roles": ["offline_access"]
+      "roles": [
+        "offline_access"
+      ]
     }
   ],
   "clientScopeMappings": {
     "account": [
       {
         "client": "account-console",
-        "roles": ["manage-account", "view-groups"]
+        "roles": [
+          "manage-account",
+          "view-groups"
+        ]
       }
     ]
   },
@@ -771,7 +843,9 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "redirectUris": ["/realms/geocidadao/account/*"],
+      "redirectUris": [
+        "/realms/geocidadao/account/*"
+      ],
       "webOrigins": [],
       "notBefore": 0,
       "bearerOnly": false,
@@ -816,7 +890,9 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "redirectUris": ["/realms/geocidadao/account/*"],
+      "redirectUris": [
+        "/realms/geocidadao/account/*"
+      ],
       "webOrigins": [],
       "notBefore": 0,
       "bearerOnly": false,
@@ -961,8 +1037,12 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "redirectUris": ["/*"],
-      "webOrigins": ["/*"],
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -1033,8 +1113,12 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "redirectUris": ["/*"],
-      "webOrigins": ["/*"],
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -1094,7 +1178,10 @@
         "http://localhost:5173/*",
         "https://www.keycloak.org/app/*"
       ],
-      "webOrigins": ["http://localhost:5173", "https://www.keycloak.org"],
+      "webOrigins": [
+        "http://localhost:5173",
+        "https://www.keycloak.org"
+      ],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -1153,8 +1240,12 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "redirectUris": ["/*"],
-      "webOrigins": ["/*"],
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -1197,10 +1288,10 @@
       ]
     },
     {
-      "id": "a2f5830f-a66e-47ef-9385-eccbaba6990f",
-      "clientId": "geocidadao-user-api-caller",
+      "id": "2ef88009-356e-48d6-9048-5829ef78c746",
+      "clientId": "geocidadao-user-management-admin",
       "name": "",
-      "description": "Client para a realização de chamadas do serviço de gerenciamento de usuários para outros serviços de forma interna",
+      "description": "",
       "rootUrl": "",
       "adminUrl": "",
       "baseUrl": "",
@@ -1209,8 +1300,12 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "redirectUris": ["/*"],
-      "webOrigins": ["/*"],
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -1224,10 +1319,9 @@
       "attributes": {
         "realm_client": "false",
         "oidc.ciba.grant.enabled": "false",
-        "client.secret.creation.time": "1760303079",
+        "client.secret.creation.time": "1760892429",
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
-        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "dpop.bound.access.tokens": "false"
@@ -1236,20 +1330,25 @@
       "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": -1,
       "defaultClientScopes": [
+        "aud-geocidadao-users-api",
         "service_account",
         "web-origins",
         "acr",
         "profile",
+        "aud-geocidadao-posts-api",
         "roles",
         "basic",
-        "email"
+        "group-scopes",
+        "email",
+        "aud-comments-service"
       ],
       "optionalClientScopes": [
         "address",
         "phone",
         "offline_access",
         "organization",
-        "microprofile-jwt"
+        "microprofile-jwt",
+        "manager-city"
       ]
     },
     {
@@ -1305,8 +1404,12 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "redirectUris": ["/admin/geocidadao/console/*"],
-      "webOrigins": ["+"],
+      "redirectUris": [
+        "/admin/geocidadao/console/*"
+      ],
+      "webOrigins": [
+        "+"
+      ],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -2282,7 +2385,10 @@
   "adminTheme": "",
   "emailTheme": "",
   "eventsEnabled": true,
-  "eventsListeners": ["jboss-logging", "rabbitmq-events"],
+  "eventsListeners": [
+    "jboss-logging",
+    "rabbitmq-events"
+  ],
   "enabledEventTypes": [
     "SEND_RESET_PASSWORD",
     "UPDATE_CONSENT_ERROR",
@@ -2391,7 +2497,9 @@
         "subType": "anonymous",
         "subComponents": {},
         "config": {
-          "max-clients": ["200"]
+          "max-clients": [
+            "200"
+          ]
         }
       },
       {
@@ -2410,14 +2518,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-address-mapper",
+            "saml-user-property-mapper",
             "saml-role-list-mapper",
             "oidc-usermodel-property-mapper",
-            "saml-user-property-mapper",
-            "saml-user-attribute-mapper",
-            "oidc-usermodel-attribute-mapper",
             "oidc-full-name-mapper",
-            "oidc-sha256-pairwise-sub-mapper"
+            "oidc-address-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "saml-user-attribute-mapper"
           ]
         }
       },
@@ -2428,7 +2536,9 @@
         "subType": "anonymous",
         "subComponents": {},
         "config": {
-          "allow-default-scopes": ["true"]
+          "allow-default-scopes": [
+            "true"
+          ]
         }
       },
       {
@@ -2438,7 +2548,9 @@
         "subType": "authenticated",
         "subComponents": {},
         "config": {
-          "allow-default-scopes": ["true"]
+          "allow-default-scopes": [
+            "true"
+          ]
         }
       },
       {
@@ -2448,8 +2560,12 @@
         "subType": "anonymous",
         "subComponents": {},
         "config": {
-          "host-sending-registration-request-must-match": ["true"],
-          "client-uris-must-match": ["true"]
+          "host-sending-registration-request-must-match": [
+            "true"
+          ],
+          "client-uris-must-match": [
+            "true"
+          ]
         }
       },
       {
@@ -2470,12 +2586,12 @@
           "allowed-protocol-mapper-types": [
             "oidc-usermodel-attribute-mapper",
             "oidc-sha256-pairwise-sub-mapper",
-            "saml-user-property-mapper",
-            "oidc-full-name-mapper",
-            "oidc-address-mapper",
-            "saml-user-attribute-mapper",
             "saml-role-list-mapper",
-            "oidc-usermodel-property-mapper"
+            "saml-user-attribute-mapper",
+            "oidc-usermodel-property-mapper",
+            "oidc-address-mapper",
+            "saml-user-property-mapper",
+            "oidc-full-name-mapper"
           ]
         }
       }
@@ -2487,8 +2603,12 @@
         "providerId": "rsa-enc-generated",
         "subComponents": {},
         "config": {
-          "priority": ["100"],
-          "algorithm": ["RSA-OAEP"]
+          "priority": [
+            "100"
+          ],
+          "algorithm": [
+            "RSA-OAEP"
+          ]
         }
       },
       {
@@ -2497,7 +2617,9 @@
         "providerId": "aes-generated",
         "subComponents": {},
         "config": {
-          "priority": ["100"]
+          "priority": [
+            "100"
+          ]
         }
       },
       {
@@ -2506,7 +2628,9 @@
         "providerId": "rsa-generated",
         "subComponents": {},
         "config": {
-          "priority": ["100"]
+          "priority": [
+            "100"
+          ]
         }
       },
       {
@@ -2515,8 +2639,12 @@
         "providerId": "hmac-generated",
         "subComponents": {},
         "config": {
-          "priority": ["100"],
-          "algorithm": ["HS512"]
+          "priority": [
+            "100"
+          ],
+          "algorithm": [
+            "HS512"
+          ]
         }
       }
     ]
