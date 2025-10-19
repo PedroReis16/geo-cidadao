@@ -22,18 +22,22 @@ namespace GeoCidadao.Cloud.Config
                 BucketCredentials credentials = CloudHelpers.GetAwsCredentials(configuration);
 
                 // Ensure the bucket exists
-                using AmazonS3Client client = credentials.GetClient();
-
-                var result = AmazonS3Util.DoesS3BucketExistV2Async(client, credentials.BucketName).GetAwaiter().GetResult();
-
-                if (!result)
+                try
                 {
-                    client.PutBucketAsync(new Amazon.S3.Model.PutBucketRequest
+                    using AmazonS3Client client = credentials.GetClient();
+
+                    var result = AmazonS3Util.DoesS3BucketExistV2Async(client, credentials.BucketName).GetAwaiter().GetResult();
+
+                    if (!result)
                     {
-                        BucketName = credentials.BucketName,
-                        UseClientRegion = true
-                    }).Wait();
+                        client.PutBucketAsync(new Amazon.S3.Model.PutBucketRequest
+                        {
+                            BucketName = credentials.BucketName,
+                            UseClientRegion = true
+                        }).Wait();
+                    }
                 }
+                catch (Exception) { }
 
                 next(app);
             };
