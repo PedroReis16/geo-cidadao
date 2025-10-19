@@ -13,7 +13,12 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Controllers
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserPhoto(Guid userId)
         {
-            return Ok();
+            string? photoUrl = await _service.GetUserPhotoUrlAsync(userId);
+
+            if (string.IsNullOrWhiteSpace(photoUrl))
+                return NoContent();
+
+            return Ok(photoUrl);
         }
 
         [HttpPatch("{userId}")]
@@ -26,6 +31,14 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Controllers
                 return new ContentResult { StatusCode = 406 };
 
             await _service.UpdateUserPhotoAsync(userId, photo);
+
+            return CreatedAtAction(nameof(GetUserPhoto), new { userId = userId }, null);
+        }
+
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteUserPhoto(Guid userId)
+        {
+            await _service.DeleteUserPhotoAsync(userId);
 
             return NoContent();
         }

@@ -2,14 +2,15 @@ namespace GeoCidadao.Model.Enums
 {
     public enum ErrorCodes
     {
-
-        VALIDATION_ERROR = 1,
-        ENTITY_NOT_FOUND = 2,
-        USERNAME_REQUIRED = 3,
-        EMAIL_REQUIRED = 4,
-        NAME_REQUIRED = 5,
-        USER_NOT_FOUND = 6,
-        INVALID_MEDIA = 7,
-        UNKNOWN_ERROR = 999,
+        UNKNOWN_ERROR = 1,
+        VALIDATION_ERROR = 2,
+        ENTITY_NOT_FOUND = 3,
+        USERNAME_REQUIRED = 4,
+        EMAIL_REQUIRED = 5,
+        NAME_REQUIRED = 6,
+        USER_NOT_FOUND = 7,
+        INVALID_MEDIA = 8,
+        FILE_HASH_REQUIRED = 9,
+        FILE_EXTENSION_REQUIRED = 10,
     }
 }
