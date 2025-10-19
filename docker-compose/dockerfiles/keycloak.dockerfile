@@ -4,9 +4,10 @@ FROM quay.io/keycloak/keycloak:26.4
 ENV KEYCLOAK_ADMIN=admin \
     KEYCLOAK_ADMIN_PASSWORD=admin \
     KC_DB=postgres \
-    KC_DB_URL=jdbc:postgresql://db:5432/geodb \
-    KC_DB_USERNAME=geo \
-    KC_DB_PASSWORD=geo \
+    KC_DB_URL=jdbc:postgresql://db:5432/keycloakdb  \
+    KC_DB_USERNAME=keycloak \
+    KC_DB_PASSWORD=keycloak \
+    KC_DB_SCHEMA=keycloak \
     KC_HOSTNAME=localhost \
     KC_HTTP_PORT=8180 \
     RABBITMQ_HOST=rabbitmq \
@@ -20,4 +21,3 @@ EXPOSE 8180
 
 # Start padrão; você pode adicionar flags extras aqui se quiser
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
-CMD ["start-dev"]

@@ -1,9 +1,44 @@
 version: "3.8"
 services:
+  mongodb:
+    image: mongo:8.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - geo-network
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3,ec2
+      - DEBUG=1
+      - AWS_DEFAULT_REGION=us-east-1
+      - PERSISTENCE=1
+    volumes:
+      - localstack_data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - geo-network
   db:
     image: postgres:15-alpine
     ports:
       - "5432:5432"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB} || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
     environment:
       POSTGRES_PORT: 5432
       POSTGRES_DB: geodb
@@ -28,6 +63,8 @@ services:
       - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/
+      - ./docker-compose/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./docker-compose/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
@@ -41,14 +78,40 @@ services:
       - "1025:1025"
     networks:
       - geo-network
-  mongodb:
-    image: mongo:8.0
-    container_name: mongodb
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
+  init-keycloak-db:
+    image: postgres:15-alpine
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: geo
+    command: >
+      sh -c '
+        # 1) Garante usuário com a senha correta
+        UE=$(psql -h db -U geo -d geodb -Atc "SELECT 1 FROM pg_roles WHERE rolname='\''keycloak'\''")
+        if [ "$UE" = "1" ]; then
+          echo "[init] Usuário keycloak já existe; ajustando senha..."
+          psql -h db -U geo -d geodb -v ON_ERROR_STOP=1 -c "ALTER USER keycloak WITH PASSWORD '\''keycloak'\''";
+        else
+          echo "[init] Criando usuário keycloak..."
+          psql -h db -U geo -d geodb -v ON_ERROR_STOP=1 -c "CREATE USER keycloak WITH PASSWORD '\''keycloak'\''";
+        fi
+
+        # 2) Garante database
+        DE=$(psql -h db -U geo -d geodb -Atc "SELECT 1 FROM pg_database WHERE datname='\''keycloakdb'\''")
+        if [ "$DE" = "1" ]; then
+          echo "[init] Database keycloakdb já existe."
+        else
+          echo "[init] Criando database keycloakdb (OWNER keycloak)..."
+          psql -h db -U geo -d geodb -v ON_ERROR_STOP=1 -c "CREATE DATABASE keycloakdb OWNER keycloak";
+        fi
+
+        # 3) Garante schema (e ownership) dentro do keycloakdb
+        echo "[init] Garantindo schema keycloak..."
+        psql -h db -U geo -d keycloakdb -v ON_ERROR_STOP=1 -c "CREATE SCHEMA IF NOT EXISTS keycloak AUTHORIZATION keycloak";
+
+        # Observação: como você já usa KC_DB_SCHEMA=keycloak, não precisamos setar search_path.
+        echo "[init] OK"      '
     networks:
       - geo-network
   keycloak:
@@ -58,13 +121,22 @@ services:
     container_name: keycloak
     ports:
       - "8082:8180"
+    environment:
+      - KEYCLOAK_IMPORT=/opt/keycloak/data/import/geocidadao-realm.json
     depends_on:
-      - db
-      - rabbitmq
-      - mailhog
+      db:
+        condition: service_healthy
+      init-keycloak-db:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_started
+      mailhog:
+        condition: service_started
     networks:
       - geo-network
+    command: ["start-dev", "--import-realm"]
     volumes:
+      - ./docker-compose/keycloak/geocidadao-realm.json:/opt/keycloak/data/import/geocidadao-realm.json
       - ./docker-compose/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
       - ./docker-compose/keycloak/themes:/opt/keycloak/themes/custom-theme
       - keycloak_data:/opt/keycloak/data
@@ -76,6 +148,8 @@ services:
     ports:
       - "8090:8080"
     depends_on:
+      keycloak:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     env_file:

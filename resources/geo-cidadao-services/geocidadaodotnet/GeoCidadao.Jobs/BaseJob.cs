@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using GeoCidadao.Model.Helpers;
 using GeoCidadao.Jobs.Config;
 using GeoCidadao.Jobs.Exceptions;
 using Quartz;
+using GeoCidadao.Model.Extensions;
 
 namespace GeoCidadao.Jobs
 {

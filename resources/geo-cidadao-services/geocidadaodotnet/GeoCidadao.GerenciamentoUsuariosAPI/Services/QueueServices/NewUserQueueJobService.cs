@@ -3,13 +3,17 @@ using GeoCidadao.AMQP.Configuration;
 using GeoCidadao.AMQP.Messages;
 using GeoCidadao.AMQP.Services;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices;
-using GeoCidadao.Model.Helpers;
+using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
+using GeoCidadao.Model.Entities;
+using GeoCidadao.Model.Extensions;
 using RabbitMQ.Client.Events;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices
 {
-    public class NewUserQueueJobService(ILogger<NewUserQueueJobService> logger, IConfiguration configuration) : RabbitMQSubscriberService(logger, configuration), INewUserQueueJobService
+    internal class NewUserQueueJobService(ILogger<NewUserQueueJobService> logger, IConfiguration configuration, IServiceScopeFactory scopeFactory) : RabbitMQSubscriberService(logger, configuration), INewUserQueueJobService
     {
+        private readonly IServiceScopeFactory _serviceProvider = scopeFactory;
+
         public void ConsumeQueue()
         {
             ConsumeQueue(
@@ -32,7 +36,23 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices
 
                 if (message != null)
                 {
+                    using IServiceScope scope = _serviceProvider.CreateScope();
+                    IUserProfileDao? userDao = scope.ServiceProvider.GetRequiredService<IUserProfileDao>();
 
+                    if (userDao is not null)
+                    {
+                        UserProfile newUser = new()
+                        {
+                            Id = new Guid(message.Id),
+                            Username = message.Username,
+                            Email = message.Email,
+                            FirstName = message.FirstName,
+                            LastName = message.LastName,
+                        };
+
+                        _ = userDao.AddAsync(newUser);
+                        Logger.LogInformation($"Novo usuário criado com sucesso: {newUser.Id} - {newUser.Username}");
+                    }
                 }
                 Channel?.BasicAck(e.DeliveryTag, false);
             }

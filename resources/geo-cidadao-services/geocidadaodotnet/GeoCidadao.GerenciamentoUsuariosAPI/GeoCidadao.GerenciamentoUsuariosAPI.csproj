@@ -4,8 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<NoWarn>$(NoWarn);1591</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
 
@@ -38,6 +38,7 @@
     <ProjectReference Include="..\GeoCidadao.Database\GeoCidadao.Database.csproj" />
     <ProjectReference Include="..\GeoCidadao.AMQP\GeoCidadao.AMQP.csproj" />
     <ProjectReference Include="..\GeoCidadao.Jobs\GeoCidadao.Jobs.csproj" />
+    <ProjectReference Include="..\GeoCidadao.Cloud\GeoCidadao.Cloud.csproj" />
   </ItemGroup>
 
 </Project>

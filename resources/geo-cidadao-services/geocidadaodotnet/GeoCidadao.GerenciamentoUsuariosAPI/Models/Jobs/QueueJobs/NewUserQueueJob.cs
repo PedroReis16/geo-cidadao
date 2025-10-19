@@ -1,9 +1,9 @@
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices;
 using GeoCidadao.Jobs;
-using GeoCidadao.Model.Helpers;
+using GeoCidadao.Model.Extensions;
 using Quartz;
 
-namespace GeoCidadao.GerenciamentoUsuariosAPI.Model.Jobs.QueueJobs
+namespace GeoCidadao.GerenciamentoUsuariosAPI.Models.Jobs.QueueJobs
 {
     public class NewUserQueueJob(ILogger<NewUserQueueJob> logger, INewUserQueueJobService service) : BaseJob(logger), IJob
     {
@@ -13,7 +13,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Model.Jobs.QueueJobs
         {
             try
             {
-                await base.Execute(context);
+                _ = base.Execute(context);
 
                 _service.ConsumeQueue();
             }

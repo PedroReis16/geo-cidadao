@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace GeoCidadao.Model.Helpers
+namespace GeoCidadao.Model.Extensions
 {
     public static class ExceptionExtensions
     {

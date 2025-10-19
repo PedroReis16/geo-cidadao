@@ -1,6 +1,6 @@
 {
   "id": "aafad211-0cd1-44d4-a56d-a3bb324d6ec7",
-  "realm": "geo-cidadao",
+  "realm": "geocidadao",
   "displayName": "GeoCidadao",
   "displayNameHtml": "",
   "notBefore": 0,
@@ -157,7 +157,6 @@
       }
     ],
     "client": {
-      "geocidadao-user-api-caller": [],
       "geocidadao-interation-api": [
         {
           "id": "ac29cddc-1e14-43bf-928c-bc0a9306ce29",
@@ -364,17 +363,17 @@
           "composites": {
             "client": {
               "realm-management": [
-                "view-users",
                 "manage-identity-providers",
+                "view-users",
                 "manage-clients",
                 "manage-events",
                 "query-realms",
                 "manage-authorization",
                 "view-authorization",
                 "manage-realm",
-                "view-realm",
                 "view-events",
                 "view-identity-providers",
+                "view-realm",
                 "manage-users",
                 "view-clients",
                 "impersonation",
@@ -484,6 +483,7 @@
         }
       ],
       "security-admin-console": [],
+      "geocidadao-user-management-admin": [],
       "admin-cli": [],
       "account-console": [],
       "broker": [
@@ -592,13 +592,11 @@
     {
       "id": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
       "name": "cities",
-      "description": "",
       "path": "/cities",
       "subGroups": [
         {
           "id": "1c9507ce-44ae-478d-89c0-6c580705de22",
           "name": "DIADEMA",
-          "description": "",
           "path": "/cities/DIADEMA",
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
@@ -613,7 +611,6 @@
         {
           "id": "9c3304b4-c6c1-4a1e-bb7b-7bcd85b6149f",
           "name": "MAUA",
-          "description": "",
           "path": "/cities/MAUA",
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
@@ -628,7 +625,6 @@
         {
           "id": "f1b141b2-b52f-4827-b106-7626a10ea68a",
           "name": "RIBEIRAO_PIRES",
-          "description": "",
           "path": "/cities/RIBEIRAO_PIRES",
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
@@ -643,7 +639,6 @@
         {
           "id": "d85e13c9-9e29-402b-b25b-0e051d0ca3b2",
           "name": "RIO_GRANDE_DA_SERRA",
-          "description": "",
           "path": "/cities/RIO_GRANDE_DA_SERRA",
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
@@ -658,7 +653,6 @@
         {
           "id": "8dcc3a38-353d-4a41-a0a1-b5a0dcecc487",
           "name": "SANTO_ANDRE",
-          "description": "",
           "path": "/cities/SANTO_ANDRE",
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
@@ -673,7 +667,6 @@
         {
           "id": "bdd6a1ff-1956-4bb8-a857-e2ffdf9df088",
           "name": "SAO_BERNARDO",
-          "description": "",
           "path": "/cities/SAO_BERNARDO",
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
@@ -688,7 +681,6 @@
         {
           "id": "6076196f-30b1-4cfd-8a1d-3a09ad80dcf9",
           "name": "SAO_CAETANO",
-          "description": "",
           "path": "/cities/SAO_CAETANO",
           "parentId": "492334d2-547f-45cd-a9f8-ec63d11bcae7",
           "subGroups": [],
@@ -708,13 +700,9 @@
     {
       "id": "618e0f78-de32-4874-8db2-83932e633744",
       "name": "managers",
-      "description": "",
       "path": "/managers",
       "subGroups": [],
       "attributes": {},
-      "realmRoles": [
-        "MANAGER_USER"
-      ],
       "realmRoles": [
         "MANAGER_USER"
       ],
@@ -723,7 +711,6 @@
     {
       "id": "f26b932b-9e3a-4ecd-80e7-d7b805f1547c",
       "name": "moderators",
-      "description": "",
       "path": "/moderators",
       "subGroups": [],
       "attributes": {},
@@ -735,13 +722,9 @@
     {
       "id": "bdd608e7-73b0-4257-9630-1b672a7430ca",
       "name": "users",
-      "description": "",
       "path": "/users",
       "subGroups": [],
       "attributes": {},
-      "realmRoles": [
-        "USER"
-      ],
       "realmRoles": [
         "USER"
       ],
@@ -805,18 +788,25 @@
   "webAuthnPolicyPasswordlessExtraOrigins": [],
   "users": [
     {
-      "id": "7527b211-bd3f-426f-9a83-4ef7ec393a80",
-      "username": "service-account-geocidadao-user-api-caller",
+      "id": "b199ace9-9fb3-4ac3-9b46-8c2e9f539fb4",
+      "username": "service-account-geocidadao-user-management-admin",
       "emailVerified": false,
       "enabled": true,
-      "createdTimestamp": 1760303079589,
+      "createdTimestamp": 1760892429154,
       "totp": false,
-      "serviceAccountClientId": "geocidadao-user-api-caller",
+      "serviceAccountClientId": "geocidadao-user-management-admin",
       "disableableCredentialTypes": [],
       "requiredActions": [],
       "realmRoles": [
         "default-roles-geo-cidadao"
       ],
+      "clientRoles": {
+        "realm-management": [
+          "view-users",
+          "manage-users",
+          "query-users"
+        ]
+      },
       "notBefore": 0,
       "groups": [
         "/users"
@@ -848,13 +838,13 @@
       "clientId": "account",
       "name": "${client_account}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/geo-cidadao/account/",
+      "baseUrl": "/realms/geocidadao/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/geo-cidadao/account/*"
+        "/realms/geocidadao/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -895,13 +885,13 @@
       "clientId": "account-console",
       "name": "${client_account-console}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/geo-cidadao/account/",
+      "baseUrl": "/realms/geocidadao/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/realms/geo-cidadao/account/*"
+        "/realms/geocidadao/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -970,7 +960,8 @@
       "protocol": "openid-connect",
       "attributes": {
         "realm_client": "false",
-        "client.use.lightweight.access.token.enabled": "true"
+        "client.use.lightweight.access.token.enabled": "true",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
@@ -1012,7 +1003,8 @@
       "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
-        "realm_client": "true"
+        "realm_client": "true",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
@@ -1068,6 +1060,7 @@
         "client.introspection.response.allow.jwt.claim.enabled": "false",
         "standard.token.exchange.enabled": "false",
         "frontchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "use.refresh.tokens": "true",
@@ -1142,6 +1135,7 @@
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
         "frontchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
         "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
@@ -1204,6 +1198,7 @@
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
         "frontchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
         "display.on.consent.screen": "false",
         "pkce.code.challenge.method": "S256",
@@ -1215,11 +1210,9 @@
       "nodeReRegistrationTimeout": -1,
       "defaultClientScopes": [
         "aud-geocidadao-users-api",
-        "aud-geocidadao-users-api",
         "web-origins",
         "acr",
         "profile",
-        "aud-geocidadao-posts-api",
         "aud-geocidadao-posts-api",
         "roles",
         "basic",
@@ -1232,7 +1225,6 @@
         "phone",
         "offline_access",
         "organization",
-        "microprofile-jwt"
         "microprofile-jwt"
       ]
     },
@@ -1270,6 +1262,7 @@
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
         "frontchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
         "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
@@ -1295,10 +1288,10 @@
       ]
     },
     {
-      "id": "a2f5830f-a66e-47ef-9385-eccbaba6990f",
-      "clientId": "geocidadao-user-api-caller",
+      "id": "2ef88009-356e-48d6-9048-5829ef78c746",
+      "clientId": "geocidadao-user-management-admin",
       "name": "",
-      "description": "Client para a realização de chamadas do serviço de gerenciamento de usuários para outros serviços de forma interna",
+      "description": "",
       "rootUrl": "",
       "adminUrl": "",
       "baseUrl": "",
@@ -1326,7 +1319,7 @@
       "attributes": {
         "realm_client": "false",
         "oidc.ciba.grant.enabled": "false",
-        "client.secret.creation.time": "1760303079",
+        "client.secret.creation.time": "1760892429",
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
         "oauth2.device.authorization.grant.enabled": "false",
@@ -1337,20 +1330,25 @@
       "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": -1,
       "defaultClientScopes": [
+        "aud-geocidadao-users-api",
         "service_account",
         "web-origins",
         "acr",
         "profile",
+        "aud-geocidadao-posts-api",
         "roles",
         "basic",
-        "email"
+        "group-scopes",
+        "email",
+        "aud-comments-service"
       ],
       "optionalClientScopes": [
         "address",
         "phone",
         "offline_access",
         "organization",
-        "microprofile-jwt"
+        "microprofile-jwt",
+        "manager-city"
       ]
     },
     {
@@ -1374,7 +1372,8 @@
       "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
-        "realm_client": "true"
+        "realm_client": "true",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
@@ -1400,13 +1399,13 @@
       "clientId": "security-admin-console",
       "name": "${client_security-admin-console}",
       "rootUrl": "${authAdminUrl}",
-      "baseUrl": "/admin/geo-cidadao/console/",
+      "baseUrl": "/admin/geocidadao/console/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "/admin/geo-cidadao/console/*"
+        "/admin/geocidadao/console/*"
       ],
       "webOrigins": [
         "+"
@@ -1488,8 +1487,9 @@
             "included.client.audience": "geocidadao-posts-api",
             "id.token.claim": "false",
             "lightweight.claim": "false",
+            "introspection.token.claim": "true",
             "access.token.claim": "true",
-            "introspection.token.claim": "true"
+            "userinfo.token.claim": "false"
           }
         },
         {
@@ -1589,7 +1589,8 @@
             "id.token.claim": "false",
             "lightweight.claim": "false",
             "introspection.token.claim": "true",
-            "access.token.claim": "true"
+            "access.token.claim": "true",
+            "userinfo.token.claim": "false"
           }
         },
         {
@@ -1662,8 +1663,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "clientHost",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientHost",
             "jsonType.label": "String"
@@ -1677,8 +1679,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "client_id",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "client_id",
             "jsonType.label": "String"
@@ -1692,8 +1695,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "clientAddress",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientAddress",
             "jsonType.label": "String"
@@ -1749,8 +1753,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "AUTH_TIME",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "auth_time",
             "jsonType.label": "long"
@@ -1776,12 +1781,13 @@
           "protocolMapper": "oidc-organization-membership-mapper",
           "consentRequired": false,
           "config": {
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "organization",
-            "jsonType.label": "String",
-            "multivalued": "true"
+            "jsonType.label": "String"
           }
         }
       ]
@@ -1821,6 +1827,7 @@
           "config": {
             "introspection.token.claim": "true",
             "multivalued": "true",
+            "userinfo.token.claim": "true",
             "user.attribute": "foo",
             "id.token.claim": "true",
             "access.token.claim": "true",
@@ -2195,7 +2202,8 @@
           "config": {
             "id.token.claim": "true",
             "introspection.token.claim": "true",
-            "access.token.claim": "true"
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
           }
         }
       ]
@@ -2319,8 +2327,9 @@
             "included.client.audience": "geocidadao-comments-api",
             "id.token.claim": "false",
             "lightweight.claim": "false",
+            "introspection.token.claim": "true",
             "access.token.claim": "true",
-            "introspection.token.claim": "true"
+            "userinfo.token.claim": "false"
           }
         }
       ]
@@ -2381,13 +2390,13 @@
     "rabbitmq-events"
   ],
   "enabledEventTypes": [
-    "UPDATE_CONSENT_ERROR",
     "SEND_RESET_PASSWORD",
+    "UPDATE_CONSENT_ERROR",
     "GRANT_CONSENT",
     "VERIFY_PROFILE_ERROR",
-    "UPDATE_TOTP",
     "REMOVE_TOTP",
     "REVOKE_GRANT",
+    "UPDATE_TOTP",
     "LOGIN_ERROR",
     "CLIENT_LOGIN",
     "RESET_PASSWORD_ERROR",
@@ -2397,43 +2406,43 @@
     "CUSTOM_REQUIRED_ACTION",
     "OAUTH2_DEVICE_CODE_TO_TOKEN_ERROR",
     "RESTART_AUTHENTICATION",
-    "UPDATE_PROFILE_ERROR",
     "IMPERSONATE",
+    "UPDATE_PROFILE_ERROR",
     "LOGIN",
-    "UPDATE_PASSWORD_ERROR",
     "OAUTH2_DEVICE_VERIFY_USER_CODE",
+    "UPDATE_PASSWORD_ERROR",
     "CLIENT_INITIATED_ACCOUNT_LINKING",
     "IDENTITY_PROVIDER_LOGIN",
-    "USER_DISABLED_BY_PERMANENT_LOCKOUT",
     "OAUTH2_EXTENSION_GRANT",
+    "USER_DISABLED_BY_PERMANENT_LOCKOUT",
     "REMOVE_CREDENTIAL_ERROR",
     "TOKEN_EXCHANGE",
-    "REGISTER",
-    "LOGOUT",
     "AUTHREQID_TO_TOKEN",
+    "LOGOUT",
+    "REGISTER",
     "DELETE_ACCOUNT_ERROR",
     "CLIENT_REGISTER",
     "IDENTITY_PROVIDER_LINK_ACCOUNT",
     "USER_DISABLED_BY_TEMPORARY_LOCKOUT",
-    "UPDATE_PASSWORD",
     "DELETE_ACCOUNT",
-    "FEDERATED_IDENTITY_LINK_ERROR",
+    "UPDATE_PASSWORD",
     "CLIENT_DELETE",
+    "FEDERATED_IDENTITY_LINK_ERROR",
     "IDENTITY_PROVIDER_FIRST_LOGIN",
-    "VERIFY_EMAIL",
     "CLIENT_DELETE_ERROR",
+    "VERIFY_EMAIL",
     "CLIENT_LOGIN_ERROR",
     "RESTART_AUTHENTICATION_ERROR",
-    "REMOVE_FEDERATED_IDENTITY_ERROR",
     "EXECUTE_ACTIONS",
+    "REMOVE_FEDERATED_IDENTITY_ERROR",
     "TOKEN_EXCHANGE_ERROR",
     "PERMISSION_TOKEN",
     "FEDERATED_IDENTITY_OVERRIDE_LINK",
     "SEND_IDENTITY_PROVIDER_LINK_ERROR",
     "UPDATE_CREDENTIAL_ERROR",
     "EXECUTE_ACTION_TOKEN_ERROR",
-    "SEND_VERIFY_EMAIL",
     "OAUTH2_EXTENSION_GRANT_ERROR",
+    "SEND_VERIFY_EMAIL",
     "OAUTH2_DEVICE_AUTH",
     "EXECUTE_ACTIONS_ERROR",
     "REMOVE_FEDERATED_IDENTITY",
@@ -2441,22 +2450,22 @@
     "IDENTITY_PROVIDER_POST_LOGIN",
     "IDENTITY_PROVIDER_LINK_ACCOUNT_ERROR",
     "FEDERATED_IDENTITY_OVERRIDE_LINK_ERROR",
-    "UPDATE_EMAIL",
     "OAUTH2_DEVICE_VERIFY_USER_CODE_ERROR",
+    "UPDATE_EMAIL",
     "REGISTER_ERROR",
     "REVOKE_GRANT_ERROR",
+    "EXECUTE_ACTION_TOKEN",
     "LOGOUT_ERROR",
     "UPDATE_EMAIL_ERROR",
-    "EXECUTE_ACTION_TOKEN",
     "CLIENT_UPDATE_ERROR",
-    "UPDATE_PROFILE",
     "AUTHREQID_TO_TOKEN_ERROR",
     "INVITE_ORG_ERROR",
-    "FEDERATED_IDENTITY_LINK",
+    "UPDATE_PROFILE",
     "CLIENT_REGISTER_ERROR",
+    "FEDERATED_IDENTITY_LINK",
     "INVITE_ORG",
-    "SEND_VERIFY_EMAIL_ERROR",
     "SEND_IDENTITY_PROVIDER_LINK",
+    "SEND_VERIFY_EMAIL_ERROR",
     "IDENTITY_PROVIDER_LOGIN_ERROR",
     "RESET_PASSWORD",
     "CLIENT_INITIATED_ACCOUNT_LINKING_ERROR",
@@ -2467,8 +2476,8 @@
     "VERIFY_EMAIL_ERROR",
     "SEND_RESET_PASSWORD_ERROR",
     "CLIENT_UPDATE",
-    "IDENTITY_PROVIDER_POST_LOGIN_ERROR",
     "CUSTOM_REQUIRED_ACTION_ERROR",
+    "IDENTITY_PROVIDER_POST_LOGIN_ERROR",
     "UPDATE_TOTP_ERROR",
     "CODE_TO_TOKEN",
     "VERIFY_PROFILE",
@@ -2509,14 +2518,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-usermodel-property-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "oidc-address-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
-            "saml-user-attribute-mapper",
             "saml-user-property-mapper",
+            "saml-role-list-mapper",
+            "oidc-usermodel-property-mapper",
             "oidc-full-name-mapper",
-            "saml-role-list-mapper"
+            "oidc-address-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "saml-user-attribute-mapper"
           ]
         }
       },
@@ -2575,14 +2584,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-sha256-pairwise-sub-mapper",
             "oidc-usermodel-attribute-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
             "saml-role-list-mapper",
-            "oidc-full-name-mapper",
+            "saml-user-attribute-mapper",
+            "oidc-usermodel-property-mapper",
             "oidc-address-mapper",
             "saml-user-property-mapper",
-            "saml-user-attribute-mapper",
-            "oidc-usermodel-property-mapper"
+            "oidc-full-name-mapper"
           ]
         }
       }
@@ -3465,8 +3474,8 @@
   "attributes": {
     "cibaBackchannelTokenDeliveryMode": "poll",
     "cibaAuthRequestedUserHint": "login_hint",
-    "oauth2DevicePollingInterval": "5",
     "clientOfflineSessionMaxLifespan": "0",
+    "oauth2DevicePollingInterval": "5",
     "clientSessionIdleTimeout": "0",
     "clientOfflineSessionIdleTimeout": "0",
     "cibaInterval": "5",
@@ -3480,7 +3489,7 @@
     "acr.loa.map": "{}",
     "darkMode": "true"
   },
-  "keycloakVersion": "26.4.0",
+  "keycloakVersion": "26.4.1",
   "userManagedAccessAllowed": false,
   "organizationsEnabled": false,
   "verifiableCredentialsEnabled": false,
