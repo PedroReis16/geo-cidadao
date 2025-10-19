@@ -136,7 +136,7 @@ services:
       - geo-network
     command: ["start-dev", "--import-realm"]
     volumes:
-      - ./docker-compose/keycloak/geo-cidadao-realm.json:/opt/keycloak/data/import/geo-cidadao-realm.json
+      - ./docker-compose/keycloak/geocidadao-realm.json:/opt/keycloak/data/import/geocidadao-realm.json
       - ./docker-compose/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
       - ./docker-compose/keycloak/themes:/opt/keycloak/themes/custom-theme
       - keycloak_data:/opt/keycloak/data
