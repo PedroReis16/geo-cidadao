@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Authorize]
     public class ProfileController(IUserProfileService service) : ControllerBase
     {
@@ -14,6 +14,8 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Controllers
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserProfile(Guid userId)
         {
+            await _service.GetUserProfileAsync(userId);
+
             return Ok();
         }
 

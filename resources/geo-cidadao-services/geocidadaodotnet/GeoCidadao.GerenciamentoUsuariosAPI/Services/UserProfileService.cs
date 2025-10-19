@@ -1,12 +1,15 @@
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts;
+using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.ConnectionServices;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
 {
-    public class UserProfileService : IUserProfileService
+    internal class UserProfileService(IKeycloakService keycloakService) : IUserProfileService
     {
-        public Task GetUserProfileAsync(Guid userId)
+        private readonly IKeycloakService _keycloakService = keycloakService;
+
+        public async Task GetUserProfileAsync(Guid userId)
         {
-            throw new NotImplementedException();
+            await _keycloakService.GetUserAsync(userId);
         }
     }
 }

@@ -24,6 +24,10 @@ using GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao;
 using GeoCidadao.Cloud.Extensions;
 using GeoCidadao.GerenciamentoUsuariosAPI.Services.CacheServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.CacheServices;
+using GeoCidadao.GerenciamentoUsuariosAPI.Services.ConnectionServices;
+using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.ConnectionServices;
+using GeoCidadao.GerenciamentoUsuariosAPI.Middlewares;
+using Microsoft.Extensions.Options;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -47,6 +51,7 @@ builder.Services.AddDbContext<GeoDbContext>(options =>
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 builder.Services.AddTransient<IStartupFilter, MigrationStartupFilter<GeoDbContext>>();
 
+builder.Services.Configure<KeycloakAdminOptions>(builder.Configuration.GetSection(AppSettingsProperties.Keycloak).GetSection(AppSettingsProperties.KeycloakAdmin)!);
 
 // Middlewares
 builder.Services.AddTransient<GlobalExceptionHandler>();
@@ -72,7 +77,31 @@ builder.Services.AddSingleton<INewUserQueueJobService, NewUserQueueJobService>()
 builder.Services.AddSingleton<INotifyUserChangedService, NotifyUserChangedService>();
 
 // Cache Services
+builder.Services.AddSingleton<IKeycloakAdminCacheService, KeycloakAdminCacheService>();
 builder.Services.AddSingleton<IUserPictureCacheService, UserPictureCacheService>();
+
+// Connection Services
+builder.Services.AddTransient<IKeycloakService, KeycloakService>();
+
+// Keycloak
+builder.Services.AddSingleton<IKeycloakTokenProvider, KeycloakTokenProvider>();
+builder.Services.AddTransient<KeycloakAdminHandler>();
+
+
+// Http Clients
+builder.Services.AddHttpClient<IKeycloakTokenProvider, KeycloakTokenProvider>(AppSettingsProperties.TokenClient, (sp, httpClient) =>
+{
+    var admin = sp.GetRequiredService<IOptions<KeycloakAdminOptions>>().Value;
+    httpClient.BaseAddress = new Uri($"{admin.BaseUrl}/realms/{admin.Realm}/protocol/openid-connect/token");
+});
+
+builder.Services.AddHttpClient<IKeycloakService, KeycloakService>(AppSettingsProperties.KeycloakClient, (sp, httpClient) =>
+{
+    var admin = sp.GetRequiredService<IOptions<KeycloakAdminOptions>>().Value;
+    httpClient.BaseAddress = new Uri($"{admin.BaseUrl}/admin/realms/{admin.Realm}/");
+})
+.AddHttpMessageHandler<KeycloakAdminHandler>();
+
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();
