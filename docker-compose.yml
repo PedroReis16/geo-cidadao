@@ -30,7 +30,11 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB} || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB} || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -117,6 +121,8 @@ services:
     container_name: keycloak
     ports:
       - "8082:8180"
+    environment:
+      - KEYCLOAK_IMPORT=/opt/keycloak/data/import/geocidadao-realm.json
     depends_on:
       db:
         condition: service_healthy
@@ -128,7 +134,9 @@ services:
         condition: service_started
     networks:
       - geo-network
+    command: ["start-dev", "--import-realm"]
     volumes:
+      - ./docker-compose/keycloak/geo-cidadao-realm.json:/opt/keycloak/data/import/geo-cidadao-realm.json
       - ./docker-compose/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
       - ./docker-compose/keycloak/themes:/opt/keycloak/themes/custom-theme
       - keycloak_data:/opt/keycloak/data

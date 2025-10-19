@@ -21,4 +21,3 @@ EXPOSE 8180
 
 # Start padrão; você pode adicionar flags extras aqui se quiser
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
-CMD ["start-dev"]
