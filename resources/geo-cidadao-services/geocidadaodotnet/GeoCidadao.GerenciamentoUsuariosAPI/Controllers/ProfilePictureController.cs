@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class ProfilePictureController(IUserPictureService service) : ControllerBase
     {
         private readonly IUserPictureService _service = service;
