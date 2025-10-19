@@ -7,9 +7,9 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class ProfileController(IProfileService service) : ControllerBase
+    public class ProfileController(IUserProfileService service) : ControllerBase
     {
-        private readonly IProfileService _service = service;
+        private readonly IUserProfileService _service = service;
 
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserProfile(Guid userId)

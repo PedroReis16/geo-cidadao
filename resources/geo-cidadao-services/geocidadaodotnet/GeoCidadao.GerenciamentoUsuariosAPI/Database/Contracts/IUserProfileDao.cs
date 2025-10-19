@@ -3,8 +3,8 @@ using GeoCidadao.Model.Entities;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts
 {
-    public interface IProfileUserDao : IRepository<UserProfile>
+    public interface IUserProfileDao : IRepository<UserProfile>
     {
-
+        Task UpdateUserPictureAsync(Guid userId, string objectKey, string fileHash);
     }
 }

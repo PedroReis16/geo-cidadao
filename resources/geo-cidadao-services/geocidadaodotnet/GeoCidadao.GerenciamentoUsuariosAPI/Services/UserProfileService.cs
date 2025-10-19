@@ -2,7 +2,7 @@ using GeoCidadao.GerenciamentoUsuariosAPI.Contracts;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
 {
-    public class ProfileService : IProfileService
+    public class UserProfileService : IUserProfileService
     {
         public Task GetUserProfileAsync(Guid userId)
         {

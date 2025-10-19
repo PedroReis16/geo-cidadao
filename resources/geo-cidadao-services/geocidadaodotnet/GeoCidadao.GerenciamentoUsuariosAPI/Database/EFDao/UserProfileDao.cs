@@ -9,9 +9,9 @@ using GeoCidadao.Model.Exceptions;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
 {
-    public class ProfileUsersDao(GeoDbContext context, IProfileUserDaoCache? cache = null) : BaseDao<UserProfile>(context, cache), IProfileUserDao
+    public class UserProfileDao(GeoDbContext context, IUserProfileDaoCache? cache = null) : BaseDao<UserProfile>(context, cache), IUserProfileDao
     {
-        protected override IRepositoryCache<UserProfile>? GetCache() => _cache as IProfileUserDaoCache;
+        protected override IRepositoryCache<UserProfile>? GetCache() => _cache as IUserProfileDaoCache;
 
         protected override Task ValidateEntityForInsert(params UserProfile[] obj)
         {
@@ -28,6 +28,11 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
         }
 
         protected override Task ValidateEntityForUpdate(params UserProfile[] obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateUserPictureAsync(Guid userId, string objectKey, string fileHash)
         {
             throw new NotImplementedException();
         }

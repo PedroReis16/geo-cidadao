@@ -5,9 +5,9 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProfilePictureController(IProfilePictureService service) : ControllerBase
+    public class ProfilePictureController(IUserPictureService service) : ControllerBase
     {
-        private readonly IProfilePictureService _service = service;
+        private readonly IUserPictureService _service = service;
 
 
         [HttpGet("{userId}")]

@@ -5,7 +5,7 @@ using GeoCidadao.Model.Entities;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.Cache
 {
-    public class ProfileUserDaoCache(IInMemoryCacheService cacheService) : RepositoryCache<UserProfile>(cacheService), IProfileUserDaoCache
+    public class UserProfileDaoCache(IInMemoryCacheService cacheService) : RepositoryCache<UserProfile>(cacheService), IUserProfileDaoCache
     {
 
     }
