@@ -31,9 +31,11 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services.ConnectionServices
             return user;
         }
 
-        public Task DeleteUserAsync(Guid userId)
+        public async Task UpdateUserAsync(Guid userId, UpdateUserDTO updatedProfile)
         {
-            throw new NotImplementedException();
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"users/{userId}", updatedProfile);
+
+            response.EnsureSuccessStatusCode();
         }
 
         public Task UpdateUserAsync(Guid userId, UpdateUserDTO updatedProfile)

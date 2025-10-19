@@ -1,7 +1,10 @@
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.CacheServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.ConnectionServices;
+using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices;
+using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Models.DTOs;
+using GeoCidadao.Model.Constants;
 using GeoCidadao.Model.Extensions;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
@@ -13,7 +16,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
                                       IUserCacheService cacheService) : IUserProfileService
     {
         private readonly ILogger<UserProfileService> _logger = logger;
-        private readonly IHttpContextAccessor? _contextAccessor = contextAccessor;
+        private readonly HttpContext? _httpContext = contextAccessor?.HttpContext;
         private readonly IServiceScopeFactory _serviceFactory = serviceFactory;
         private readonly IKeycloakService _keycloakService = keycloakService;
         private readonly IUserCacheService _cacheService = cacheService;
@@ -38,7 +41,10 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
             catch (Exception ex)
             {
                 string errorMessage = $"Houve um erro ao obter o perfil de usuário com Id '{userId}': {ex.GetFullMessage()}";
-                _logger.LogError(errorMessage, ex);
+                _logger.LogError(ex, errorMessage, context: _httpContext, additionalProperties: new Dictionary<string, object>
+                {
+                    { LogConstants.User, userId }
+                });
                 throw new Exception(errorMessage);
             }
         }
@@ -51,11 +57,20 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
                 
                 _cacheService.RemoveUser(userId);
 
+                using IServiceScope scope = _serviceFactory.CreateScope();
+
+                INotifyUserChangedService? notifyService = scope.ServiceProvider.GetService<INotifyUserChangedService>();
+
+                if (notifyService != null)
+                    notifyService.NotifyUserChanged(userId);
             }
             catch (Exception ex)
             {
                 string errorMessage = $"Houve um erro ao atualizar o perfil de usuário '{userId}': {ex.GetFullMessage()}";
-                _logger.LogError(errorMessage, ex);
+                _logger.LogError(ex, errorMessage, context: _httpContext, additionalProperties: new Dictionary<string, object>
+                {
+                    { LogConstants.EntityId, userId }
+                });
                 throw new Exception(errorMessage);
             }
         }
