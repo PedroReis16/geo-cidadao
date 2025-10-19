@@ -10,7 +10,7 @@ using RabbitMQ.Client.Events;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices
 {
-    public class NewUserQueueJobService(ILogger<NewUserQueueJobService> logger, IConfiguration configuration, IServiceScopeFactory scopeFactory) : RabbitMQSubscriberService(logger, configuration), INewUserQueueJobService
+    internal class NewUserQueueJobService(ILogger<NewUserQueueJobService> logger, IConfiguration configuration, IServiceScopeFactory scopeFactory) : RabbitMQSubscriberService(logger, configuration), INewUserQueueJobService
     {
         private readonly IServiceScopeFactory _serviceProvider = scopeFactory;
 

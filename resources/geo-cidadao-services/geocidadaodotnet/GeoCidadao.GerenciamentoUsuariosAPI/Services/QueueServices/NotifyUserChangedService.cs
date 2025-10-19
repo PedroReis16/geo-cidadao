@@ -6,7 +6,7 @@ using RabbitMQ.Client;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices
 {
-    public class NotifyUserChangedService : RabbitMQPublisherService, INotifyUserChangedService
+    internal class NotifyUserChangedService : RabbitMQPublisherService, INotifyUserChangedService
     {
         public NotifyUserChangedService(ILogger<NotifyUserChangedService> logger, IConfiguration configuration) : base(logger, configuration)
         {
