@@ -146,7 +146,7 @@ services:
       context: .
       dockerfile: docker-compose/dockerfiles/gerenciamento-usuarios-api.dockerfile
     ports:
-      - "8090:8080"
+      - "8090:8090"
     depends_on:
       keycloak:
         condition: service_healthy
@@ -157,13 +157,38 @@ services:
       - docker-compose/gerenciamento-usuarios.env
     labels:
       - traefik.http.routers.gerenciamento-usuarios.rule=PathPrefix(`/gerenciamento-usuarios`)
-      - traefik.http.services.gerenciamento-usuarios.loadbalancer.server.port=8080
+      - traefik.http.services.gerenciamento-usuarios.loadbalancer.server.port=8090
       - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
       - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
       - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
       - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
       - traefik.http.middlewares.cors.headers.addvaryheader=true
       - traefik.http.routers.gerenciamento-usuarios.middlewares=cors
+    networks:
+      - geo-network
+    restart: always
+  gerenciamento-posts:
+    container_name: gerenciamento-posts
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/gerenciamento-posts-api.dockerfile
+    ports:
+      - "8091:8091"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - docker-compose/default.env
+      - docker-compose/gerenciamento-posts.env
+    labels:
+      - traefik.http.routers.gerenciamento-posts.rule=PathPrefix(`/gerenciamento-posts`)
+      - traefik.http.services.gerenciamento-posts.loadbalancer.server.port=8091
+      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.cors.headers.addvaryheader=true
+      - traefik.http.routers.gerenciamento-posts.middlewares=cors
     networks:
       - geo-network
     restart: always

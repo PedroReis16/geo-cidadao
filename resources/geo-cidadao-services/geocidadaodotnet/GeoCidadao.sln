@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoCidadao.MongoDatabase", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoCidadao.Cloud", "GeoCidadao.Cloud\GeoCidadao.Cloud.csproj", "{C4EDDD47-08C6-4A9A-80B2-F0F8DB0969B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoCidadao.GerenciamentoPostsAPI", "GeoCidadao.GerenciamentoPostsAPI\GeoCidadao.GerenciamentoPostsAPI.csproj", "{FD8A2861-EEA3-47A4-B48B-3745398EF61A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,18 @@ Global
 		{C4EDDD47-08C6-4A9A-80B2-F0F8DB0969B7}.Release|x64.Build.0 = Release|Any CPU
 		{C4EDDD47-08C6-4A9A-80B2-F0F8DB0969B7}.Release|x86.ActiveCfg = Release|Any CPU
 		{C4EDDD47-08C6-4A9A-80B2-F0F8DB0969B7}.Release|x86.Build.0 = Release|Any CPU
+		{FD8A2861-EEA3-47A4-B48B-3745398EF61A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD8A2861-EEA3-47A4-B48B-3745398EF61A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD8A2861-EEA3-47A4-B48B-3745398EF61A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FD8A2861-EEA3-47A4-B48B-3745398EF61A}.Debug|x64.Build.0 = Debug|Any CPU
+		{FD8A2861-EEA3-47A4-B48B-3745398EF61A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FD8A2861-EEA3-47A4-B48B-3745398EF61A}.Debug|x86.Build.0 = Debug|Any CPU
+		{FD8A2861-EEA3-47A4-B48B-3745398EF61A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD8A2861-EEA3-47A4-B48B-3745398EF61A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD8A2861-EEA3-47A4-B48B-3745398EF61A}.Release|x64.ActiveCfg = Release|Any CPU
+		{FD8A2861-EEA3-47A4-B48B-3745398EF61A}.Release|x64.Build.0 = Release|Any CPU
+		{FD8A2861-EEA3-47A4-B48B-3745398EF61A}.Release|x86.ActiveCfg = Release|Any CPU
+		{FD8A2861-EEA3-47A4-B48B-3745398EF61A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
