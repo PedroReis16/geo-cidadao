@@ -1,6 +1,3 @@
-using System.Buffers;
-using System.Collections.Concurrent;
-using System.Threading.Channels;
 using Amazon.S3;
 using Amazon.S3.Model;
 using GeoCidadao.Cloud.Contracts;
@@ -10,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace GeoCidadao.Cloud.Services
 {
-    public class CloudBucketService(IConfiguration configuration) : ICloudBucketService
+    internal class CloudBucketService(IConfiguration configuration) : ICloudBucketService
     {
         private readonly IConfiguration _configuration = configuration;
 
@@ -54,7 +51,7 @@ namespace GeoCidadao.Cloud.Services
                 await response.WriteResponseStreamToFileAsync(request.FilePath, false, default);
             }
         }
-        
+
         public Task PutObjectAsync(Models.BucketRequests.PutObjectRequest request)
         {
             BucketCredentials credentials = GetCredentials();
