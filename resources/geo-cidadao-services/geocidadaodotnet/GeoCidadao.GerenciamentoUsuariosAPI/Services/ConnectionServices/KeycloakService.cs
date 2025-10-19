@@ -1,6 +1,5 @@
 using System.Net;
 using System.Text.Json;
-using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.CacheServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.ConnectionServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Models.DTOs;
 
@@ -38,9 +37,13 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services.ConnectionServices
             response.EnsureSuccessStatusCode();
         }
 
-        public Task UpdateUserAsync(Guid userId, UpdateUserDTO updatedProfile)
+        public async Task DeleteUserAsync(Guid userId)
         {
-            throw new NotImplementedException();
+            HttpResponseMessage response = await _httpClient.DeleteAsync($"users/{userId}");
+
+            response.EnsureSuccessStatusCode();
         }
+
+
     }
 }

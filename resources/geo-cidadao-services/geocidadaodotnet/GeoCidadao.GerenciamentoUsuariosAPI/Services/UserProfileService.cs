@@ -54,7 +54,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
             try
             {
                 await _keycloakService.UpdateUserAsync(userId, updatedProfile);
-                
+
                 _cacheService.RemoveUser(userId);
 
                 using IServiceScope scope = _serviceFactory.CreateScope();
@@ -82,11 +82,25 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
                 await _keycloakService.DeleteUserAsync(userId);
                 _cacheService.RemoveUser(userId);
 
+                using IServiceScope scope = _serviceFactory.CreateScope();
+
+                IUserProfileDao profileDao = scope.ServiceProvider.GetRequiredService<IUserProfileDao>();
+                INotifyUserChangedService? notifyService = scope.ServiceProvider.GetService<INotifyUserChangedService>();
+
+                await profileDao.DeleteAsync(userId);
+
+                if (notifyService != null)
+                    notifyService.NotifyUserDeleted(userId);
+
             }
             catch (Exception ex)
             {
                 string errorMessage = $"Houve um erro ao excluir o perfil de usuário '{userId}': {ex.GetFullMessage()}";
-                _logger.LogError(errorMessage, ex);
+
+                _logger.LogError(ex, errorMessage, context: _httpContext, additionalProperties: new Dictionary<string, object>
+                {
+                    { LogConstants.EntityId, userId }
+                });
                 throw new Exception(errorMessage);
             }
         }

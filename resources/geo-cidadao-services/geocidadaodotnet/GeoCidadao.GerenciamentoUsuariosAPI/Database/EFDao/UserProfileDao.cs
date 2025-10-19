@@ -6,6 +6,7 @@ using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
 using GeoCidadao.Model.Entities;
 using GeoCidadao.Model.Enums;
 using GeoCidadao.Model.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
 {
@@ -35,6 +36,23 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
         public Task UpdateUserPictureAsync(Guid userId, string objectKey, string fileHash)
         {
             throw new NotImplementedException();
+        }
+
+        public override Task<int> DeleteAsync(params object[] keys)
+        {
+            DbSet<UserProfile> dbSet = _context.Set<UserProfile>();
+
+            foreach (object key in keys)
+            {
+                UserProfile? trackedUser = dbSet.Where(u => u.Id.Equals(key)).FirstOrDefault();
+
+                if (trackedUser == null)
+                    continue;
+
+                dbSet.Remove(trackedUser);
+                _cache?.RemoveEntity(trackedUser);
+            }
+            return _context.SaveChangesAsync();
         }
     }
 }
