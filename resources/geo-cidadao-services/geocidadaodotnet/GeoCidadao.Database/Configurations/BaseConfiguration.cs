@@ -12,7 +12,7 @@ namespace GeoCidadao.Database.Configurations
             _ = builder.HasKey(x => x.Id);
             _ = builder.HasIndex(x => x.CreatedAt);
             _ = builder.HasIndex(x => x.UpdatedAt);
-            _ = builder.HasIndex(x => x.DeletedAt);
+            // _ = builder.HasIndex(x => x.DeletedAt);
 
             _ = builder.ToTable(Regex.Replace(GetType().Name.ToString().Replace("Configuration", ""), "([a-z])([A-Z])", "$1_$2").ToLower());
 
@@ -32,9 +32,9 @@ namespace GeoCidadao.Database.Configurations
                    .HasColumnName("updated_at")
                    .HasConversion(v => v, v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v);
 
-            _ = builder.Property(p => p.DeletedAt)
-                   .IsRequired(false)
-                   .HasColumnName("deleted_at");
+            // _ = builder.Property(p => p.DeletedAt)
+            //        .IsRequired(false)
+            //        .HasColumnName("deleted_at");
         }
     }
 }

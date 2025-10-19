@@ -33,7 +33,7 @@ namespace GeoCidadao.Database.EFDao
             {
                 TEntity? existingEntity = await dbSet
                     .AsNoTracking()
-                    .FirstOrDefaultAsync(e => e.Id.Equals(entity.Id) && e.DeletedAt == null);
+                    .FirstOrDefaultAsync(e => e.Id.Equals(entity.Id));
 
                 if (existingEntity == null)
                     continue;
@@ -55,21 +55,16 @@ namespace GeoCidadao.Database.EFDao
         {
             DbSet<TEntity> dbSet = _context.Set<TEntity>();
             List<TEntity> list = track ?
-                await dbSet.Where(d => d.DeletedAt == null).ToListAsync() :
-                await dbSet.Where(d => d.DeletedAt == null).AsNoTracking().ToListAsync();
+                await dbSet.ToListAsync() :
+                await dbSet.AsNoTracking().ToListAsync();
             return list;
         }
 
         public virtual async Task<int> DeleteAsync(params TEntity[] obj)
         {
             DbSet<TEntity> dbSet = _context.Set<TEntity>();
-            foreach (TEntity item in obj)
-            {
-                item.DeletedAt = item.UpdatedAt = DateTime.Now.ToUniversalTime();
-            }
-            dbSet.UpdateRange(obj);
+            dbSet.RemoveRange(obj);
             int result = await _context.SaveChangesAsync();
-
             if (result > 0)
                 _cache?.RemoveEntity(obj);
 
@@ -84,7 +79,7 @@ namespace GeoCidadao.Database.EFDao
                 TEntity? entity = await dbSet.FindAsync(item);
                 if (entity != null)
                 {
-                    entity.DeletedAt = entity.UpdatedAt = DateTime.Now.ToUniversalTime();
+                    entity.UpdatedAt = DateTime.Now.ToUniversalTime();
                     _ = dbSet.Update(entity);
                     _cache?.RemoveEntity(entity);
                 }
@@ -109,7 +104,7 @@ namespace GeoCidadao.Database.EFDao
                 await dbSet.FindAsync(key) :
                 await dbSet.AsNoTracking().FirstOrDefaultAsync(p => p.Id.Equals(key));
 
-            if (entity != null && entity.DeletedAt == null)
+            if (entity != null)
             {
                 if (!track)
                     _cache?.AddEntity(entity);
@@ -124,7 +119,6 @@ namespace GeoCidadao.Database.EFDao
             DbSet<TEntity> dbSet = _context.Set<TEntity>();
             foreach (TEntity item in obj)
             {
-                item.DeletedAt = null;
                 item.UpdatedAt = DateTime.Now.ToUniversalTime();
             }
             dbSet.UpdateRange(obj);
