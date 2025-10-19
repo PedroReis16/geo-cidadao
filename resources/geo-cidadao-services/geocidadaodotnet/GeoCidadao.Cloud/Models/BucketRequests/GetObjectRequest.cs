@@ -2,7 +2,7 @@
 
 namespace GeoCidadao.Cloud.Models.BucketRequests
 {
-    public class GetObjectRequest : BaseBucketRequest
+    public class GetObjectRequest 
     {
         public string ObjectKey { get; set; } = null!;
         public bool DoesSaveFile { get; set; } = true;
