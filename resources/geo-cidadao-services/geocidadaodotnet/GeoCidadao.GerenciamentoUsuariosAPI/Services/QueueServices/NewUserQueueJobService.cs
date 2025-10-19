@@ -37,7 +37,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices
                 if (message != null)
                 {
                     using IServiceScope scope = _serviceProvider.CreateScope();
-                    IProfileUserDao? userDao = scope.ServiceProvider.GetRequiredService<IProfileUserDao>();
+                    IUserProfileDao? userDao = scope.ServiceProvider.GetRequiredService<IUserProfileDao>();
 
                     if (userDao is not null)
                     {

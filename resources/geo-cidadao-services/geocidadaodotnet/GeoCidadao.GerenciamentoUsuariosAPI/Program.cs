@@ -22,6 +22,8 @@ using GeoCidadao.GerenciamentoUsuariosAPI.Database.CacheContracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao;
 using GeoCidadao.Cloud.Extensions;
+using GeoCidadao.GerenciamentoUsuariosAPI.Services.CacheServices;
+using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.CacheServices;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -54,14 +56,16 @@ builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
 builder.Services.AddBucketServices(); // -> Injeta a dependencia dos serviços de Bucket 
-builder.Services.AddTransient<IProfileService, ProfileService>();
-builder.Services.AddTransient<IProfilePictureService, ProfilePictureService>();
+builder.Services.AddTransient<IUserProfileService, UserProfileService>();
+builder.Services.AddTransient<IUserPictureService, UserPictureService>();
 
 // DAOs
-builder.Services.AddTransient<IProfileUserDao, ProfileUsersDao>();
+builder.Services.AddTransient<IUserProfileDao, UserProfileDao>();
+builder.Services.AddTransient<IUserPictureDao, UserPictureDao>();
 
 // Dao Cache
-builder.Services.AddTransient<IProfileUserDaoCache, ProfileUserDaoCache>();
+builder.Services.AddTransient<IUserProfileDaoCache, UserProfileDaoCache>();
+builder.Services.AddTransient<IUserPictureDaoCache, UserPictureDaoCache>();
 
 // Queue Services
 builder.Services.AddSingleton<INewUserQueueJobService, NewUserQueueJobService>();

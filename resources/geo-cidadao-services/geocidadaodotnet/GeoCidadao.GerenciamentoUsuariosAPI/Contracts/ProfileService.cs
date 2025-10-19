@@ -1,7 +1,7 @@
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Contracts
 {
-    public interface IProfileService
+    public interface IUserProfileService
     {
         Task GetUserProfileAsync(Guid userId);
     }

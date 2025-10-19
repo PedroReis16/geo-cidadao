@@ -1,6 +1,6 @@
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Contracts
 {
-    public interface IProfilePictureService
+    public interface IUserPictureService
     {
         Task UpdateUserPhotoAsync(Guid userId, IFormFile photoBase64);
     }
