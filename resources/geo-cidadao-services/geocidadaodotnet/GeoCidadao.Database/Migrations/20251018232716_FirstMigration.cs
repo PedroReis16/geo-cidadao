@@ -20,25 +20,39 @@ namespace GeoCidadao.Database.Migrations
                     email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     first_name = table.Column<string>(type: "text", nullable: false),
                     last_name = table.Column<string>(type: "text", nullable: false),
-                    profile_picture = table.Column<Guid>(type: "uuid", maxLength: 200, nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    deleted_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    updated_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_user_profile", x => x.id);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "user_picture",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    file_hash = table.Column<string>(type: "text", nullable: false),
+                    file_extension = table.Column<string>(type: "text", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user_picture", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_UserPicture_user_profile_Id",
+                        column: x => x.id,
+                        principalTable: "user_profile",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_user_profile_created_at",
                 table: "user_profile",
                 column: "created_at");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_user_profile_deleted_at",
-                table: "user_profile",
-                column: "deleted_at");
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_profile_email",
@@ -60,6 +74,9 @@ namespace GeoCidadao.Database.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "UserPicture");
+
             migrationBuilder.DropTable(
                 name: "user_profile");
         }

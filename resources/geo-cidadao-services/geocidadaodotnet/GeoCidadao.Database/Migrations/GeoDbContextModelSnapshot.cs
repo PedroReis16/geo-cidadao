@@ -22,6 +22,30 @@ namespace GeoCidadao.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("GeoCidadao.Model.Entities.UserPicture", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("FileExtension")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserPicture");
+                });
+
             modelBuilder.Entity("GeoCidadao.Model.Entities.UserProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -34,10 +58,6 @@ namespace GeoCidadao.Database.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("now()");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("deleted_at");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -55,11 +75,6 @@ namespace GeoCidadao.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("last_name");
 
-                    b.Property<Guid?>("ProfilePictureId")
-                        .HasMaxLength(200)
-                        .HasColumnType("uuid")
-                        .HasColumnName("profile_picture");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("updated_at");
@@ -74,8 +89,6 @@ namespace GeoCidadao.Database.Migrations
 
                     b.HasIndex("CreatedAt");
 
-                    b.HasIndex("DeletedAt");
-
                     b.HasIndex("Email");
 
                     b.HasIndex("UpdatedAt");
@@ -84,6 +97,22 @@ namespace GeoCidadao.Database.Migrations
                         .IsUnique();
 
                     b.ToTable("user_profile", (string)null);
+                });
+
+            modelBuilder.Entity("GeoCidadao.Model.Entities.UserPicture", b =>
+                {
+                    b.HasOne("GeoCidadao.Model.Entities.UserProfile", "User")
+                        .WithOne("ProfilePicture")
+                        .HasForeignKey("GeoCidadao.Model.Entities.UserPicture", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("GeoCidadao.Model.Entities.UserProfile", b =>
+                {
+                    b.Navigation("ProfilePicture");
                 });
 #pragma warning restore 612, 618
         }

@@ -33,11 +33,9 @@ namespace GeoCidadao.Database.Configurations
                 .HasColumnName("last_name")
                 .IsRequired();
 
-            _ = builder
-                .Property(x => x.ProfilePictureId)
-                .HasColumnName("profile_picture")
-                .HasMaxLength(200)
-                .IsRequired(false);
+            builder.HasOne(x => x.ProfilePicture)
+                .WithOne(up => up.User)
+                .HasForeignKey<UserPicture>(up => up.Id);
 
             builder.HasIndex(x => x.Username).IsUnique();
             builder.HasIndex(x => x.Email);
