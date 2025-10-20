@@ -146,7 +146,7 @@ services:
       context: .
       dockerfile: docker-compose/dockerfiles/gerenciamento-usuarios-api.dockerfile
     ports:
-      - "8090:8090"
+      - "8090:8080"
     depends_on:
       keycloak:
         condition: service_healthy
@@ -173,7 +173,7 @@ services:
       context: .
       dockerfile: docker-compose/dockerfiles/gerenciamento-posts-api.dockerfile
     ports:
-      - "8091:8091"
+      - "8091:8080"
     depends_on:
       rabbitmq:
         condition: service_healthy
