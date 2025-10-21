@@ -70,7 +70,7 @@
     </script>
 </head>
 
-<body class="${properties.kcBodyClass!}">
+<body class="${properties.kcBodyClass!} <#if bodyClass??>${bodyClass}</#if>">
     <div id="kc-container" class="${properties.kcContainerClass!}">
         <div id="kc-container-wrapper" class="${properties.kcContainerWrapperClass!}">
 

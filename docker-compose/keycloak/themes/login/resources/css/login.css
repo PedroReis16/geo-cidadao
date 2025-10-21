@@ -120,11 +120,6 @@ body {
   width: 100%;
 }
 
-.form-group {
-  margin-bottom: 24px;
-  animation: fadeInUp 0.6s ease;
-}
-
 .form-label {
   display: block;
   color: var(--text-primary);
