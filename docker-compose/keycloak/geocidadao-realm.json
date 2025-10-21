@@ -1095,8 +1095,8 @@
         "address",
         "phone",
         "offline_access",
-        "aud-geocidadao-posts-api",
         "organization",
+        "aud-geocidadao-posts-api",
         "microprofile-jwt",
         "aud-comments-service"
       ]
@@ -1157,8 +1157,8 @@
         "address",
         "phone",
         "offline_access",
-        "aud-geocidadao-posts-api",
         "organization",
+        "aud-geocidadao-posts-api",
         "microprofile-jwt"
       ]
     },
@@ -1331,8 +1331,8 @@
       "nodeReRegistrationTimeout": -1,
       "defaultClientScopes": [
         "aud-geocidadao-users-api",
-        "service_account",
         "web-origins",
+        "service_account",
         "acr",
         "profile",
         "aud-geocidadao-posts-api",
@@ -2380,7 +2380,7 @@
     "envelopeFrom": "",
     "ssl": "false"
   },
-  "loginTheme": "keycloak.v2",
+  "loginTheme": "custom-theme",
   "accountTheme": "",
   "adminTheme": "",
   "emailTheme": "",

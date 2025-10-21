@@ -1,4 +1,4 @@
-namespace GeoCidadao.UserPostsAPI.Config;
+namespace GeoCidadao.GerenciamentoPostsAPI.Config;
 
 public class AppSettingsProperties
 {

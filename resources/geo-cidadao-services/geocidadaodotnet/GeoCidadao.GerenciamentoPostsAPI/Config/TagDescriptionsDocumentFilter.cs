@@ -1,7 +1,7 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace GeoCidadao.UserPostsAPI.Config
+namespace GeoCidadao.GerenciamentoPostsAPI.Config
 {
     public class TagDescriptionsDocumentFilter : IDocumentFilter
     {

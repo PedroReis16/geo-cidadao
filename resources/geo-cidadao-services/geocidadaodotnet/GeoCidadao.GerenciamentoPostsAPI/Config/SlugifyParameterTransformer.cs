@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace GeoCidadao.UserPostsAPI.Config;
+namespace GeoCidadao.GerenciamentoPostsAPI.Config;
 
 public class SlugifyParameterTransformer : IOutboundParameterTransformer
 {

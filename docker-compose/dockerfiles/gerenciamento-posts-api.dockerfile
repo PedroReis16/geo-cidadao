@@ -4,23 +4,23 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY resources/geo-cidadao-services/geocidadaodotnet/<PROJECT_NAME>/<PROJECT_NAME>.csproj <PROJECT_NAME>/
+COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.GerenciamentoPostsAPI/GeoCidadao.GerenciamentoPostsAPI.csproj GeoCidadao.GerenciamentoPostsAPI/
 COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.AMQP/GeoCidadao.AMQP.csproj GeoCidadao.AMQP/
 COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.Database/GeoCidadao.Database.csproj GeoCidadao.Database/
 COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.Caching/GeoCidadao.Caching.csproj GeoCidadao.Caching/
 COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.Model/GeoCidadao.Model.csproj GeoCidadao.Model/
 
-RUN dotnet restore <PROJECT_NAME>/<PROJECT_NAME>.csproj
+RUN dotnet restore GeoCidadao.GerenciamentoPostsAPI/GeoCidadao.GerenciamentoPostsAPI.csproj
 
 COPY resources/geo-cidadao-services/geocidadaodotnet/ ./
 
-WORKDIR "/src/<PROJECT_NAME>"
-RUN dotnet build "<PROJECT_NAME>.csproj" -c Release -o /app/build
+WORKDIR "/src/GeoCidadao.GerenciamentoPostsAPI"
+RUN dotnet build "GeoCidadao.GerenciamentoPostsAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "<PROJECT_NAME>.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "GeoCidadao.GerenciamentoPostsAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "<PROJECT_NAME>.dll"]
+ENTRYPOINT ["dotnet", "GeoCidadao.GerenciamentoPostsAPI.dll"]

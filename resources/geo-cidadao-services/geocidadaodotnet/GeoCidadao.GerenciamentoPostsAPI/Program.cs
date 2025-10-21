@@ -6,12 +6,12 @@ using GeoCidadao.Database;
 using GeoCidadao.Database.Migrations;
 using GeoCidadao.Model.Middlewares;
 using GeoCidadao.Model.OAuth;
-using GeoCidadao.UserPostsAPI.Config;
+using GeoCidadao.GerenciamentoPostsAPI.Config;
 using System.Text.Json.Serialization;
 using System.Reflection;
+using GeoCidadao.Model.Constants;
+using GeoCidadao.Model.Helpers;
 using GeoCidadao.Model.Config;
-using GeoCidadao.UserPostsAPI.Services;
-using GeoCidadao.UserPostsAPI.Contracts;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -43,8 +43,6 @@ builder.Services.AddResponseCaching();
 builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
-builder.Services.AddTransient<IUserPostsService, UserPostsService>();
-
 
 // DAOs
 
@@ -83,10 +81,10 @@ builder.Services.AddSwaggerGen(option =>
     option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-// builder.Services.ConfigureOAuth([
-//     builder.Configuration.GetRequiredSection(AppSettingsProperties.OAuth).Get<OAuthConfiguration>()!,
-//     builder.Configuration.GetRequiredSection(AppSettingsProperties.PortalAuthClient).Get<OAuthConfiguration>()!
-// ]);
+builder.Services.ConfigureOAuth([
+    builder.Configuration.GetRequiredSection(AppSettingsProperties.OAuth).Get<OAuthConfiguration>()!,
+    builder.Configuration.GetRequiredSection(AppSettingsProperties.PortalAuthClient).Get<OAuthConfiguration>()!
+]);
 
 WebApplication app = builder.Build();
 
@@ -103,7 +101,7 @@ app.UseSwagger(c =>
 });
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint($"/{basePath}/swagger/v1/swagger.json", "GeoCidadao.UserPostsAPI v1");
+    options.SwaggerEndpoint($"/{basePath}/swagger/v1/swagger.json", "GeoCidadao.GerenciamentoPostsAPI v1");
     options.RoutePrefix = $"{basePath}/swagger";
 });
 

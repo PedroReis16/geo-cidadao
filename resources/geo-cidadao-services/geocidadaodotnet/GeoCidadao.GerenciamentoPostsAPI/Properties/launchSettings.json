@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "GeoCidadao.UserPostsAPI": {
+    "GeoCidadao.GerenciamentoPostsAPI": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

@@ -5,12 +5,12 @@ param(
     [int]$SSL_PORT
 )
 
-# Create API projeto 
+# Cria novo projeto de Web API e adiciona na solução
 dotnet new webapi -n $PROJECT_NAME -f net8.0
 dotnet sln add $PROJECT_NAME
 
-# Adiciona pacotes de suporte
 
+# Adiciona packages do NuGet (sempre revisar as versões)
 dotnet add $PROJECT_NAME package Microsoft.EntityFrameworkCore --version 8.0.4
 dotnet add $PROJECT_NAME package Microsoft.EntityFrameworkCore.Design --version 8.0.4
 dotnet add $PROJECT_NAME package Microsoft.VisualStudio.Azure.Containers.Tools.Targets --version 1.19.5
@@ -38,6 +38,11 @@ New-Item -Path "$PROJECT_NAME\Services" -ItemType Directory
 New-Item -Path "$PROJECT_NAME\Model" -ItemType Directory
 New-Item -Path "$PROJECT_NAME\Config" -ItemType Directory
 New-Item -Path "$PROJECT_NAME\Middlewares" -ItemType Directory
+New-Item -Path "$PROJECT_NAME\Database" -ItemType Directory
+New-Item -Path "$PROJECT_NAME\Database\Contracts" -ItemType Directory
+New-Item -Path "$PROJECT_NAME\Database\EFDao" -ItemType Directory
+New-Item -Path "$PROJECT_NAME\Database\CacheContracts" -ItemType Directory
+New-Item -Path "$PROJECT_NAME\Database\Cache" -ItemType Directory
 
 # Cria classes padrão
 Copy-Item -Path "Templates\AppSettingsProperties.cs" -Destination "$PROJECT_NAME\Config\AppSettingsProperties.cs"
@@ -66,11 +71,11 @@ Copy-Item -Path "Templates\appsettings.Development.json" -Destination "$PROJECT_
 (Get-Content "$PROJECT_NAME\appsettings.Development.json") -replace '<API_NAME>', $API_NAME -replace '<LOG_NAME>', ( -join ($API_NAME -split '[-_\s]+' | ForEach-Object { if ($_.Length -gt 0) { $_.Substring(0, 1).ToUpper() + $_.Substring(1).ToLower() } })) | Set-Content "$PROJECT_NAME\appsettings.Development.json"
 
 Copy-Item -Path "Templates\Template.env" -Destination "../../../docker-compose/$API_NAME.env"
-(Get-Content "docker-compose/$API_NAME.env") -replace '<API_NAME>', $API_NAME | Set-Content "../../../docker-compose/$API_NAME.env" 
+(Get-Content "../../../docker-compose/$API_NAME.env") -replace '<API_NAME>', $API_NAME | Set-Content "../../../docker-compose/$API_NAME.env" 
 
 # Cria arquivos para deploy
 Copy-Item -Path "Templates\Template.dockerfile" -Destination "../../../docker-compose/dockerfiles/$API_NAME-api.dockerfile"
-(Get-Content "docker-compose/dockerfiles/$API_NAME-api.dockerfile") -replace '<PROJECT_NAME>', $PROJECT_NAME | Set-Content "docker-compose/dockerfiles/$API_NAME-api.dockerfile"
+(Get-Content "../../../docker-compose/dockerfiles/$API_NAME-api.dockerfile") -replace '<PROJECT_NAME>', $PROJECT_NAME | Set-Content "../../../docker-compose/dockerfiles/$API_NAME-api.dockerfile"
 
 # Exclui arquivos sem uso
 Remove-Item "$PROJECT_NAME\$PROJECT_NAME.http"
