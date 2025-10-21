@@ -47,6 +47,11 @@
                         <span> para reenviar o código de verificação</span>
                     </p>
 
+                    <div id="auto-check-status" class="auto-check-status" style="display: none;">
+                        <div class="spinner"></div>
+                        <span>Aguardando verificação do email...</span>
+                    </div>
+
                     <div class="action-buttons">
                         <a href="${url.loginRestartFlowUrl}" class="back-button">
                             <svg class="back-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,6 +63,72 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            // Polling para verificar se o email foi verificado
+            // Quando o usuário clica no link do email, o Keycloak atualiza o status
+            // Este script verifica periodicamente e redireciona automaticamente
+            (function() {
+                var pollInterval = 3000; // Verifica a cada 3 segundos
+                var maxAttempts = 600; // Tenta por 30 minutos (600 * 3s = 1800s)
+                var attempts = 0;
+                var statusElement = document.getElementById('auto-check-status');
+
+                function showStatus() {
+                    if (statusElement) {
+                        statusElement.style.display = 'flex';
+                    }
+                }
+
+                function hideStatus() {
+                    if (statusElement) {
+                        statusElement.style.display = 'none';
+                    }
+                }
+
+                function checkEmailVerified() {
+                    if (attempts >= maxAttempts) {
+                        console.log('Polling parado após atingir o limite de tentativas');
+                        hideStatus();
+                        return;
+                    }
+
+                    attempts++;
+                    showStatus();
+
+                    // Faz uma requisição para verificar o status
+                    fetch(window.location.href, {
+                        method: 'GET',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Accept': 'text/html'
+                        }
+                    })
+                    .then(function(response) {
+                        return response.text();
+                    })
+                    .then(function(html) {
+                        // Se a página mudou (não é mais a página de verificação), recarrega
+                        if (html.indexOf('email-verification-container') === -1) {
+                            window.location.reload();
+                        } else {
+                            // Continua verificando
+                            setTimeout(checkEmailVerified, pollInterval);
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Erro ao verificar status do email:', error);
+                        // Continua verificando mesmo com erro
+                        setTimeout(checkEmailVerified, pollInterval);
+                    });
+                }
+
+                // Inicia a verificação após 5 segundos
+                setTimeout(function() {
+                    checkEmailVerified();
+                }, 5000);
+            })();
+        </script>
     <#elseif section = "info">
         <#-- Info section vazia para evitar duplicação -->
     </#if>

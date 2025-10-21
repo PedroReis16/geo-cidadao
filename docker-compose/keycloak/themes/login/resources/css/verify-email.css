@@ -207,6 +207,37 @@ body.verify-email-page .resend-link:hover {
   text-decoration: underline;
 }
 
+/* Status de verificação automática */
+body.verify-email-page .auto-check-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 12px 20px;
+  background-color: rgba(8, 189, 189, 0.08);
+  border: 1px solid rgba(8, 189, 189, 0.2);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  animation: fadeInUp 0.4s ease;
+}
+
+body.verify-email-page .spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(8, 189, 189, 0.3);
+  border-top-color: var(--button-hover);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Botões de ação */
 body.verify-email-page .action-buttons {
   display: flex;
