@@ -6,23 +6,34 @@ import {
 } from "react-router-dom";
 
 //Components
-import Header from "../ui/components/Header/Header";
+import ProtectedRoute from "../ui/components/ProtectedRoute";
 
 //Pages
 import FeedPage from "./FeedPage";
 import PostPage from "./PostPage";
 import NotFoundPage from "./NotFoundPage";
+import KeycloakCallback from "./KeycloakCallback";
 
 // Styles
 import { ThemeProvider } from "../data/contexts/ThemeProvider";
 
+// Layout protegido que envolve todas as rotas
+const ProtectedLayout = () => (
+  <ProtectedRoute>
+    <Outlet />
+  </ProtectedRoute>
+);
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Outlet />,
+    element: <ProtectedLayout />,
     children: [
       {
         index: true,
+        element: <Navigate to="/feed" replace />, // Redirect root to /feed
+      },
+      {
         path: "feed",
         element: <FeedPage />,
       },
@@ -34,11 +45,12 @@ const router = createBrowserRouter([
         path: "*",
         element: <NotFoundPage />,
       },
-      {
-        index: true,
-        element: <Navigate to="/feed" replace />, // Redirect root to /feed
-      },
     ],
+  },
+  {
+    // Rota de callback do Keycloak (sem proteção)
+    path: "/auth/callback",
+    element: <KeycloakCallback />,
   },
 ]);
 
