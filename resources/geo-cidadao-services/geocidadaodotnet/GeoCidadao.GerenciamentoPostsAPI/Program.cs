@@ -13,6 +13,8 @@ using GeoCidadao.GerenciamentoPostsAPI.Contracts;
 using GeoCidadao.Cloud.Extensions;
 using GeoCidadao.GerenciamentoPostsAPI.Database.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Database.EFDao;
+using GeoCidadao.GerenciamentoPostsAPI.Services.QueueServices;
+using GeoCidadao.GerenciamentoPostsAPI.Contracts.QueueServices;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -47,6 +49,9 @@ builder.Services.AddTransient<IMediaService, MediaService>();
 builder.Services.AddTransient<IPostDao, PostDao>();
 builder.Services.AddTransient<IPostMediaDao, PostMediaDao>();
 builder.Services.AddTransient<IPostLocationDao, PostLocationDao>();
+
+// Queue Services
+builder.Services.AddSingleton<INotifyPostChangedService, NotifyPostChangedService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();

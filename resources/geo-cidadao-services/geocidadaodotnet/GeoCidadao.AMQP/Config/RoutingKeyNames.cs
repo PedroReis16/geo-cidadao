@@ -30,4 +30,14 @@ public static class RoutingKeyNames
     /// Dead Letter Routing key para notificação de alterações nos dados do usuário
     /// </summary>
     public const string DLQ_USER_CHANGED_ACTIONS_ROUTING_KEY = "user.changed.dlq";
+
+    /// <summary>
+    /// Routing key para notificação de alteração em posts
+    /// </summary>
+    public const string POST_CHANGED_ROUTING_KEY = "post.changed";
+
+    /// <summary>
+    /// Dead Letter Routing key para notificação de alteração em posts
+    /// </summary>
+    public const string DLQ_POST_CHANGED_ROUTING_KEY = "post.changed.dlq";
 }
