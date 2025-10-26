@@ -12,5 +12,8 @@ namespace GeoCidadao.Model.Enums
         INVALID_MEDIA = 8,
         FILE_HASH_REQUIRED = 9,
         FILE_EXTENSION_REQUIRED = 10,
+        USER_ID_REQUIRED = 11,
+        CONTENT_REQUIRED = 12,
+        POST_MEDIA_LIMIT_EXCEEDED = 13,
     }
 }

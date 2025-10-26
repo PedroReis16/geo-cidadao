@@ -14,5 +14,6 @@ namespace GeoCidadao.Model.Constants
         public const string OldEntity = "OldEntity";
         public const string UpdatedEntity = "UpdatedEntity";
         public const string RequestMethod = "RequestMethod";
+        public const string UserId = "UserId";
     }
 }
