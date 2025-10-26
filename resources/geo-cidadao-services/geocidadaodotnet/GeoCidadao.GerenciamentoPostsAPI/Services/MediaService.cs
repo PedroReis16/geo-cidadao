@@ -8,9 +8,13 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
     {
         private readonly ICloudBucketService _bucketService = bucketService;
 
+
         public Task<List<string>> GetPostMediaKeysAsync(Guid postId)
         {
-            throw new NotImplementedException();
+            return _bucketService.ListObjectsAsync(new()
+            {
+
+            });
         }
 
         public Task UploadMediaAsync(Guid postId, Guid mediaId, Stream fileContent, out string fileExtension)
@@ -48,6 +52,12 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
 
             return _bucketService.PutObjectAsync(putRequest);
         }
-
+        public Task DeleteMediaAsync(string mediaKey)
+        {
+            return _bucketService.DeleteObjectAsync(new()
+            {
+                ObjectKey = mediaKey
+            });
+        }
     }
 }

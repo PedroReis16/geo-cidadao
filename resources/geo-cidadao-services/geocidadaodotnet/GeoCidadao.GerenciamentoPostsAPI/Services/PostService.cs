@@ -46,7 +46,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
 
                 if (newPost.Media != null && newPost.Media.Any())
                 {
-                    if(newPost.Media.Count > 10)
+                    if (newPost.Media.Count > 10)
                         throw new EntityValidationException(nameof(Post), "Um post não pode conter mais do que 10 mídias.", ErrorCodes.POST_MEDIA_LIMIT_EXCEEDED);
 
                     IMediaService mediaService = scope.ServiceProvider.GetRequiredService<IMediaService>();
@@ -105,6 +105,14 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                 IMediaService mediaService = scope.ServiceProvider.GetRequiredService<IMediaService>();
 
                 List<string> postMediaKeys = await mediaService.GetPostMediaKeysAsync(postId);
+
+                List<Task> deleteTasks = new();
+                foreach (string mediaKey in postMediaKeys.Where(k => k.StartsWith(postId.ToString())))
+                {
+                    deleteTasks.Add(mediaService.DeleteMediaAsync(mediaKey));
+                }
+
+                await Task.WhenAll(deleteTasks);
             }
             catch (Exception ex)
             {
@@ -113,7 +121,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                 {
                     { LogConstants.EntityId, postId },
                 });
-                throw new Exception(errorMsg, ex);
+                
             }
         }
 
