@@ -2,14 +2,17 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using GeoCidadao.Caching.Extensions;
-using GeoCidadao.Database;
-using GeoCidadao.Database.Migrations;
 using GeoCidadao.Model.Middlewares;
 using GeoCidadao.GerenciamentoPostsAPI.Config;
 using System.Text.Json.Serialization;
 using System.Reflection;
 using GeoCidadao.Model.Config;
 using GeoCidadao.Database.Extensions;
+using GeoCidadao.GerenciamentoPostsAPI.Services;
+using GeoCidadao.GerenciamentoPostsAPI.Contracts;
+using GeoCidadao.Cloud.Extensions;
+using GeoCidadao.GerenciamentoPostsAPI.Database.Contracts;
+using GeoCidadao.GerenciamentoPostsAPI.Database.EFDao;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -36,8 +39,14 @@ builder.Services.AddResponseCaching();
 builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
+builder.Services.AddBucketServices();
+builder.Services.AddTransient<IPostService, PostService>();
+builder.Services.AddTransient<IMediaService, MediaService>();
 
 // DAOs
+builder.Services.AddTransient<IPostDao, PostDao>();
+builder.Services.AddTransient<IPostMediaDao, PostMediaDao>();
+builder.Services.AddTransient<IPostLocationDao, PostLocationDao>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();

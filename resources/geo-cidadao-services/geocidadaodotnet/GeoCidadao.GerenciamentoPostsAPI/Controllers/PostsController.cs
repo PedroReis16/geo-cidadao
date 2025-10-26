@@ -1,5 +1,6 @@
 using GeoCidadao.GerenciamentoPostsAPI.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts;
+using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
@@ -35,9 +36,9 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNewPost([FromHeader] Guid userId, [FromForm] NewPostDTO newPost)
         {
-            await _service.CreatePostAsync(userId, newPost);
+            PostDTO createdPost = await _service.CreatePostAsync(userId, newPost);
 
-            return CreatedAtAction(nameof(GetPost), new { postId = Guid.NewGuid() }, null);
+            return CreatedAtAction(nameof(GetPost), new { postId = createdPost.Id }, null);
         }
 
         [HttpPut("{postId}")]
