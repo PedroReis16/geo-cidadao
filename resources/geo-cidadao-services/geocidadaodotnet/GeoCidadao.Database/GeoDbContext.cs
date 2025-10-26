@@ -1,8 +1,11 @@
-using GeoCidadao.Database.Configurations;
+using GeoCidadao.Database.Configurations.GerenciamentoPostsAPI;
+using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
 using GeoCidadao.Model.Entities;
 using GeoCidadao.Database.Configurations.GerenciamentoUsuariosAPI;
 using GeoCidadao.Model.Entities.GerenciamentoUsuariosAPI;
 using Microsoft.EntityFrameworkCore;
+using GeoCidadao.Database.Entities.GerenciamentoPostsAPI;
+using GeoCidadao.Model.Enums;
 
 namespace GeoCidadao.Database
 {
@@ -12,6 +15,11 @@ namespace GeoCidadao.Database
         public DbSet<UserProfile> UserProfiles { get; set; } = default!;
         public DbSet<UserPicture> UserPictures { get; set; } = default!;
 
+        //Gerenciamento de posts API
+        public DbSet<Post> Posts { get; set; } = default!;
+        public DbSet<PostMedia> PostMedias { get; set; } = default!;
+        public DbSet<PostLocation> PostLocations { get; set; } = default!;
+
         static GeoDbContext()
         {
 
@@ -19,16 +27,23 @@ namespace GeoCidadao.Database
 
         public GeoDbContext(DbContextOptions<GeoDbContext> options) : base(options)
         {
-
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            _ = modelBuilder.HasPostgresEnum<PostCategory>("post_categories");
+
             // Gerenciamento de usuários API
             _ = modelBuilder.ApplyConfiguration(new UserProfileConfiguration());
             _ = modelBuilder.ApplyConfiguration(new UserPictureConfiguration());
+
+            // Gerenciamento de posts API
+
+            _ = modelBuilder.ApplyConfiguration(new PostConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new PostMediaConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new PostLocationConfiguration());
 
             _ = modelBuilder.Ignore<BaseEntity>();
         }
