@@ -28,6 +28,7 @@ using GeoCidadao.GerenciamentoUsuariosAPI.Services.ConnectionServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.ConnectionServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Middlewares;
 using Microsoft.Extensions.Options;
+using GeoCidadao.Database.Extensions;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -44,12 +45,8 @@ builder.Services.AddControllers(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-builder.Services.AddDbContext<GeoDbContext>(options =>
-{
-    _ = options.UseNpgsql(builder.Configuration.GetConnectionString("GeoDb"));
-});
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-builder.Services.AddTransient<IStartupFilter, MigrationStartupFilter<GeoDbContext>>();
+builder.Services.UsePostgreSql(builder.Configuration);
+
 
 builder.Services.Configure<KeycloakAdminOptions>(builder.Configuration.GetSection(AppSettingsProperties.Keycloak).GetSection(AppSettingsProperties.KeycloakAdmin)!);
 

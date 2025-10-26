@@ -16,6 +16,8 @@
     <PackageReference Include="Serilog.Expressions" Version="5.1.0-dev-02301" />
     <PackageReference Include="MongoDB.Driver" Version="3.4.0" />
     <PackageReference Include="NetDevPack.Security.JwtExtensions" Version="8.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite"
+      Version="8.0.2" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
