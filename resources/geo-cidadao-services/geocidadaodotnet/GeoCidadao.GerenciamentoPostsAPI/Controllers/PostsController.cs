@@ -1,6 +1,5 @@
 using GeoCidadao.GerenciamentoPostsAPI.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts;
-using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
@@ -49,9 +48,9 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         }
 
         [HttpDelete("{postId}")]
-        public async Task<IActionResult> DeletePost(Guid postId)
+        public async Task<IActionResult> DeletePost(Guid postId, [FromHeader] Guid userId)
         {
-            await _service.DeletePostAsync(postId);
+            await _service.DeletePostAsync(postId, userId);
             return NoContent();
         }
     }

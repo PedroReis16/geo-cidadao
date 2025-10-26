@@ -15,5 +15,6 @@ namespace GeoCidadao.Model.Enums
         USER_ID_REQUIRED = 11,
         CONTENT_REQUIRED = 12,
         POST_MEDIA_LIMIT_EXCEEDED = 13,
+        POST_NOT_FOUND = 14,
     }
 }

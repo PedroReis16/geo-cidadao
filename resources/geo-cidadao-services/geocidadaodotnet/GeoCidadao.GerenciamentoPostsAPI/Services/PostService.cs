@@ -1,5 +1,5 @@
-using GeoCidadao.Cloud.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Contracts;
+using GeoCidadao.GerenciamentoPostsAPI.Contracts.QueueServices;
 using GeoCidadao.GerenciamentoPostsAPI.Database.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts;
 using GeoCidadao.Model.Constants;
@@ -7,6 +7,7 @@ using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
 using GeoCidadao.Model.Enums;
 using GeoCidadao.Model.Exceptions;
 using GeoCidadao.Model.Extensions;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Services
 {
@@ -26,6 +27,10 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
             throw new NotImplementedException();
         }
 
+        public Task<List<PostDTO>> GetUserPostsAsync(Guid userId)
+        {
+            throw new NotImplementedException();
+        }
         public async Task<PostDTO> CreatePostAsync(Guid userId, NewPostDTO newPost)
         {
             Guid postId = Guid.NewGuid();
@@ -121,23 +126,54 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                 {
                     { LogConstants.EntityId, postId },
                 });
-                
             }
         }
 
         public Task UpdatePostAsync(Guid postId, UpdatePostDTO updatedPost)
         {
+            //TODO: Implementar a validação de propriedade do post antes de deletar
             throw new NotImplementedException();
         }
 
-        public Task DeletePostAsync(Guid postId)
+        public async Task DeletePostAsync(Guid userId, Guid postId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using IServiceScope scope = _scopeFactory.CreateScope();
+                IPostDao postRepository = scope.ServiceProvider.GetRequiredService<IPostDao>();
+
+                Post? postToDelete = await postRepository.FindAsync(postId);
+
+                if (postToDelete == null)
+                    throw new EntityValidationException(nameof(Post), "Post não encontrado para deleção", ErrorCodes.POST_NOT_FOUND);
+
+                //TODO: Implementar a validação de propriedade do post antes de deletar
+
+                await Task.WhenAll(
+                    postRepository.DeleteAsync(postToDelete),
+                    DeleteErrorPostMediaAsync(postId)
+                );
+
+                NotifyPostChanged(postId);
+            }
+            catch (Exception ex)
+            {
+                string errorMsg = $"Ocorreu um erro ao tentar deletar o post '{postId}': {ex.GetFullMessage()}";
+                _logger.LogError(ex, errorMsg, _context, new()
+                {
+                    { LogConstants.EntityId, postId },
+                });
+                throw new Exception(errorMsg, ex);
+            }
         }
 
-        public Task<List<PostDTO>> GetUserPostsAsync(Guid userId)
+        private void NotifyPostChanged(Guid postId)
         {
-            throw new NotImplementedException();
+            using IServiceScope scope = _scopeFactory.CreateScope();
+            INotifyPostChangedService notifyService = scope.ServiceProvider.GetRequiredService<INotifyPostChangedService>();
+
+            notifyService.NotifyPostChanged(postId);
         }
+
     }
 }
