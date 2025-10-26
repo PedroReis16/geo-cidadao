@@ -7,6 +7,7 @@ using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
 using GeoCidadao.Model.Constants;
 using GeoCidadao.Model.Entities;
+using GeoCidadao.Model.Entities.GerenciamentoUsuariosAPI;
 using GeoCidadao.Model.Enums;
 using GeoCidadao.Model.Exceptions;
 using GeoCidadao.Model.Extensions;

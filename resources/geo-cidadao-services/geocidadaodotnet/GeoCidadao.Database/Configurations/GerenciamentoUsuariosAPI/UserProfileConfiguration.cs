@@ -1,9 +1,9 @@
 
-using GeoCidadao.Model.Entities;
+using GeoCidadao.Model.Entities.GerenciamentoUsuariosAPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace GeoCidadao.Database.Configurations
+namespace GeoCidadao.Database.Configurations.GerenciamentoUsuariosAPI
 {
     public class UserProfileConfiguration : BaseConfiguration<UserProfile>
     {

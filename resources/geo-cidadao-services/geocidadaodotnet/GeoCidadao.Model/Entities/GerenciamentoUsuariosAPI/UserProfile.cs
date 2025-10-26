@@ -1,6 +1,4 @@
-using GeoCidadao.Model.Entities;
-
-namespace GeoCidadao.Model.Entities
+namespace GeoCidadao.Model.Entities.GerenciamentoUsuariosAPI
 {
     public class UserProfile : BaseEntity
     {
