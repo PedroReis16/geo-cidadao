@@ -12,10 +12,8 @@ namespace GeoCidadao.Database.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql("CREATE EXTENSION IF NOT EXISTS postgis");
-
             migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:Enum:post_categories.post_category", "crime,vandalism,public_disorder,illegal_occupation,traffic_accident,damaged_signage,missing_signage,traffic_congestion,illegal_parking,lack_of_accessibility,road_hole,public_lighting,damaged_pavement,clogged_drain,damaged_bridge,damaged_sidewalk,illegal_construction,accumulated_garbage,irregular_waste_disposal,pollution,fire,deforestation,flooding,water_outage,power_outage,garbage_collection_failure,abandoned_animal,aggressive_animal,lack_of_sanitation,poor_public_space_maintenance,lack_of_social_programs,illegal_settlement,homeless_person,event_show,event_protest,event_fair,temporary_interdiction,large_gathering,lack_of_public_response,inefficient_inspection,abandoned_public_equipment")
+                .Annotation("Npgsql:Enum:post_categories", "crime,vandalism,public_disorder,illegal_occupation,traffic_accident,damaged_signage,missing_signage,traffic_congestion,illegal_parking,lack_of_accessibility,road_hole,public_lighting,damaged_pavement,clogged_drain,damaged_bridge,damaged_sidewalk,illegal_construction,accumulated_garbage,irregular_waste_disposal,pollution,fire,deforestation,flooding,water_outage,power_outage,garbage_collection_failure,abandoned_animal,aggressive_animal,lack_of_sanitation,poor_public_space_maintenance,lack_of_social_programs,illegal_settlement,homeless_person,event_show,event_protest,event_fair,temporary_interdiction,large_gathering,lack_of_public_response,inefficient_inspection,abandoned_public_equipment")
                 .Annotation("Npgsql:PostgresExtension:postgis", ",,");
 
             migrationBuilder.CreateTable(
@@ -57,6 +55,7 @@ namespace GeoCidadao.Database.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     media_type = table.Column<string>(type: "text", nullable: false),
                     order = table.Column<int>(type: "integer", nullable: false),
+                    file_size = table.Column<double>(type: "double precision", nullable: false),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "now()"),
                     updated_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
@@ -156,7 +155,7 @@ namespace GeoCidadao.Database.Migrations
                 name: "post");
 
             migrationBuilder.AlterDatabase()
-                .OldAnnotation("Npgsql:Enum:post_categories.post_category", "crime,vandalism,public_disorder,illegal_occupation,traffic_accident,damaged_signage,missing_signage,traffic_congestion,illegal_parking,lack_of_accessibility,road_hole,public_lighting,damaged_pavement,clogged_drain,damaged_bridge,damaged_sidewalk,illegal_construction,accumulated_garbage,irregular_waste_disposal,pollution,fire,deforestation,flooding,water_outage,power_outage,garbage_collection_failure,abandoned_animal,aggressive_animal,lack_of_sanitation,poor_public_space_maintenance,lack_of_social_programs,illegal_settlement,homeless_person,event_show,event_protest,event_fair,temporary_interdiction,large_gathering,lack_of_public_response,inefficient_inspection,abandoned_public_equipment")
+                .OldAnnotation("Npgsql:Enum:post_categories", "crime,vandalism,public_disorder,illegal_occupation,traffic_accident,damaged_signage,missing_signage,traffic_congestion,illegal_parking,lack_of_accessibility,road_hole,public_lighting,damaged_pavement,clogged_drain,damaged_bridge,damaged_sidewalk,illegal_construction,accumulated_garbage,irregular_waste_disposal,pollution,fire,deforestation,flooding,water_outage,power_outage,garbage_collection_failure,abandoned_animal,aggressive_animal,lack_of_sanitation,poor_public_space_maintenance,lack_of_social_programs,illegal_settlement,homeless_person,event_show,event_protest,event_fair,temporary_interdiction,large_gathering,lack_of_public_response,inefficient_inspection,abandoned_public_equipment")
                 .OldAnnotation("Npgsql:PostgresExtension:postgis", ",,");
         }
     }

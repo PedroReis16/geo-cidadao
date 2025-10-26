@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GeoCidadao.Database.Migrations
 {
     [DbContext(typeof(GeoDbContext))]
-    [Migration("20251026152731_AddPostEntityStructure")]
+    [Migration("20251026222312_AddPostEntityStructure")]
     partial class AddPostEntityStructure
     {
         /// <inheritdoc />
@@ -24,7 +24,7 @@ namespace GeoCidadao.Database.Migrations
                 .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "post_categories", "post_category", new[] { "crime", "vandalism", "public_disorder", "illegal_occupation", "traffic_accident", "damaged_signage", "missing_signage", "traffic_congestion", "illegal_parking", "lack_of_accessibility", "road_hole", "public_lighting", "damaged_pavement", "clogged_drain", "damaged_bridge", "damaged_sidewalk", "illegal_construction", "accumulated_garbage", "irregular_waste_disposal", "pollution", "fire", "deforestation", "flooding", "water_outage", "power_outage", "garbage_collection_failure", "abandoned_animal", "aggressive_animal", "lack_of_sanitation", "poor_public_space_maintenance", "lack_of_social_programs", "illegal_settlement", "homeless_person", "event_show", "event_protest", "event_fair", "temporary_interdiction", "large_gathering", "lack_of_public_response", "inefficient_inspection", "abandoned_public_equipment" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "post_categories", new[] { "crime", "vandalism", "public_disorder", "illegal_occupation", "traffic_accident", "damaged_signage", "missing_signage", "traffic_congestion", "illegal_parking", "lack_of_accessibility", "road_hole", "public_lighting", "damaged_pavement", "clogged_drain", "damaged_bridge", "damaged_sidewalk", "illegal_construction", "accumulated_garbage", "irregular_waste_disposal", "pollution", "fire", "deforestation", "flooding", "water_outage", "power_outage", "garbage_collection_failure", "abandoned_animal", "aggressive_animal", "lack_of_sanitation", "poor_public_space_maintenance", "lack_of_social_programs", "illegal_settlement", "homeless_person", "event_show", "event_protest", "event_fair", "temporary_interdiction", "large_gathering", "lack_of_public_response", "inefficient_inspection", "abandoned_public_equipment" });
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
@@ -128,6 +128,10 @@ namespace GeoCidadao.Database.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("now()");
+
+                    b.Property<double>("FileSize")
+                        .HasColumnType("double precision")
+                        .HasColumnName("file_size");
 
                     b.Property<string>("MediaType")
                         .IsRequired()

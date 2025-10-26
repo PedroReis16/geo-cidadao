@@ -21,6 +21,11 @@ namespace GeoCidadao.Database.Configurations.GerenciamentoPostsAPI
                 .IsRequired();
 
             builder
+                .Property(pm => pm.FileSize)
+                .HasColumnName("file_size")
+                .IsRequired();
+
+            builder
                 .HasOne(pm => pm.Post)
                 .WithMany(p => p.Medias);
 

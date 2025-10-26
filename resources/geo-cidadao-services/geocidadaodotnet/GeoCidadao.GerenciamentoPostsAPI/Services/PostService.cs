@@ -66,6 +66,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                         {
                             await mediaService.UploadMediaAsync(postId, media.Id, fileContent, out string fileExtension);
                             media.MediaType = fileExtension;
+                            media.FileSize = fileContent.Length;
                             newPostEntity.Medias.Add(media);
                         }));
                     }

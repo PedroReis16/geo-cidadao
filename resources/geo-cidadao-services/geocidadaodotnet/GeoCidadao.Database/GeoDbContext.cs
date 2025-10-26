@@ -33,7 +33,7 @@ namespace GeoCidadao.Database
         {
             base.OnModelCreating(modelBuilder);
 
-            _ = modelBuilder.HasPostgresEnum<PostCategory>("post_categories");
+            _ = modelBuilder.HasPostgresEnum<PostCategory>(name: "post_categories");
 
             // Gerenciamento de usuários API
             _ = modelBuilder.ApplyConfiguration(new UserProfileConfiguration());
