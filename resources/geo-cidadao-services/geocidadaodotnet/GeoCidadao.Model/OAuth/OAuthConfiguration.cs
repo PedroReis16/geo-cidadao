@@ -1,102 +1,104 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
-using GeoCidadao.Model.Helpers;
-using GeoCidadao.Model.Middlewares;
-using NetDevPack.Security.JwtExtensions;
+using MongoDB.Driver;
 
 namespace GeoCidadao.Model.OAuth;
 
 public class OAuthConfiguration
 {
-    public const string SECRET_ALLOW_ANONYMOUS = "sirwyX-9cixze-vejgeg";
-    public const string SECRET_ALLOW_ANONYMOUS_USER = "jkd72lm-q9vtxe4-81rmbz3";
-    public string JwksEndpoint { get; set; } = null!;
-    public string Issuer { get; set; } = null!;
-    public List<string> Claims { get; set; } = null!;
-    public string? ClientId { get; set; }
+    public string Authority { get; set; } = null!;
+    public Dictionary<string, string> ClaimRoles { get; set; } = new();
+    public Dictionary<string, string> GroupClaims { get; set; } = new();
 }
 
 public static class OAuthConfigurationExtensions
 {
-    public static IServiceCollection ConfigureOAuth(this IServiceCollection services, List<OAuthConfiguration> oauthConfig)
+    public static IServiceCollection ConfigureOAuth(this IServiceCollection services, OAuthConfiguration oauthConfig)
     {
-        services.AddAuthentication(options =>
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
             {
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.AddScheme<AllowAnonymousAuthenticationHandler>(AllowAnonymousDefaults.AllowAnonymousScheme, AllowAnonymousDefaults.AllowAnonymousScheme);
-                options.AddScheme<AllowAnonymousUserAuthenticationHandler>(AllowAnonymousDefaults.AllowAnonymousUserScheme, AllowAnonymousDefaults.AllowAnonymousUserScheme);
-            });
+                options.Authority = oauthConfig.Authority;
+                options.RequireHttpsMetadata = false;   //TODO: Mudar para true em produção
 
-        foreach (var config in oauthConfig)
-        {
-            var schemeName = !string.IsNullOrWhiteSpace(config.ClientId) ? "ClientCredentials" : "OAuth";
-
-            services.AddAuthentication().AddJwtBearer(schemeName, options =>
-            {
-                options.SetJwksOptions(new JwkOptions(
-                    jwksUri: config.JwksEndpoint,
-                    issuer: config.Issuer,
-                    cacheTime: TimeSpan.FromMinutes(5)
-                ));
-            });
-        }
-
-
-        services.AddAuthentication()
-            .AddPolicyScheme(JwtBearerDefaults.AuthenticationScheme, JwtBearerDefaults.AuthenticationScheme, options =>
-            {
-                options.ForwardDefaultSelector = context =>
+                // Remove a validação da audiência (audience) do token
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
-                    var remoteIpAddress = context.Connection.RemoteIpAddress?.ToString();
-                    string authHeader = context.Request.Headers.Authorization.ToString();
-                    if (remoteIpAddress != null && Validators.IsPrivateIpAddress(remoteIpAddress) && authHeader.Contains($"Bearer {OAuthConfiguration.SECRET_ALLOW_ANONYMOUS}"))
-                    {
-                        return AllowAnonymousDefaults.AllowAnonymousScheme;
-                    }
-                    if (remoteIpAddress != null && Validators.IsPrivateIpAddress(remoteIpAddress) && authHeader.Contains($"Bearer {OAuthConfiguration.SECRET_ALLOW_ANONYMOUS_USER}"))
-                    {
-                        return AllowAnonymousDefaults.AllowAnonymousUserScheme;
-                    }
-                    var token = authHeader.StartsWith("Bearer ") ? authHeader.Substring("Bearer ".Length).Trim() : null;
-                    if (!string.IsNullOrEmpty(token))
-                    {
-                        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-                        if (jwt.Claims.Any(c => c.Type == "cognito:groups"))
-                            return "OAuth";
-                        string clientId = jwt.Claims.First(c => c.Type == "client_id").Value;
-                        if (oauthConfig.Any(c => c.ClientId == clientId))
-                            return "ClientCredentials";
-                    }
+                    ValidateAudience = false,
+                };
 
-                    return "OAuth";
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        JwtSecurityToken jwt = (JwtSecurityToken)context.SecurityToken;
+                        ClaimsIdentity id = (ClaimsIdentity)context.Principal!.Identity!;
+
+                        // Garantir NameIdentifier a partir de "sub"
+                        var sub = jwt.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+                        if (!string.IsNullOrEmpty(sub) &&
+                            id.FindFirst(ClaimTypes.NameIdentifier) is null)
+                        {
+                            id.AddClaim(new Claim(ClaimTypes.NameIdentifier, sub));
+                        }
+
+                        // Mapear grupos
+                        if (jwt.Payload.TryGetValue("groups", out var groupsObj) &&
+                            groupsObj is IEnumerable<object> groups)
+                        {
+                            foreach (var g in groups)
+                                id.AddClaim(new Claim("group", g.ToString()!));
+                        }
+
+                        // Mapear realm roles -> Role "realm:<role>"
+                        if (jwt.Payload.TryGetValue("realm_access", out var raObj) &&
+                            raObj is IDictionary<string, object> ra &&
+                            ra.TryGetValue("roles", out var rrObj) &&
+                            rrObj is IEnumerable<object> rroles)
+                        {
+                            foreach (var r in rroles)
+                                id.AddClaim(new Claim(ClaimTypes.Role, $"realm:{r}"));
+                        }
+
+                        // Mapear client roles -> Role "res:<clientId>:<role>"
+                        if (jwt.Payload.TryGetValue("resource_access", out var resObj) &&
+                            resObj is IDictionary<string, object> resources)
+                        {
+                            foreach (var kv in resources)
+                            {
+                                var clientId = kv.Key;
+                                if (kv.Value is IDictionary<string, object> entry &&
+                                    entry.TryGetValue("roles", out var crObj) &&
+                                    crObj is IEnumerable<object> croles)
+                                {
+                                    foreach (var r in croles)
+                                        id.AddClaim(new Claim(ClaimTypes.Role, $"res:{clientId}:{r}"));
+                                }
+                            }
+                        }
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
 
         services.AddAuthorization(options =>
         {
-            oauthConfig.ForEach(config =>
+            foreach (var kv in oauthConfig.ClaimRoles)
             {
-                config.Claims.ForEach(claim =>
-                {
-                    options.AddPolicy(claim, policy =>
-                    {
-                        policy.RequireAssertion(context =>
-                        {
-                            var hasCognitoGroup = context.User.HasClaim(c =>
-                                c.Type == "cognito:groups" && c.Value == claim);
+                options.AddPolicy(kv.Key,
+                    p => p.RequireRole(kv.Value));
+            }
 
-                            var hasClientId = !string.IsNullOrEmpty(config.ClientId) &&
-                                context.User.HasClaim(c =>
-                                    c.Type == "client_id" && c.Value == config.ClientId);
-
-                            return hasCognitoGroup || hasClientId;
-                        });
-                    });
-                });
-            });
+            foreach (var kv in oauthConfig.GroupClaims)
+            {
+                options.AddPolicy(kv.Key,
+                    p => p.RequireClaim("group", kv.Value));
+            }
         });
+
         return services;
     }
 }
