@@ -13,8 +13,8 @@ namespace GeoCidadao.Model.Extensions
                 string header = authHeader.ToString().Replace("Bearer ", "");
 
                 string? userId =
-                    header == OAuthConfiguration.SECRET_ALLOW_ANONYMOUS ? "Anonymous Admin User" :
-                    header == OAuthConfiguration.SECRET_ALLOW_ANONYMOUS_USER ? "Anonymous User" :
+                    // header == OAuthConfiguration.SECRET_ALLOW_ANONYMOUS ? "Anonymous Admin User" :
+                    // header == OAuthConfiguration.SECRET_ALLOW_ANONYMOUS_USER ? "Anonymous User" :
                     new JwtSecurityTokenHandler()
                         .ReadJwtToken(header)
                         .Claims

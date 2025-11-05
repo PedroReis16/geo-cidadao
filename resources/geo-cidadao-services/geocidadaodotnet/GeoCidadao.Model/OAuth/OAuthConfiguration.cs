@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 
 namespace GeoCidadao.Model.OAuth;
@@ -9,6 +10,7 @@ namespace GeoCidadao.Model.OAuth;
 public class OAuthConfiguration
 {
     public string Authority { get; set; } = null!;
+    public string Audience { get; set; } = null!;   
     public Dictionary<string, string> ClaimRoles { get; set; } = new();
     public Dictionary<string, string> GroupClaims { get; set; } = new();
 }
@@ -24,11 +26,24 @@ public static class OAuthConfigurationExtensions
                 options.RequireHttpsMetadata = false;   //TODO: Mudar para true em produção
 
                 // Remove a validação da audiência (audience) do token
-                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                var requiredAudience = oauthConfig.Audience; // ex: "geocidadao-posts-api"
+                if (!string.IsNullOrWhiteSpace(requiredAudience))
                 {
-                    ValidateAudience = false,
-                };
-
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = true,
+                        AudienceValidator = (audiences, _, __) =>
+                            audiences.Contains(requiredAudience) // aceita se o "aud" contém sua API
+                    };
+                }
+                else
+                {
+                    // opcional: desabilitar validação de audience se você confia no gateway
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false
+                    };
+                }
                 options.Events = new JwtBearerEvents
                 {
                     OnTokenValidated = context =>
