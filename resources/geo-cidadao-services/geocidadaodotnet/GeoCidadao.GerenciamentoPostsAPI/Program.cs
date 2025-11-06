@@ -15,6 +15,7 @@ using GeoCidadao.GerenciamentoPostsAPI.Database.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Database.EFDao;
 using GeoCidadao.GerenciamentoPostsAPI.Services.QueueServices;
 using GeoCidadao.GerenciamentoPostsAPI.Contracts.QueueServices;
+using GeoCidadao.Model.OAuth;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -88,10 +89,7 @@ builder.Services.AddSwaggerGen(option =>
     option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-// builder.Services.ConfigureOAuth([
-//     builder.Configuration.GetRequiredSection(AppSettingsProperties.OAuth).Get<OAuthConfiguration>()!,
-//     builder.Configuration.GetRequiredSection(AppSettingsProperties.PortalAuthClient).Get<OAuthConfiguration>()!
-// ]);
+builder.Services.ConfigureOAuth(builder.Configuration.GetRequiredSection("OAuth").Get<OAuthConfiguration>()!);
 
 WebApplication app = builder.Build();
 
@@ -119,6 +117,7 @@ app.UseMiddleware<HttpResponseCacheHandler>();
 
 app.UsePathBase($"/{basePath}");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -1,11 +1,14 @@
 using GeoCidadao.GerenciamentoPostsAPI.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts;
+using GeoCidadao.Model.OAuth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class PostsController(IPostService service) : ControllerBase
     {
         private readonly IPostService _service = service;
@@ -13,6 +16,8 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         [HttpGet("{userId}/posts")]
         public async Task<IActionResult> GetUserPosts(Guid userId)
         {
+            Guid requestId = HttpContext.User.GetUserId();
+
             List<PostDTO> posts = await _service.GetUserPostsAsync(userId);
 
             if (posts.Count == 0)
