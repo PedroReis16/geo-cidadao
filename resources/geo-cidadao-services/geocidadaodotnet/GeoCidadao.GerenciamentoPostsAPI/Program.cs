@@ -44,7 +44,8 @@ builder.Services.AddTransient<HttpResponseCacheHandler>();
 // Services
 builder.Services.AddBucketServices();
 builder.Services.AddTransient<IPostService, PostService>();
-builder.Services.AddTransient<IMediaService, MediaService>();
+builder.Services.AddTransient<IPostMediaService, PostMediaService>();
+builder.Services.AddTransient<IMediaBucketService, MediaBucketService>();
 
 // DAOs
 builder.Services.AddTransient<IPostDao, PostDao>();

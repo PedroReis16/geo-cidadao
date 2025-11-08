@@ -13,6 +13,12 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
     {
         private readonly IPostService _service = service;
 
+
+        /// <summary>
+        /// Obter posts de um usuário
+        /// </summary>
+        /// <param name="userId">Id do usuário</param>
+        /// <returns></returns>
         [HttpGet("{userId}/posts")]
         public async Task<IActionResult> GetUserPosts(Guid userId)
         {
@@ -25,6 +31,11 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
             return Ok(posts);
         }
 
+        /// <summary>
+        /// Obter post por Id
+        /// </summary>
+        /// <param name="postId">Id do post</param>
+        /// <returns></returns>
         [HttpGet("{postId}")]
         public async Task<IActionResult> GetPost(Guid postId)
         {
@@ -36,6 +47,11 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
             return Ok(post);
         }
 
+        /// <summary>
+        /// Criar novo post
+        /// </summary>
+        /// <param name="newPost">Dados do novo post</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateNewPost([FromBody] NewPostDTO newPost)
         {
@@ -44,52 +60,29 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
             PostDTO createdPost = await _service.CreatePostAsync(userId, newPost);
 
             return CreatedAtAction(nameof(GetPost), new { postId = createdPost.Id }, createdPost);
-        }
-
+        }       
 
         /// <summary>
-        /// Incrementar media para um post
+        /// Atualizar post
         /// </summary>
-        /// <param name="postId"></param>
-        /// <param name="mediaFile"></param>
+        /// <param name="postId">Id do post</param>
+        /// <param name="updatedPost">Dados do post atualizado</param>
         /// <returns></returns>
-        [HttpPatch("{postId}/media")]
-        public async Task<IActionResult> UploadPostMedia(Guid postId, [FromForm] IFormFile mediaFile)
-        {
-            try
-            {
-                await _service.UploadPostMediaAsync(postId, mediaFile);
-
-                return Ok();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Forbid();
-            }
-        }
-
-
-
-        [HttpDelete("{postId}/media/{mediaId}")]
-        public async Task<IActionResult> DeletePostMedia(Guid postId, Guid mediaId)
-        {
-            Guid userId = HttpContext.User.GetUserId();
-
-            // await _service.DeleteMediaPostAsync(userId, postId, mediaId);
-
-            return NoContent();
-        }
-
         [HttpPut("{postId}")]
         public async Task<IActionResult> UpdatePost(Guid postId, [FromBody] UpdatePostDTO updatedPost)
         {
             return NoContent();
         }
 
+        /// <summary>
+        /// Deletar post
+        /// </summary>
+        /// <param name="postId">Id do post</param>
+        /// <returns></returns>
         [HttpDelete("{postId}")]
-        public async Task<IActionResult> DeletePost(Guid postId, [FromHeader] Guid userId)
+        public async Task<IActionResult> DeletePost(Guid postId)
         {
-            await _service.DeletePostAsync(postId, userId);
+            await _service.DeletePostAsync(postId);
             return NoContent();
         }
     }

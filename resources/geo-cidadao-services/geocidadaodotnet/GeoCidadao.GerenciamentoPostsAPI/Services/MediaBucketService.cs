@@ -4,7 +4,7 @@ using GeoCidadao.GerenciamentoPostsAPI.Contracts;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Services
 {
-    public class MediaService(ICloudBucketService bucketService) : IMediaService
+    public class MediaBucketService(ICloudBucketService bucketService) : IMediaBucketService
     {
         private readonly ICloudBucketService _bucketService = bucketService;
 
