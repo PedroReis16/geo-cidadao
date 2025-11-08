@@ -7,6 +7,7 @@ using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
 using GeoCidadao.Model.Enums;
 using GeoCidadao.Model.Exceptions;
 using GeoCidadao.Model.Extensions;
+using GeoCidadao.Model.OAuth;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Services
@@ -22,9 +23,30 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
         private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
 
 
-        public Task<PostDTO?> GetPostAsync(Guid postId)
+        public async Task<PostDTO?> GetPostAsync(Guid postId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using IServiceScope scope = _scopeFactory.CreateScope();
+
+                IPostDao postRepository = scope.ServiceProvider.GetRequiredService<IPostDao>();
+
+                Post? post = await postRepository.FindAsync(postId);
+
+                if (post == null)
+                    return null;
+
+                return new PostDTO(post);
+            }
+            catch(Exception ex)
+            {
+                string errorMsg = $"Ocorreu um erro ao tentar obter o post '{postId}': {ex.GetFullMessage()}";
+                _logger.LogError(ex, errorMsg, _context, new()
+                {
+                    { LogConstants.EntityId, postId },
+                });
+                throw new Exception(errorMsg, ex);
+            }
         }
 
         public Task<List<PostDTO>> GetUserPostsAsync(Guid userId)
@@ -49,43 +71,12 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                 };
 
 
-                if (newPost.Media != null && newPost.Media.Any())
-                {
-                    if (newPost.Media.Count > 10)
-                        throw new EntityValidationException(nameof(Post), "Um post não pode conter mais do que 10 mídias.", ErrorCodes.POST_MEDIA_LIMIT_EXCEEDED);
-
-                    IMediaService mediaService = scope.ServiceProvider.GetRequiredService<IMediaService>();
-                    List<Task> uploadTasks = new();
-
-                    newPostEntity.Medias = new();
-
-                    for (int i = 0; i < newPost.Media.Count; i++)
-                    {
-                        PostMedia media = new()
-                        {
-                            Order = i,
-                        };
-                        Stream fileContent = newPost.Media[i].OpenReadStream();
-
-                        uploadTasks.Add(Task.Run(async () =>
-                        {
-                            await mediaService.UploadMediaAsync(postId, media.Id, fileContent, out string fileExtension);
-                            media.MediaType = fileExtension;
-                            media.FileSize = fileContent.Length;
-                            newPostEntity.Medias.Add(media);
-                        }));
-                    }
-
-                    await Task.WhenAll(uploadTasks);
-                }
-
                 await postRepository.AddAsync(newPostEntity);
 
-                return new();
+                return new(newPostEntity);
             }
             catch (EntityValidationException)
             {
-                _ = DeleteErrorPostMediaAsync(postId);
                 throw;
             }
             catch (Exception ex)
@@ -96,7 +87,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                     { LogConstants.UserId, userId },
                     { LogConstants.EntityId, postId },
                 });
-                _ = DeleteErrorPostMediaAsync(postId);
+
 
                 throw new Exception(errorMsg, ex);
             }
@@ -126,6 +117,45 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                 {
                     { LogConstants.EntityId, postId },
                 });
+            }
+        }
+
+        public async Task UploadPostMediaAsync(Guid postId, IFormFile mediaFile)
+        {
+            try
+            {
+                using IServiceScope scope = _scopeFactory.CreateScope();
+
+                Guid userId = _context!.User.GetUserId();
+
+                Post? post = await scope.ServiceProvider.GetRequiredService<IPostDao>().FindAsync(postId);
+
+                if (post == null)
+                    throw new EntityValidationException(nameof(Post), $"Post '{postId}' não encontrado para adiçao de mídia", ErrorCodes.POST_NOT_FOUND);
+
+                if (post.UserId != userId)
+                {
+                    if (!_context.User.Identities.Any(i => i.IsAuthenticated && i.HasClaim(c => c.Type == "role" && c.Value == "admin")))
+                        throw new UnauthorizedAccessException($"Usuário '{userId}' não é proprietário do post '{postId}'");
+                }
+
+
+
+
+                _logger.LogInformation($"O post '{postId}' será atualizado com nova mídia pelo usuário '{userId}'");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                string errorMsg = $"Ocorreu um erro ao tentar adicionar mídia ao post '{postId}': {ex.GetFullMessage()}";
+                _logger.LogError(ex, errorMsg, _context, new()
+                {
+                    { LogConstants.EntityId, postId },
+                });
+                throw new Exception(errorMsg, ex);
             }
         }
 

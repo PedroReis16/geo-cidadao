@@ -16,7 +16,6 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         [HttpGet("{userId}/posts")]
         public async Task<IActionResult> GetUserPosts(Guid userId)
         {
-            Guid requestId = HttpContext.User.GetUserId();
 
             List<PostDTO> posts = await _service.GetUserPostsAsync(userId);
 
@@ -38,17 +37,52 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateNewPost([FromHeader] Guid userId, [FromForm] NewPostDTO newPost)
+        public async Task<IActionResult> CreateNewPost([FromBody] NewPostDTO newPost)
         {
+            Guid userId = HttpContext.User.GetUserId();
+
             PostDTO createdPost = await _service.CreatePostAsync(userId, newPost);
 
-            return CreatedAtAction(nameof(GetPost), new { postId = createdPost.Id }, null);
+            return CreatedAtAction(nameof(GetPost), new { postId = createdPost.Id }, createdPost);
+        }
+
+
+        /// <summary>
+        /// Incrementar media para um post
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <param name="mediaFile"></param>
+        /// <returns></returns>
+        [HttpPatch("{postId}/media")]
+        public async Task<IActionResult> UploadPostMedia(Guid postId, [FromForm] IFormFile mediaFile)
+        {
+            try
+            {
+                await _service.UploadPostMediaAsync(postId, mediaFile);
+
+                return Ok();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
+        }
+
+
+
+        [HttpDelete("{postId}/media/{mediaId}")]
+        public async Task<IActionResult> DeletePostMedia(Guid postId, Guid mediaId)
+        {
+            Guid userId = HttpContext.User.GetUserId();
+
+            // await _service.DeleteMediaPostAsync(userId, postId, mediaId);
+
+            return NoContent();
         }
 
         [HttpPut("{postId}")]
         public async Task<IActionResult> UpdatePost(Guid postId, [FromBody] UpdatePostDTO updatedPost)
         {
-            await _service.UpdatePostAsync(postId, updatedPost);
             return NoContent();
         }
 

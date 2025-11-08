@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts
 {
     public class UpdatePostDTO
     {
-        
+        public string? Content { get; set; }
+        public PositionDTO? Position { get; set; }
     }
 }
