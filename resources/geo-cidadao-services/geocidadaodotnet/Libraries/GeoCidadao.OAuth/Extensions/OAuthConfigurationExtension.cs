@@ -25,7 +25,10 @@ namespace GeoCidadao.OAuth.Extensions
                         ValidateIssuer = true,
                         ValidIssuer = oauthConfig.Authority,
                         ValidateAudience = !string.IsNullOrWhiteSpace(oauthConfig.Audience),
-                        ClockSkew = TimeSpan.FromMinutes(2)
+                        ClockSkew = TimeSpan.FromMinutes(2),
+
+                        RoleClaimType = ClaimTypes.Role,
+                        NameClaimType = ClaimTypes.NameIdentifier
                     };
 
                     options.Events = new JwtBearerEvents
@@ -37,88 +40,103 @@ namespace GeoCidadao.OAuth.Extensions
                         },
                         OnTokenValidated = ctx =>
                         {
-                            var principal = ctx.Principal!;
-                            var id = (ClaimsIdentity)principal.Identity!;
+                            var id = (ClaimsIdentity)ctx.Principal!.Identity!;
 
-                            // 1) Garantir NameIdentifier a partir do "sub"
-                            var sub = principal.FindFirst("sub")?.Value;
+                            // Garante que é autenticado e usa RoleClaimType correto
+                            if (!id.IsAuthenticated)
+                                id = new ClaimsIdentity(id.Claims, "Bearer", ClaimTypes.NameIdentifier, ClaimTypes.Role);
+
+                            // Força o NameIdentifier pelo "sub"
+                            var sub = id.FindFirst("sub")?.Value;
                             if (!string.IsNullOrEmpty(sub) && id.FindFirst(ClaimTypes.NameIdentifier) is null)
                                 id.AddClaim(new Claim(ClaimTypes.NameIdentifier, sub));
 
-                            // 2) Mapear grupos e roles a partir do payload bruto (funciona para JsonWebToken e JwtSecurityToken)
-                            if (ctx.SecurityToken is Microsoft.IdentityModel.JsonWebTokens.JsonWebToken jtok)
+                            // � 1) Mapear groups - direto das claims já parseadas
+                            var groupClaims = id.Claims.Where(c => c.Type == "groups").ToList();
+                            Console.WriteLine($"[DEBUG] Found {groupClaims.Count} group claims in token");
+                            foreach (var gc in groupClaims)
                             {
-                                // groups
-                                if (jtok.TryGetPayloadValue<object>("groups", out var groupsObj) &&
-                                    groupsObj is IEnumerable<object> groups)
-                                {
-                                    foreach (var g in groups)
-                                        id.AddClaim(new Claim("group", g.ToString()!));
-                                }
+                                Console.WriteLine($"[DEBUG] Adding group: {gc.Value}");
+                                id.AddClaim(new Claim("group", gc.Value));
+                            }
 
-                                // realm_access.roles
-                                if (jtok.TryGetPayloadValue<IDictionary<string, object>>("realm_access", out var ra) &&
-                                    ra.TryGetValue("roles", out var rrObj) &&
-                                    rrObj is IEnumerable<object> rroles)
+                            // 🔹 2) Mapear realm_access.roles - procurar nas claims
+                            var realmRoleClaims = id.Claims.Where(c => c.Type == "realm_access.roles" || c.Type.EndsWith("/roles")).ToList();
+                            Console.WriteLine($"[DEBUG] Found {realmRoleClaims.Count} realm role claims");
+                            
+                            // Tentar pegar do claim realm_access
+                            var realmAccessClaim = id.FindFirst("realm_access");
+                            if (realmAccessClaim != null)
+                            {
+                                Console.WriteLine($"[DEBUG] realm_access claim found: {realmAccessClaim.Value}");
+                                try
                                 {
-                                    foreach (var r in rroles)
-                                        id.AddClaim(new Claim(ClaimTypes.Role, $"realm:{r}"));
-                                }
-
-                                // resource_access.<clientId>.roles
-                                if (jtok.TryGetPayloadValue<IDictionary<string, object>>("resource_access", out var resources))
-                                {
-                                    foreach (var (clientId, entryObj) in resources)
+                                    var realmAccess = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, System.Text.Json.JsonElement>>(realmAccessClaim.Value);
+                                    if (realmAccess != null && realmAccess.TryGetValue("roles", out var rolesElement))
                                     {
-                                        if (entryObj is IDictionary<string, object> entry &&
-                                            entry.TryGetValue("roles", out var crObj) &&
-                                            crObj is IEnumerable<object> croles)
+                                        foreach (var role in rolesElement.EnumerateArray())
                                         {
-                                            foreach (var r in croles)
-                                                id.AddClaim(new Claim(ClaimTypes.Role, $"res:{clientId}:{r}"));
+                                            var roleValue = role.GetString();
+                                            Console.WriteLine($"[DEBUG] Adding realm role: realm:{roleValue}");
+                                            id.AddClaim(new Claim(id.RoleClaimType, $"realm:{roleValue}"));
                                         }
                                     }
                                 }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"[ERROR] Failed to parse realm_access: {ex.Message}");
+                                }
                             }
-                            else if (ctx.SecurityToken is JwtSecurityToken jwt) // fallback (se o handler estiver usando JwtSecurityToken)
+
+                            // 🔹 3) Mapear resource_access.<client>.roles - procurar nas claims
+                            var resourceAccessClaim = id.FindFirst("resource_access");
+                            if (resourceAccessClaim != null)
                             {
-                                var payload = (IDictionary<string, object>)jwt.Payload;
-
-                                // groups
-                                if (payload.TryGetValue("groups", out var groupsObj) &&
-                                    groupsObj is IEnumerable<object> groups)
+                                Console.WriteLine($"[DEBUG] resource_access claim found: {resourceAccessClaim.Value}");
+                                try
                                 {
-                                    foreach (var g in groups)
-                                        id.AddClaim(new Claim("group", g.ToString()!));
-                                }
-
-                                // realm_access.roles
-                                if (payload.TryGetValue("realm_access", out var raObj) &&
-                                    raObj is IDictionary<string, object> ra &&
-                                    ra.TryGetValue("roles", out var rrObj) &&
-                                    rrObj is IEnumerable<object> rroles)
-                                {
-                                    foreach (var r in rroles)
-                                        id.AddClaim(new Claim(ClaimTypes.Role, $"realm:{r}"));
-                                }
-
-                                // resource_access.<clientId>.roles
-                                if (payload.TryGetValue("resource_access", out var resObj) &&
-                                    resObj is IDictionary<string, object> resources)
-                                {
-                                    foreach (var kv in resources)
+                                    var resourceAccess = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, System.Text.Json.JsonElement>>(resourceAccessClaim.Value);
+                                    if (resourceAccess != null)
                                     {
-                                        var clientId = kv.Key;
-                                        if (kv.Value is IDictionary<string, object> entry &&
-                                            entry.TryGetValue("roles", out var crObj) &&
-                                            crObj is IEnumerable<object> croles)
+                                        foreach (var client in resourceAccess)
                                         {
-                                            foreach (var r in croles)
-                                                id.AddClaim(new Claim(ClaimTypes.Role, $"res:{clientId}:{r}"));
+                                            var clientId = client.Key;
+                                            Console.WriteLine($"[DEBUG] Processing client: {clientId}");
+                                            
+                                            if (client.Value.ValueKind == System.Text.Json.JsonValueKind.Object &&
+                                                client.Value.TryGetProperty("roles", out var rolesElement) &&
+                                                rolesElement.ValueKind == System.Text.Json.JsonValueKind.Array)
+                                            {
+                                                foreach (var role in rolesElement.EnumerateArray())
+                                                {
+                                                    var roleValue = role.GetString();
+                                                    var fullRole = $"res:{clientId}:{roleValue}";
+                                                    Console.WriteLine($"[DEBUG] Adding resource role: {fullRole}");
+                                                    id.AddClaim(new Claim(id.RoleClaimType, fullRole));
+                                                }
+                                            }
                                         }
                                     }
                                 }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"[ERROR] Failed to parse resource_access: {ex.Message}");
+                                }
                             }
+                            else
+                            {
+                                Console.WriteLine($"[WARNING] resource_access claim not found! Available claims: {string.Join(", ", id.Claims.Select(c => c.Type))}");
+                            }
+
+                            // 🔹 Atualiza o principal
+                            ctx.Principal = new ClaimsPrincipal(id);
+
+                            // 🔹 Log para verificação
+                            Console.WriteLine($"[RoleClaimType] {id.RoleClaimType}");
+                            var finalRoles = id.Claims.Where(c => c.Type == id.RoleClaimType || c.Type == "group").ToList();
+                            Console.WriteLine($"[DEBUG] Total roles/groups added: {finalRoles.Count}");
+                            foreach (var c in finalRoles)
+                                Console.WriteLine($"[ROLE/GROUP] {c.Type} = {c.Value}");
 
                             return Task.CompletedTask;
                         }
@@ -131,10 +149,16 @@ namespace GeoCidadao.OAuth.Extensions
             services.AddAuthorization(options =>
             {
                 foreach (var kv in oauthConfig.ClaimRoles)
+                {
+                    Console.WriteLine($"[POLICY CONFIG] Policy: {kv.Key} -> RequireRole: {kv.Value}");
                     options.AddPolicy(kv.Key, p => p.RequireRole(kv.Value));
+                }
 
                 foreach (var kv in oauthConfig.GroupClaims)
+                {
+                    Console.WriteLine($"[POLICY CONFIG] Policy: {kv.Key} -> RequireClaim group: {kv.Value}");
                     options.AddPolicy(kv.Key, p => p.RequireClaim("group", kv.Value));
+                }
             });
 
             return services;
