@@ -5,6 +5,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Database.Contracts
 {
     public interface IPostMediaDao : IRepository<PostMedia>
     {
-
+        Task<List<PostMedia>> GetPostMediasAsync(Guid postId);
+        Task UpdateMediaOrderAsync(Guid id, int order);
     }
 }

@@ -52,11 +52,11 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
 
             return _bucketService.PutObjectAsync(putRequest);
         }
-        public Task DeleteMediaAsync(string mediaKey)
+        public Task DeleteMediaAsync(Guid postId, Guid mediaId, string fileExtension)
         {
             return _bucketService.DeleteObjectAsync(new()
             {
-                ObjectKey = mediaKey
+                ObjectKey = $"{postId}/{mediaId}{fileExtension}"
             });
         }
     }
