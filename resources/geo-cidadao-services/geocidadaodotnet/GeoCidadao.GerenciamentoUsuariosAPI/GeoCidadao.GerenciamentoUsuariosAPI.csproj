@@ -33,12 +33,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GeoCidadao.Model\GeoCidadao.Model.csproj" />
-    <ProjectReference Include="..\GeoCidadao.Caching\GeoCidadao.Caching.csproj" />
-    <ProjectReference Include="..\GeoCidadao.Database\GeoCidadao.Database.csproj" />
-    <ProjectReference Include="..\GeoCidadao.AMQP\GeoCidadao.AMQP.csproj" />
-    <ProjectReference Include="..\GeoCidadao.Jobs\GeoCidadao.Jobs.csproj" />
-    <ProjectReference Include="..\GeoCidadao.Cloud\GeoCidadao.Cloud.csproj" />
+    <ProjectReference Include="..\Libraries\GeoCidadao.Model\GeoCidadao.Model.csproj" />
+    <ProjectReference Include="..\Libraries\GeoCidadao.Caching\GeoCidadao.Caching.csproj" />
+    <ProjectReference Include="..\Libraries\GeoCidadao.Database\GeoCidadao.Database.csproj" />
+    <ProjectReference Include="..\Libraries\GeoCidadao.AMQP\GeoCidadao.AMQP.csproj" />
+    <ProjectReference Include="..\Libraries\GeoCidadao.Jobs\GeoCidadao.Jobs.csproj" />
+    <ProjectReference Include="..\Libraries\GeoCidadao.Cloud\GeoCidadao.Cloud.csproj" />
   </ItemGroup>
 
 </Project>
