@@ -17,6 +17,9 @@ using GeoCidadao.GerenciamentoPostsAPI.Services.QueueServices;
 using GeoCidadao.GerenciamentoPostsAPI.Contracts.QueueServices;
 using GeoCidadao.OAuth.Extensions;
 using GeoCidadao.OAuth.Models;
+using GeoCidadao.OAuth.Contracts;
+using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
+using GeoCidadao.GerenciamentoPostsAPI.Middlewares;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -55,6 +58,9 @@ builder.Services.AddTransient<IPostLocationDao, PostLocationDao>();
 
 // Queue Services
 builder.Services.AddSingleton<INotifyPostChangedService, NotifyPostChangedService>();
+
+// Fetchers (OAuth - Resource Fetchers)
+builder.Services.AddScoped<IResourceFetcher<Post>, PostFetcher>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();

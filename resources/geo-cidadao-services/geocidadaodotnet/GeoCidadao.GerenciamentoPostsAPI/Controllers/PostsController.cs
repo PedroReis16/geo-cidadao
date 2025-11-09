@@ -1,6 +1,8 @@
 using GeoCidadao.GerenciamentoPostsAPI.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts;
+using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
 using GeoCidadao.Models.OAuth;
+using GeoCidadao.OAuth.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +22,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         /// <param name="userId">Id do usuário</param>
         /// <returns></returns>
         [HttpGet("{userId}/posts")]
+        [Authorize(Policy = "Posts.Read")]
         public async Task<IActionResult> GetUserPosts(Guid userId)
         {
 
@@ -37,6 +40,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         /// <param name="postId">Id do post</param>
         /// <returns></returns>
         [HttpGet("{postId}")]
+        [Authorize(Policy = "Posts.Read")]
         public async Task<IActionResult> GetPost(Guid postId)
         {
             PostDTO? post = await _service.GetPostAsync(postId);
@@ -53,6 +57,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         /// <param name="newPost">Dados do novo post</param>
         /// <returns></returns>
         [HttpPost]
+        [Authorize(Policy = "Posts.Create")]
         public async Task<IActionResult> CreateNewPost([FromBody] NewPostDTO newPost)
         {
             Guid userId = HttpContext.User.GetUserId();
@@ -60,7 +65,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
             PostDTO createdPost = await _service.CreatePostAsync(userId, newPost);
 
             return CreatedAtAction(nameof(GetPost), new { postId = createdPost.Id }, createdPost);
-        }       
+        }
 
         /// <summary>
         /// Atualizar post
@@ -69,6 +74,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         /// <param name="updatedPost">Dados do post atualizado</param>
         /// <returns></returns>
         [HttpPut("{postId}")]
+        [OwnerOrPermissionByProperty<Post>("UserId", "Posts.Edit.Self", "Posts.Edit.Any")]
         public async Task<IActionResult> UpdatePost(Guid postId, [FromBody] UpdatePostDTO updatedPost)
         {
             return NoContent();
@@ -80,6 +86,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         /// <param name="postId">Id do post</param>
         /// <returns></returns>
         [HttpDelete("{postId}")]
+        [OwnerOrPermissionByProperty<Post>("UserId", "Posts.Delete.Self", "Moderators", "Posts.Delete.Any")]
         public async Task<IActionResult> DeletePost(Guid postId)
         {
             await _service.DeletePostAsync(postId);
