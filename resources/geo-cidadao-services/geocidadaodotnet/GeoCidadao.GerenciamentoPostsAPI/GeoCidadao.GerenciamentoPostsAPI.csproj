@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Libraries\GeoCidadao.Model\GeoCidadao.Model.csproj" />
+    <ProjectReference Include="..\Libraries\GeoCidadao.Models\GeoCidadao.Models.csproj" />
     <ProjectReference Include="..\Libraries\GeoCidadao.Caching\GeoCidadao.Caching.csproj" />
     <ProjectReference Include="..\Libraries\GeoCidadao.Database\GeoCidadao.Database.csproj" />
     <ProjectReference Include="..\Libraries\GeoCidadao.AMQP\GeoCidadao.AMQP.csproj" />

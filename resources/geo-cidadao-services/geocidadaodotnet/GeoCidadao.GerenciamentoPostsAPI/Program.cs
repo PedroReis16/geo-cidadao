@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using GeoCidadao.Caching.Extensions;
-using GeoCidadao.Model.Middlewares;
+using GeoCidadao.Models.Middlewares;
 using GeoCidadao.GerenciamentoPostsAPI.Config;
 using System.Text.Json.Serialization;
 using System.Reflection;
-using GeoCidadao.Model.Config;
+using GeoCidadao.Models.Config;
 using GeoCidadao.Database.Extensions;
 using GeoCidadao.GerenciamentoPostsAPI.Services;
 using GeoCidadao.GerenciamentoPostsAPI.Contracts;
@@ -15,7 +15,7 @@ using GeoCidadao.GerenciamentoPostsAPI.Database.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Database.EFDao;
 using GeoCidadao.GerenciamentoPostsAPI.Services.QueueServices;
 using GeoCidadao.GerenciamentoPostsAPI.Contracts.QueueServices;
-using GeoCidadao.Model.OAuth;
+using GeoCidadao.Models.OAuth;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

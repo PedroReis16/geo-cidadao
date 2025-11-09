@@ -2,7 +2,7 @@
 using GeoCidadao.Jobs.Config;
 using GeoCidadao.Jobs.Exceptions;
 using Quartz;
-using GeoCidadao.Model.Extensions;
+using GeoCidadao.Models.Extensions;
 
 namespace GeoCidadao.Jobs
 {

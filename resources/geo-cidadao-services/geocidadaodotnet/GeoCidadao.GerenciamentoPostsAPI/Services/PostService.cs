@@ -2,10 +2,10 @@ using GeoCidadao.GerenciamentoPostsAPI.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Contracts.QueueServices;
 using GeoCidadao.GerenciamentoPostsAPI.Database.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts;
-using GeoCidadao.Model.Constants;
-using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
-using GeoCidadao.Model.Exceptions;
-using GeoCidadao.Model.Extensions;
+using GeoCidadao.Models.Constants;
+using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
+using GeoCidadao.Models.Exceptions;
+using GeoCidadao.Models.Extensions;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Services
 {

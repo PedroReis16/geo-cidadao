@@ -13,6 +13,6 @@
 
   <ItemGroup>
     <ProjectReference
-      Include="..\GeoCidadao.Model\GeoCidadao.Model.csproj" />
+      Include="..\GeoCidadao.Models\GeoCidadao.Models.csproj" />
   </ItemGroup>
 </Project>

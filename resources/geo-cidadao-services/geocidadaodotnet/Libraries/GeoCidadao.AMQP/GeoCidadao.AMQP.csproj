@@ -9,6 +9,6 @@
     <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GeoCidadao.Model\GeoCidadao.Model.csproj" />
+    <ProjectReference Include="..\GeoCidadao.Models\GeoCidadao.Models.csproj" />
   </ItemGroup>
 </Project>

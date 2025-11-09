@@ -1,6 +1,6 @@
 using GeoCidadao.Database.CacheContracts;
 using GeoCidadao.Database.Contracts;
-using GeoCidadao.Model.Entities;
+using GeoCidadao.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace GeoCidadao.Database.EFDao

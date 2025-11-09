@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoCidadao.Jobs", "Librarie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoCidadao.MongoDatabase", "Libraries\GeoCidadao.MongoDatabase\GeoCidadao.MongoDatabase.csproj", "{B7A5746F-D45F-4EB3-91B0-2CF987DCAE60}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoCidadao.Models", "Libraries\GeoCidadao.Models\GeoCidadao.Models.csproj", "{23970135-40B3-44B6-9C9F-1361D44C0E2B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +129,18 @@ Global
 		{B7A5746F-D45F-4EB3-91B0-2CF987DCAE60}.Release|x64.Build.0 = Release|Any CPU
 		{B7A5746F-D45F-4EB3-91B0-2CF987DCAE60}.Release|x86.ActiveCfg = Release|Any CPU
 		{B7A5746F-D45F-4EB3-91B0-2CF987DCAE60}.Release|x86.Build.0 = Release|Any CPU
+		{23970135-40B3-44B6-9C9F-1361D44C0E2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23970135-40B3-44B6-9C9F-1361D44C0E2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23970135-40B3-44B6-9C9F-1361D44C0E2B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{23970135-40B3-44B6-9C9F-1361D44C0E2B}.Debug|x64.Build.0 = Debug|Any CPU
+		{23970135-40B3-44B6-9C9F-1361D44C0E2B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{23970135-40B3-44B6-9C9F-1361D44C0E2B}.Debug|x86.Build.0 = Debug|Any CPU
+		{23970135-40B3-44B6-9C9F-1361D44C0E2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23970135-40B3-44B6-9C9F-1361D44C0E2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23970135-40B3-44B6-9C9F-1361D44C0E2B}.Release|x64.ActiveCfg = Release|Any CPU
+		{23970135-40B3-44B6-9C9F-1361D44C0E2B}.Release|x64.Build.0 = Release|Any CPU
+		{23970135-40B3-44B6-9C9F-1361D44C0E2B}.Release|x86.ActiveCfg = Release|Any CPU
+		{23970135-40B3-44B6-9C9F-1361D44C0E2B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -138,5 +152,6 @@ Global
 		{C8F3850B-379A-4BA0-A563-43B437F665FA} = {CE0A6827-4CBD-4F22-AF33-B69E6C0350A6}
 		{2279AD37-B3DC-4747-AB6B-5AEE277B92D4} = {CE0A6827-4CBD-4F22-AF33-B69E6C0350A6}
 		{B7A5746F-D45F-4EB3-91B0-2CF987DCAE60} = {CE0A6827-4CBD-4F22-AF33-B69E6C0350A6}
+		{23970135-40B3-44B6-9C9F-1361D44C0E2B} = {CE0A6827-4CBD-4F22-AF33-B69E6C0350A6}
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,4 @@
-using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
+using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

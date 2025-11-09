@@ -1,5 +1,5 @@
 using GeoCidadao.Database.Contracts;
-using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
+using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Database.Contracts
 {

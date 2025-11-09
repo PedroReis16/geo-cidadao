@@ -1,4 +1,4 @@
-using GeoCidadao.Model.Entities;
+using GeoCidadao.Models.Entities;
 
 namespace GeoCidadao.Database.CacheContracts
 {

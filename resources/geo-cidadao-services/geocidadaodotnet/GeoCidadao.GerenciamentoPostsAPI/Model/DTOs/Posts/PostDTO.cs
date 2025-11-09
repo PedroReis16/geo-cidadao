@@ -1,4 +1,4 @@
-using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
+using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts
 {

@@ -1,4 +1,4 @@
-using GeoCidadao.Model.MongoEntities;
+using GeoCidadao.Models.MongoEntities;
 
 namespace GeoCidadao.MongoDatabase.Contracts
 {

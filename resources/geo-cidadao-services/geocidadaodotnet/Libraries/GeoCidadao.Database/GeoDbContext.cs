@@ -1,11 +1,11 @@
 using GeoCidadao.Database.Configurations.GerenciamentoPostsAPI;
-using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
-using GeoCidadao.Model.Entities;
+using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
+using GeoCidadao.Models.Entities;
 using GeoCidadao.Database.Configurations.GerenciamentoUsuariosAPI;
-using GeoCidadao.Model.Entities.GerenciamentoUsuariosAPI;
+using GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI;
 using Microsoft.EntityFrameworkCore;
 using GeoCidadao.Database.Entities.GerenciamentoPostsAPI;
-using GeoCidadao.Model.Enums;
+using GeoCidadao.Models.Enums;
 
 namespace GeoCidadao.Database
 {

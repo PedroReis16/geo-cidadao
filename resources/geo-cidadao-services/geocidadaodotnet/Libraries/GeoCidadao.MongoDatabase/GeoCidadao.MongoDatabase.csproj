@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GeoCidadao.Caching\GeoCidadao.Caching.csproj" />
-    <ProjectReference Include="..\GeoCidadao.Model\GeoCidadao.Model.csproj" />
+    <ProjectReference Include="..\GeoCidadao.Models\GeoCidadao.Models.csproj" />
   </ItemGroup>
 
 </Project>

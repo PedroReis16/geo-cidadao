@@ -1,7 +1,7 @@
 using GeoCidadao.Caching.Services;
 using GeoCidadao.Database.Cache;
 using GeoCidadao.GerenciamentoPostsAPI.Database.CacheContracts;
-using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
+using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Database.Cache
 {

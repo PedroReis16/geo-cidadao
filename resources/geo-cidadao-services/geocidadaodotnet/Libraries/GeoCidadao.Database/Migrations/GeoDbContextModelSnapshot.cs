@@ -70,7 +70,7 @@ namespace GeoCidadao.Database.Migrations
                     b.ToTable("post_location", (string)null);
                 });
 
-            modelBuilder.Entity("GeoCidadao.Model.Entities.GerenciamentoPostsAPI.Post", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.Post", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -113,7 +113,7 @@ namespace GeoCidadao.Database.Migrations
                     b.ToTable("post", (string)null);
                 });
 
-            modelBuilder.Entity("GeoCidadao.Model.Entities.GerenciamentoPostsAPI.PostMedia", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostMedia", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -161,7 +161,7 @@ namespace GeoCidadao.Database.Migrations
                     b.ToTable("post_media", (string)null);
                 });
 
-            modelBuilder.Entity("GeoCidadao.Model.Entities.GerenciamentoUsuariosAPI.UserPicture", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserPicture", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -196,7 +196,7 @@ namespace GeoCidadao.Database.Migrations
                     b.ToTable("user_picture", (string)null);
                 });
 
-            modelBuilder.Entity("GeoCidadao.Model.Entities.GerenciamentoUsuariosAPI.UserProfile", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserProfile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -249,9 +249,9 @@ namespace GeoCidadao.Database.Migrations
                     b.ToTable("user_profile", (string)null);
                 });
 
-            modelBuilder.Entity("GeoCidadao.Model.Entities.GerenciamentoPostsAPI.PostMedia", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostMedia", b =>
                 {
-                    b.HasOne("GeoCidadao.Model.Entities.GerenciamentoPostsAPI.Post", "Post")
+                    b.HasOne("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.Post", "Post")
                         .WithMany("Medias")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -260,23 +260,23 @@ namespace GeoCidadao.Database.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("GeoCidadao.Model.Entities.GerenciamentoUsuariosAPI.UserPicture", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserPicture", b =>
                 {
-                    b.HasOne("GeoCidadao.Model.Entities.GerenciamentoUsuariosAPI.UserProfile", "User")
+                    b.HasOne("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserProfile", "User")
                         .WithOne("ProfilePicture")
-                        .HasForeignKey("GeoCidadao.Model.Entities.GerenciamentoUsuariosAPI.UserPicture", "Id")
+                        .HasForeignKey("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserPicture", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GeoCidadao.Model.Entities.GerenciamentoPostsAPI.Post", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.Post", b =>
                 {
                     b.Navigation("Medias");
                 });
 
-            modelBuilder.Entity("GeoCidadao.Model.Entities.GerenciamentoUsuariosAPI.UserProfile", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserProfile", b =>
                 {
                     b.Navigation("ProfilePicture");
                 });

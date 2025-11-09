@@ -4,11 +4,11 @@ using Microsoft.OpenApi.Models;
 using GeoCidadao.Caching.Extensions;
 using GeoCidadao.Database;
 using GeoCidadao.Database.Migrations;
-using GeoCidadao.Model.Middlewares;
+using GeoCidadao.Models.Middlewares;
 using GeoCidadao.GerenciamentoUsuariosAPI.Config;
 using System.Text.Json.Serialization;
 using System.Reflection;
-using GeoCidadao.Model.Config;
+using GeoCidadao.Models.Config;
 using Quartz;
 using GeoCidadao.Jobs.Config;
 using GeoCidadao.Jobs.Listeners;
@@ -29,7 +29,7 @@ using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.ConnectionServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Middlewares;
 using Microsoft.Extensions.Options;
 using GeoCidadao.Database.Extensions;
-using GeoCidadao.Model.OAuth;
+using GeoCidadao.Models.OAuth;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

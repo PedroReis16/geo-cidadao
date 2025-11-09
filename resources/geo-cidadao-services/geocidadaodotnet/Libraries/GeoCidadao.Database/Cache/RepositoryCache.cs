@@ -1,6 +1,6 @@
 using GeoCidadao.Caching.Contracts;
 using GeoCidadao.Database.CacheContracts;
-using GeoCidadao.Model.Entities;
+using GeoCidadao.Models.Entities;
 
 namespace GeoCidadao.Database.Cache
 {

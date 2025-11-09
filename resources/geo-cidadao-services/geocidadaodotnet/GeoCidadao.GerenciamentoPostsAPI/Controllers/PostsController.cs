@@ -1,6 +1,6 @@
 using GeoCidadao.GerenciamentoPostsAPI.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts;
-using GeoCidadao.Model.OAuth;
+using GeoCidadao.Models.OAuth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

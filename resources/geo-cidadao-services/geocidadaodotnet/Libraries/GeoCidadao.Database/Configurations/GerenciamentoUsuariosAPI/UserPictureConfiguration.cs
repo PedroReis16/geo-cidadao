@@ -1,4 +1,4 @@
-using GeoCidadao.Model.Entities.GerenciamentoUsuariosAPI;
+using GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GeoCidadao.Database.Configurations.GerenciamentoUsuariosAPI

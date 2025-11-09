@@ -2,9 +2,9 @@ using GeoCidadao.Database;
 using GeoCidadao.Database.EFDao;
 using GeoCidadao.GerenciamentoPostsAPI.Database.CacheContracts;
 using GeoCidadao.GerenciamentoPostsAPI.Database.Contracts;
-using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
-using GeoCidadao.Model.Enums;
-using GeoCidadao.Model.Exceptions;
+using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
+using GeoCidadao.Models.Enums;
+using GeoCidadao.Models.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Database.EFDao

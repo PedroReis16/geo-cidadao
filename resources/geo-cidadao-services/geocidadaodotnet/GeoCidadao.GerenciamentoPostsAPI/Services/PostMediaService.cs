@@ -1,11 +1,11 @@
 using GeoCidadao.GerenciamentoPostsAPI.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Database.Contracts;
-using GeoCidadao.Model.Constants;
-using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
-using GeoCidadao.Model.Enums;
-using GeoCidadao.Model.Exceptions;
-using GeoCidadao.Model.Extensions;
-using GeoCidadao.Model.OAuth;
+using GeoCidadao.Models.Constants;
+using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
+using GeoCidadao.Models.Enums;
+using GeoCidadao.Models.Exceptions;
+using GeoCidadao.Models.Extensions;
+using GeoCidadao.Models.OAuth;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Services
 {

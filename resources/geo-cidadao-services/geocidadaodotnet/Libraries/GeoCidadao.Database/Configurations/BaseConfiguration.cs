@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using GeoCidadao.Model.Entities;
+using GeoCidadao.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

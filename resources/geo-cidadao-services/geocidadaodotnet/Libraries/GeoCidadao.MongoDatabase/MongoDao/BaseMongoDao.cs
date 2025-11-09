@@ -1,6 +1,6 @@
-using GeoCidadao.Model.Enums;
-using GeoCidadao.Model.Exceptions;
-using GeoCidadao.Model.MongoEntities;
+using GeoCidadao.Models.Enums;
+using GeoCidadao.Models.Exceptions;
+using GeoCidadao.Models.MongoEntities;
 using GeoCidadao.MongoDatabase.CacheContracts;
 using GeoCidadao.MongoDatabase.Contracts;
 using GeoCidadao.MongoDatabase.Helpers;
@@ -188,7 +188,7 @@ namespace GeoCidadao.MongoDatabase.MongoDao
                 TEntity? trackedEntity = await FindAsync(item.Id);
 
                 if (trackedEntity == null)
-                    throw new EntityValidationException(nameof(TEntity), $"Objeto não encontrado: {item.Id}", Model.Enums.ErrorCodes.ENTITY_NOT_FOUND);
+                    throw new EntityValidationException(nameof(TEntity), $"Objeto não encontrado: {item.Id}", ErrorCodes.ENTITY_NOT_FOUND);
 
                 FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq(e => e.Id, item.Id);
                 DeleteResult deleteResult = await Collection.DeleteOneAsync(filter);
@@ -210,7 +210,7 @@ namespace GeoCidadao.MongoDatabase.MongoDao
             {
                 TEntity? trackedEntity = await FindAsync(key);
                 if (trackedEntity == null)
-                    throw new EntityValidationException(nameof(TEntity), $"Objeto não encontrado: {key}", Model.Enums.ErrorCodes.ENTITY_NOT_FOUND);
+                    throw new EntityValidationException(nameof(TEntity), $"Objeto não encontrado: {key}", ErrorCodes.ENTITY_NOT_FOUND);
 
                 FilterDefinition<TEntity> filter = Builders<TEntity>.Filter.Eq(e => e.Id, key);
                 DeleteResult deleteResult = await Collection.DeleteOneAsync(filter);

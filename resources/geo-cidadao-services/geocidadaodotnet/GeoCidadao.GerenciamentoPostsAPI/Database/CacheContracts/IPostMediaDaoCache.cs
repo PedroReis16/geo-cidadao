@@ -1,5 +1,5 @@
 using GeoCidadao.Database.CacheContracts;
-using GeoCidadao.Model.Entities.GerenciamentoPostsAPI;
+using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Database.CacheContracts
 {

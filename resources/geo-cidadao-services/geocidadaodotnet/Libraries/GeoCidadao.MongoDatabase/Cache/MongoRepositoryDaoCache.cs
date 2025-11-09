@@ -1,5 +1,5 @@
 using GeoCidadao.Caching.Contracts;
-using GeoCidadao.Model.MongoEntities;
+using GeoCidadao.Models.MongoEntities;
 using GeoCidadao.MongoDatabase.CacheContracts;
 
 namespace GeoCidadao.MongoDatabase.Cache

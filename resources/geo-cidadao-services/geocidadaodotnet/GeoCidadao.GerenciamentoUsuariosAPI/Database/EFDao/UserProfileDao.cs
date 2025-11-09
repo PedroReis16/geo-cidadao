@@ -3,10 +3,10 @@ using GeoCidadao.Database.CacheContracts;
 using GeoCidadao.Database.EFDao;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.CacheContracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
-using GeoCidadao.Model.Entities;
-using GeoCidadao.Model.Entities.GerenciamentoUsuariosAPI;
-using GeoCidadao.Model.Enums;
-using GeoCidadao.Model.Exceptions;
+using GeoCidadao.Models.Entities;
+using GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI;
+using GeoCidadao.Models.Enums;
+using GeoCidadao.Models.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao

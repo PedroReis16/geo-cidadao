@@ -25,7 +25,7 @@ namespace GeoCidadao.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("GeoCidadao.Model.Entities.UserPicture", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.UserPicture", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
@@ -60,7 +60,7 @@ namespace GeoCidadao.Database.Migrations
                     b.ToTable("user_picture", (string)null);
                 });
 
-            modelBuilder.Entity("GeoCidadao.Model.Entities.UserProfile", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.UserProfile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -113,18 +113,18 @@ namespace GeoCidadao.Database.Migrations
                     b.ToTable("user_profile", (string)null);
                 });
 
-            modelBuilder.Entity("GeoCidadao.Model.Entities.UserPicture", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.UserPicture", b =>
                 {
-                    b.HasOne("GeoCidadao.Model.Entities.UserProfile", "User")
+                    b.HasOne("GeoCidadao.Models.Entities.UserProfile", "User")
                         .WithOne("ProfilePicture")
-                        .HasForeignKey("GeoCidadao.Model.Entities.UserPicture", "Id")
+                        .HasForeignKey("GeoCidadao.Models.Entities.UserPicture", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GeoCidadao.Model.Entities.UserProfile", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.UserProfile", b =>
                 {
                     b.Navigation("ProfilePicture");
                 });
