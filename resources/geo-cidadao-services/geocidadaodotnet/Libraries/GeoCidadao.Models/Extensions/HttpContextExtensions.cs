@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
-using GeoCidadao.Models.OAuth;
 
 namespace GeoCidadao.Models.Extensions
 {

@@ -39,6 +39,7 @@
     <ProjectReference Include="..\Libraries\GeoCidadao.AMQP\GeoCidadao.AMQP.csproj" />
     <ProjectReference Include="..\Libraries\GeoCidadao.Jobs\GeoCidadao.Jobs.csproj" />
     <ProjectReference Include="..\Libraries\GeoCidadao.Cloud\GeoCidadao.Cloud.csproj" />
+    <ProjectReference Include="..\Libraries\GeoCidadao.OAuth\GeoCidadao.OAuth.csproj" />
   </ItemGroup>
 
 </Project>

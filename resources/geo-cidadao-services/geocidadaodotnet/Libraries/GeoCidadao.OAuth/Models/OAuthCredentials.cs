@@ -1,6 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 
-namespace GeoCidadao.Models.OAuth
+namespace GeoCidadao.OAuth.Models
 {
     public class OAuthCredentials
     {

@@ -15,7 +15,8 @@ using GeoCidadao.GerenciamentoPostsAPI.Database.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Database.EFDao;
 using GeoCidadao.GerenciamentoPostsAPI.Services.QueueServices;
 using GeoCidadao.GerenciamentoPostsAPI.Contracts.QueueServices;
-using GeoCidadao.Models.OAuth;
+using GeoCidadao.OAuth.Extensions;
+using GeoCidadao.OAuth.Models;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
