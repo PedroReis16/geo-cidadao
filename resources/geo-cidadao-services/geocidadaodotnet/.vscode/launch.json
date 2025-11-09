@@ -21,18 +21,18 @@
       }
     },
     {
-      "name": "UserPostsAPI",
+      "name": "GerenciamentoPostsAPI",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "build: UserPostsAPI",
-      "program": "${workspaceFolder}/GeoCidadao.UserPostsAPI/bin/Debug/net8.0/GeoCidadao.UserPostsAPI.dll",
+      "preLaunchTask": "build: GerenciamentoPostsAPI",
+      "program": "${workspaceFolder}/GeoCidadao.GerenciamentoPostsAPI/bin/Debug/net8.0/GeoCidadao.GerenciamentoPostsAPI.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/GeoCidadao.UserPostsAPI",
+      "cwd": "${workspaceFolder}/GeoCidadao.GerenciamentoPostsAPI",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
         "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)",
-        "uriFormat": "%s/user-posts/swagger"
+        "uriFormat": "%s/gerenciamento-posts/swagger"
       },
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
@@ -45,7 +45,7 @@
       "name": "Debug all",
       "configurations": [
         "GerenciamentoUsuariosAPI",
-        "UserPostsAPI"
+        "GerenciamentoPostsAPI"
       ],
       "stopAll": true
     }

@@ -4,8 +4,9 @@ using GeoCidadao.AMQP.Messages;
 using GeoCidadao.AMQP.Services;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
-using GeoCidadao.Model.Entities;
-using GeoCidadao.Model.Extensions;
+using GeoCidadao.Models.Entities;
+using GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI;
+using GeoCidadao.Models.Extensions;
 using RabbitMQ.Client.Events;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices

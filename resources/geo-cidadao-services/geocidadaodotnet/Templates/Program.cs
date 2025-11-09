@@ -4,14 +4,15 @@ using Microsoft.OpenApi.Models;
 using GeoCidadao.Caching.Extensions;
 using GeoCidadao.Database;
 using GeoCidadao.Database.Migrations;
-using GeoCidadao.Model.Middlewares;
-using GeoCidadao.Model.OAuth;
-using <PROJECT_NAME>.Config;
+using GeoCidadao.Models.Middlewares;
+using GeoCidadao.Models.OAuth;
+using < PROJECT_NAME >.Config;
 using System.Text.Json.Serialization;
 using System.Reflection;
-using GeoCidadao.Model.Constants;
-using GeoCidadao.Model.Helpers;
-using GeoCidadao.Model.Config;
+using GeoCidadao.Models.Constants;
+using GeoCidadao.Models.Helpers;
+using GeoCidadao.Models.Config;
+using GeoCidadao.Database.Extensions;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -28,13 +29,8 @@ builder.Services.AddControllers(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-builder.Services.AddDbContext<GeoDbContext>(options =>
-{
-    _ = options.UseNpgsql(builder.Configuration.GetConnectionString("GeoDb"));
-});
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-builder.Services.AddTransient<IStartupFilter, MigrationStartupFilter<GeoDbContext>>();
 
+builder.Services.UsePostgreSql(builder.Configuration);
 
 // Middlewares
 builder.Services.AddTransient<GlobalExceptionHandler>();

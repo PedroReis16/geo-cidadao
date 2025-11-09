@@ -2,13 +2,11 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using GeoCidadao.Caching.Extensions;
-using GeoCidadao.Database;
-using GeoCidadao.Database.Migrations;
-using GeoCidadao.Model.Middlewares;
+using GeoCidadao.Models.Middlewares;
 using GeoCidadao.GerenciamentoUsuariosAPI.Config;
 using System.Text.Json.Serialization;
 using System.Reflection;
-using GeoCidadao.Model.Config;
+using GeoCidadao.Models.Config;
 using Quartz;
 using GeoCidadao.Jobs.Config;
 using GeoCidadao.Jobs.Listeners;
@@ -28,6 +26,9 @@ using GeoCidadao.GerenciamentoUsuariosAPI.Services.ConnectionServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.ConnectionServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Middlewares;
 using Microsoft.Extensions.Options;
+using GeoCidadao.Database.Extensions;
+using GeoCidadao.OAuth.Extensions;
+using GeoCidadao.OAuth.Models;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -44,12 +45,8 @@ builder.Services.AddControllers(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-builder.Services.AddDbContext<GeoDbContext>(options =>
-{
-    _ = options.UseNpgsql(builder.Configuration.GetConnectionString("GeoDb"));
-});
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-builder.Services.AddTransient<IStartupFilter, MigrationStartupFilter<GeoDbContext>>();
+builder.Services.UsePostgreSql(builder.Configuration);
+
 
 builder.Services.Configure<KeycloakAdminOptions>(builder.Configuration.GetSection(AppSettingsProperties.Keycloak).GetSection(AppSettingsProperties.KeycloakAdmin)!);
 
@@ -138,10 +135,7 @@ builder.Services.AddSwaggerGen(option =>
     option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-// builder.Services.ConfigureOAuth([
-//     builder.Configuration.GetRequiredSection(AppSettingsProperties.OAuth).Get<OAuthConfiguration>()!,
-//     builder.Configuration.GetRequiredSection(AppSettingsProperties.PortalAuthClient).Get<OAuthConfiguration>()!
-// ]);
+builder.Services.ConfigureOAuth(builder.Configuration.GetRequiredSection(AppSettingsProperties.OAuth).Get<OAuthConfiguration>()!);
 
 builder.Services.Configure<QuartzOptions>(options =>
 {
