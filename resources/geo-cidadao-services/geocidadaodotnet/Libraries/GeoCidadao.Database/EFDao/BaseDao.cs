@@ -100,9 +100,13 @@ namespace GeoCidadao.Database.EFDao
             }
 
             DbSet<TEntity> dbSet = _context.Set<TEntity>();
-            entity = track ?
-                await dbSet.FindAsync(key) :
-                await dbSet.AsNoTracking().FirstOrDefaultAsync(p => p.Id.Equals(key));
+
+            IQueryable<TEntity> query = dbSet.Where(e => e.Id.Equals(key));
+
+            if (!track)
+                query = query.AsNoTracking();
+                
+            entity =  await query.FirstOrDefaultAsync();
 
             if (entity != null)
             {
