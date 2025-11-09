@@ -1,5 +1,6 @@
 using GeoCidadao.Database.Contracts;
-using GeoCidadao.Model.Entities;
+using GeoCidadao.Models.Entities;
+using GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts
 {

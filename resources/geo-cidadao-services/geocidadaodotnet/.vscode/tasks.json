@@ -21,12 +21,12 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "build: UserPostsAPI",
+      "label": "build: GerenciamentoPostsAPI",
       "command": "dotnet",
       "type": "shell",
       "args": [
         "build",
-        "${workspaceFolder}/GeoCidadao.UserPostsAPI/GeoCidadao.UserPostsAPI.csproj",
+        "${workspaceFolder}/GeoCidadao.GerenciamentoPostsAPI/GeoCidadao.GerenciamentoPostsAPI.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],

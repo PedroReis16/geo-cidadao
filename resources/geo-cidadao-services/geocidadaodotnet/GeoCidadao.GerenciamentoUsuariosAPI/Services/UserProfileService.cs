@@ -4,8 +4,8 @@ using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.ConnectionServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Models.DTOs;
-using GeoCidadao.Model.Constants;
-using GeoCidadao.Model.Extensions;
+using GeoCidadao.Models.Constants;
+using GeoCidadao.Models.Extensions;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
 {
