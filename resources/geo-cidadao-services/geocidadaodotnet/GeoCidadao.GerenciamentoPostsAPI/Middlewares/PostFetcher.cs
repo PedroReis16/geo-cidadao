@@ -13,7 +13,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Middlewares
         {
             if (!ctx.RouteData.Values.TryGetValue("postId", out object? postId)) return null;
 
-            return await _postDao.FindAsync((Guid)postId!);
+            return await _postDao.FindAsync(Guid.Parse(postId!.ToString()!), false);
         }
     }
 }
