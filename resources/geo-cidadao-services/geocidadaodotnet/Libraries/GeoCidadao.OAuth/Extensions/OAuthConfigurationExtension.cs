@@ -68,7 +68,6 @@ namespace GeoCidadao.OAuth.Extensions
                             var realmAccessClaim = id.FindFirst("realm_access");
                             if (realmAccessClaim != null)
                             {
-                                Console.WriteLine($"[DEBUG] realm_access claim found: {realmAccessClaim.Value}");
                                 try
                                 {
                                     var realmAccess = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, System.Text.Json.JsonElement>>(realmAccessClaim.Value);
@@ -77,7 +76,6 @@ namespace GeoCidadao.OAuth.Extensions
                                         foreach (var role in rolesElement.EnumerateArray())
                                         {
                                             var roleValue = role.GetString();
-                                            Console.WriteLine($"[DEBUG] Adding realm role: realm:{roleValue}");
                                             id.AddClaim(new Claim(id.RoleClaimType, $"realm:{roleValue}"));
                                         }
                                     }
@@ -92,7 +90,6 @@ namespace GeoCidadao.OAuth.Extensions
                             var resourceAccessClaim = id.FindFirst("resource_access");
                             if (resourceAccessClaim != null)
                             {
-                                Console.WriteLine($"[DEBUG] resource_access claim found: {resourceAccessClaim.Value}");
                                 try
                                 {
                                     var resourceAccess = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, System.Text.Json.JsonElement>>(resourceAccessClaim.Value);
@@ -101,7 +98,6 @@ namespace GeoCidadao.OAuth.Extensions
                                         foreach (var client in resourceAccess)
                                         {
                                             var clientId = client.Key;
-                                            Console.WriteLine($"[DEBUG] Processing client: {clientId}");
                                             
                                             if (client.Value.ValueKind == System.Text.Json.JsonValueKind.Object &&
                                                 client.Value.TryGetProperty("roles", out var rolesElement) &&
@@ -111,7 +107,6 @@ namespace GeoCidadao.OAuth.Extensions
                                                 {
                                                     var roleValue = role.GetString();
                                                     var fullRole = $"res:{clientId}:{roleValue}";
-                                                    Console.WriteLine($"[DEBUG] Adding resource role: {fullRole}");
                                                     id.AddClaim(new Claim(id.RoleClaimType, fullRole));
                                                 }
                                             }
@@ -123,20 +118,10 @@ namespace GeoCidadao.OAuth.Extensions
                                     Console.WriteLine($"[ERROR] Failed to parse resource_access: {ex.Message}");
                                 }
                             }
-                            else
-                            {
-                                Console.WriteLine($"[WARNING] resource_access claim not found! Available claims: {string.Join(", ", id.Claims.Select(c => c.Type))}");
-                            }
 
                             // 🔹 Atualiza o principal
                             ctx.Principal = new ClaimsPrincipal(id);
 
-                            // 🔹 Log para verificação
-                            Console.WriteLine($"[RoleClaimType] {id.RoleClaimType}");
-                            var finalRoles = id.Claims.Where(c => c.Type == id.RoleClaimType || c.Type == "group").ToList();
-                            Console.WriteLine($"[DEBUG] Total roles/groups added: {finalRoles.Count}");
-                            foreach (var c in finalRoles)
-                                Console.WriteLine($"[ROLE/GROUP] {c.Type} = {c.Value}");
 
                             return Task.CompletedTask;
                         }

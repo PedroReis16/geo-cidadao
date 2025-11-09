@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using GeoCidadao.Models.Entities;
 using GeoCidadao.OAuth.Contracts;
 using Microsoft.AspNetCore.Authorization;
@@ -17,22 +18,57 @@ namespace GeoCidadao.OAuth.Attributes
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
-            var sp = context.HttpContext.RequestServices;
-            var auth = sp.GetRequiredService<IAuthorizationService>();
-            var cfg = sp.GetRequiredService<IConfiguration>();
-            var fetcher = sp.GetRequiredService<IResourceFetcher<TResource>>();
+            IServiceProvider sp = context.HttpContext.RequestServices;
+            IConfiguration cfg = sp.GetRequiredService<IConfiguration>();
+            IResourceFetcher<TResource> fetcher = sp.GetRequiredService<IResourceFetcher<TResource>>();
 
-            var resource = await fetcher.GetAsync(context);
+            TResource? resource = await fetcher.GetAsync(context);
             if (resource is null) { context.Result = new NotFoundResult(); return; }
 
-            // monta requirement genérico reaproveitando seu helper
-            var req = new OwnerOrPermissionRequirement<TResource>(
-                ownerSelector: r => r.GetType().GetProperty(_ownerPropertyName)?.GetValue(r)?.ToString(),
-                permissionsOrKeys: _permissions,
-                resolveFromConfig: true);
+            var prop = typeof(TResource).GetProperty(_ownerPropertyName);
+            if (prop is null) { context.Result = new ForbidResult(); return; }
 
-            var result = await auth.AuthorizeAsync(context.HttpContext.User, resource, req);
-            if (!result.Succeeded) context.Result = new ForbidResult();
+            var user = context.HttpContext.User;
+
+            // 1. Verifica se é o proprietário do recurso
+            var ownerId = prop.GetValue(resource)?.ToString();
+            var userId = user.Identity?.Name ?? user.FindFirst("sub")?.Value ?? user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            bool isOwner = !string.IsNullOrEmpty(ownerId) && !string.IsNullOrEmpty(userId) && ownerId.Equals(userId, StringComparison.OrdinalIgnoreCase);
+
+            if (isOwner)
+                return;
+
+            // 2. Verifica se tem permissões administrativas
+
+            foreach (var permissionOrKey in _permissions)
+            {
+                if (HasPermission(user, isOwner, permissionOrKey, cfg))
+                    return;
+            }
+
+            // Se chegou até aqui, não tem autorização
+            context.Result = new ForbidResult();
+        }
+
+        private bool HasPermission(ClaimsPrincipal user, bool isOwner, string permissionOrKey, IConfiguration cfg)
+        {
+            // Tenta resolver da configuração primeiro
+            string actualPermission = cfg[$"OAuth:ClaimRoles:{permissionOrKey}"]
+                                   ?? cfg[$"OAuth:GroupClaims:{permissionOrKey}"]
+                                   ?? permissionOrKey;
+
+            if (actualPermission.Contains("Self", StringComparison.OrdinalIgnoreCase) && !isOwner)
+                return false;
+
+            // Verifica se tem o role/grupo necessário
+            var hasPermission = user.IsInRole(actualPermission) ||
+                               user.HasClaim("group", actualPermission) ||
+                               user.HasClaim(System.Security.Claims.ClaimTypes.Role, actualPermission) ||
+                               user.HasClaim("role", actualPermission);
+
+
+            return hasPermission;
         }
     }
 }
