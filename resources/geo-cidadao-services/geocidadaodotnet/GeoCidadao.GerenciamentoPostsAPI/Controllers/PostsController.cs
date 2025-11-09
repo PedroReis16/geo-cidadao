@@ -20,13 +20,14 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         /// Obter posts de um usuário
         /// </summary>
         /// <param name="userId">Id do usuário</param>
+        /// <param name="itemsCount">Número máximo de posts a serem retornados</param>
+        /// <param name="pageNumber">Número da página (iniciando em 1)</param>
         /// <returns></returns>
         [HttpGet("{userId}/posts")]
         [Authorize(Policy = "Posts.Read")]
-        public async Task<IActionResult> GetUserPosts(Guid userId)
+        public async Task<IActionResult> GetUserPosts(Guid userId, [FromQuery] int? itemsCount, [FromQuery] int? pageNumber)
         {
-
-            List<PostDTO> posts = await _service.GetUserPostsAsync(userId);
+            List<PostDTO> posts = await _service.GetUserPostsAsync(userId, itemsCount, pageNumber);
 
             if (posts.Count == 0)
                 return NoContent();
@@ -77,6 +78,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         [OwnerOrPermissionByProperty<Post>("UserId", "Posts.Edit.Self", "Posts.Edit.Any")]
         public async Task<IActionResult> UpdatePost(Guid postId, [FromBody] UpdatePostDTO updatedPost)
         {
+            await _service.UpdatePostAsync(postId, updatedPost);
             return NoContent();
         }
 

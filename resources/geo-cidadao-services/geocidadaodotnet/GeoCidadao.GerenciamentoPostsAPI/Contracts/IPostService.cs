@@ -8,7 +8,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Contracts
         Task<PostDTO> CreatePostAsync(Guid userId, NewPostDTO newPost);
         Task DeletePostAsync(Guid userId);
         Task<PostDTO?> GetPostAsync(Guid postId);
-        Task<List<PostDTO>> GetUserPostsAsync(Guid userId);
+        Task<List<PostDTO>> GetUserPostsAsync(Guid userId, int? itemsCount=null, int? pageNumber=null);
         Task UpdatePostAsync(Guid postId, UpdatePostDTO updatedPost);
     }
 }
