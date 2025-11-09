@@ -8,7 +8,8 @@ COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.GerenciamentoPos
 COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.AMQP/GeoCidadao.AMQP.csproj GeoCidadao.AMQP/
 COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.Database/GeoCidadao.Database.csproj GeoCidadao.Database/
 COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.Caching/GeoCidadao.Caching.csproj GeoCidadao.Caching/
-COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.Model/GeoCidadao.Model.csproj GeoCidadao.Model/
+COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.Models/GeoCidadao.Models.csproj GeoCidadao.Models/
+COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.Cloud/GeoCidadao.Cloud.csproj GeoCidadao.Cloud/
 
 RUN dotnet restore GeoCidadao.GerenciamentoPostsAPI/GeoCidadao.GerenciamentoPostsAPI.csproj
 

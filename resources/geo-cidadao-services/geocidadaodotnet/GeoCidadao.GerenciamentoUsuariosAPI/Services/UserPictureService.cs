@@ -5,12 +5,13 @@ using GeoCidadao.GerenciamentoUsuariosAPI.Contracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.CacheServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
-using GeoCidadao.Model.Constants;
-using GeoCidadao.Model.Entities;
-using GeoCidadao.Model.Enums;
-using GeoCidadao.Model.Exceptions;
-using GeoCidadao.Model.Extensions;
-using GeoCidadao.Model.Helpers;
+using GeoCidadao.Models.Constants;
+using GeoCidadao.Models.Entities;
+using GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI;
+using GeoCidadao.Models.Enums;
+using GeoCidadao.Models.Exceptions;
+using GeoCidadao.Models.Extensions;
+using GeoCidadao.Models.Helpers;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
 {
