@@ -5,10 +5,10 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY resources/geo-cidadao-services/geocidadaodotnet/<PROJECT_NAME>/<PROJECT_NAME>.csproj <PROJECT_NAME>/
-COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.AMQP/GeoCidadao.AMQP.csproj GeoCidadao.AMQP/
-COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.Database/GeoCidadao.Database.csproj GeoCidadao.Database/
-COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.Caching/GeoCidadao.Caching.csproj GeoCidadao.Caching/
-COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.Models/GeoCidadao.Models.csproj GeoCidadao.Models/
+COPY resources/geo-cidadao-services/geocidadaodotnet/Labraries/GeoCidadao.AMQP/GeoCidadao.AMQP.csproj GeoCidadao.AMQP/
+COPY resources/geo-cidadao-services/geocidadaodotnet/Labraries/GeoCidadao.Database/GeoCidadao.Database.csproj GeoCidadao.Database/
+COPY resources/geo-cidadao-services/geocidadaodotnet/Labraries/GeoCidadao.Caching/GeoCidadao.Caching.csproj GeoCidadao.Caching/
+COPY resources/geo-cidadao-services/geocidadaodotnet/Labraries/GeoCidadao.Models/GeoCidadao.Models.csproj GeoCidadao.Models/
 
 RUN dotnet restore <PROJECT_NAME>/<PROJECT_NAME>.csproj
 
