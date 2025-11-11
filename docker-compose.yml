@@ -64,8 +64,8 @@ services:
       - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/
-      - ./docker-compose/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
-      - ./docker-compose/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./docker-compose/local/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./docker-compose/local/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
@@ -137,9 +137,9 @@ services:
       - geo-network
     command: ["start-dev", "--import-realm"]
     volumes:
-      - ./docker-compose/keycloak/geocidadao-realm.json:/opt/keycloak/data/import/geocidadao-realm.json
-      - ./docker-compose/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
-      - ./docker-compose/keycloak/themes:/opt/keycloak/themes/custom-theme
+      - ./docker-compose/local/keycloak/geocidadao-realm.json:/opt/keycloak/data/import/geocidadao-realm.json
+      - ./docker-compose/local/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
+      - ./docker-compose/local/keycloak/themes:/opt/keycloak/themes/custom-theme
       - keycloak_data:/opt/keycloak/data
   gerenciamento-usuarios:
     container_name: gerenciamento-usuarios
@@ -154,8 +154,8 @@ services:
       rabbitmq:
         condition: service_healthy
     env_file:
-      - docker-compose/default.env
-      - docker-compose/gerenciamento-usuarios.env
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/gerenciamento-usuarios.env
     labels:
       - traefik.http.routers.gerenciamento-usuarios.rule=PathPrefix(`/gerenciamento-usuarios`)
       - traefik.http.services.gerenciamento-usuarios.loadbalancer.server.port=8090
@@ -179,8 +179,8 @@ services:
       rabbitmq:
         condition: service_healthy
     env_file:
-      - docker-compose/default.env
-      - docker-compose/gerenciamento-posts.env
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/gerenciamento-posts.env
     labels:
       - traefik.http.routers.gerenciamento-posts.rule=PathPrefix(`/gerenciamento-posts`)
       - traefik.http.services.gerenciamento-posts.loadbalancer.server.port=8091
@@ -202,8 +202,8 @@ services:
     ports:
       - "5173:80"
     env_file:
-      - docker-compose/default.env
-      - docker-compose/geo-cidadao-ui.env
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/geo-cidadao-ui.env
     labels:
       - traefik.enable=true
       - traefik.http.routers.geo-cidadao-ui.rule=PathPrefix(`/`)
