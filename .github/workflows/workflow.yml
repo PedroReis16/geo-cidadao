@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - feature/continuous-integration
+      - feature/continuos-integration
   workflow_dispatch:
 
 env:
