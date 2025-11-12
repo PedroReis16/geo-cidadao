@@ -116,9 +116,7 @@ services:
     networks:
       - geo-network
   keycloak:
-    build:
-      context: .
-      dockerfile: docker-compose/dockerfiles/keycloak.dockerfile
+    image: pedroreis16/keycloak:latest
     container_name: keycloak
     ports:
       - "8082:8180"
@@ -143,9 +141,7 @@ services:
       - keycloak_data:/opt/keycloak/data
   gerenciamento-usuarios:
     container_name: gerenciamento-usuarios
-    build:
-      context: ../..
-      dockerfile: dockerfiles/gerenciamento-usuarios-api.dockerfile
+    image: pedroreis16/gerenciamento-usuarios-api:latest
     ports:
       - "8090:8080"
     depends_on:
@@ -170,9 +166,7 @@ services:
     restart: always
   gerenciamento-posts:
     container_name: gerenciamento-posts
-    build:
-      context: ../..
-      dockerfile: dockerfiles/gerenciamento-posts-api.dockerfile
+    image: pedroreis16/gerenciamento-posts-api:latest
     ports:
       - "8091:8080"
     depends_on:
@@ -196,9 +190,7 @@ services:
 
   geo-cidadao-ui:
     container_name: geo-cidadao-ui
-    build:
-      context: ../..
-      dockerfile: dockerfiles/geo-cidadao-ui.dockerfile
+    image: pedroreis16/geo-cidadao-ui:latest
     ports:
       - "5173:80"
     env_file:
