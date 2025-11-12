@@ -1,0 +1,244 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo:8.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - geo-network
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3,ec2
+      - DEBUG=1
+      - AWS_DEFAULT_REGION=us-east-1
+      - PERSISTENCE=1
+    volumes:
+      - localstack_data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - geo-network
+  db:
+    image: postgis/postgis:16-3.4
+    platform: linux/amd64
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB} || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    environment:
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: geodb
+      POSTGRES_USER: geo
+      POSTGRES_PASSWORD: geo
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - geo-network
+  rabbitmq:
+    image: rabbitmq:4.1.4-management
+    container_name: rabbitmq
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    networks:
+      - geo-network
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - geo-network
+  init-keycloak-db:
+    image: postgres:15-alpine
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: geo
+    command: >
+      sh -c '
+        # 1) Garante usuário com a senha correta
+        UE=$(psql -h db -U geo -d geodb -Atc "SELECT 1 FROM pg_roles WHERE rolname='\''keycloak'\''")
+        if [ "$UE" = "1" ]; then
+          echo "[init] Usuário keycloak já existe; ajustando senha..."
+          psql -h db -U geo -d geodb -v ON_ERROR_STOP=1 -c "ALTER USER keycloak WITH PASSWORD '\''keycloak'\''";
+        else
+          echo "[init] Criando usuário keycloak..."
+          psql -h db -U geo -d geodb -v ON_ERROR_STOP=1 -c "CREATE USER keycloak WITH PASSWORD '\''keycloak'\''";
+        fi
+
+        # 2) Garante database
+        DE=$(psql -h db -U geo -d geodb -Atc "SELECT 1 FROM pg_database WHERE datname='\''keycloakdb'\''")
+        if [ "$DE" = "1" ]; then
+          echo "[init] Database keycloakdb já existe."
+        else
+          echo "[init] Criando database keycloakdb (OWNER keycloak)..."
+          psql -h db -U geo -d geodb -v ON_ERROR_STOP=1 -c "CREATE DATABASE keycloakdb OWNER keycloak";
+        fi
+
+        # 3) Garante schema (e ownership) dentro do keycloakdb
+        echo "[init] Garantindo schema keycloak..."
+        psql -h db -U geo -d keycloakdb -v ON_ERROR_STOP=1 -c "CREATE SCHEMA IF NOT EXISTS keycloak AUTHORIZATION keycloak";
+
+        # Observação: como você já usa KC_DB_SCHEMA=keycloak, não precisamos setar search_path.
+        echo "[init] OK"      '
+    networks:
+      - geo-network
+  keycloak:
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/keycloak.dockerfile
+    container_name: keycloak
+    ports:
+      - "8082:8180"
+    environment:
+      - KEYCLOAK_IMPORT=/opt/keycloak/data/import/geocidadao-realm.json
+    depends_on:
+      db:
+        condition: service_healthy
+      init-keycloak-db:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_started
+      mailhog:
+        condition: service_started
+    networks:
+      - geo-network
+    command: ["start-dev", "--import-realm"]
+    volumes:
+      - ./keycloak/geocidadao-realm.json:/opt/keycloak/data/import/geocidadao-realm.json
+      - ./keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
+      - ./keycloak/themes:/opt/keycloak/themes/custom-theme
+      - keycloak_data:/opt/keycloak/data
+  gerenciamento-usuarios:
+    container_name: gerenciamento-usuarios
+    build:
+      context: ../..
+      dockerfile: dockerfiles/gerenciamento-usuarios-api.dockerfile
+    ports:
+      - "8090:8080"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./default.env
+      - ./gerenciamento-usuarios.env
+    labels:
+      - traefik.http.routers.gerenciamento-usuarios.rule=PathPrefix(`/gerenciamento-usuarios`)
+      - traefik.http.services.gerenciamento-usuarios.loadbalancer.server.port=8090
+      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.cors.headers.addvaryheader=true
+      - traefik.http.routers.gerenciamento-usuarios.middlewares=cors
+    networks:
+      - geo-network
+    restart: always
+  gerenciamento-posts:
+    container_name: gerenciamento-posts
+    build:
+      context: ../..
+      dockerfile: dockerfiles/gerenciamento-posts-api.dockerfile
+    ports:
+      - "8091:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./default.env
+      - ./gerenciamento-posts.env
+    labels:
+      - traefik.http.routers.gerenciamento-posts.rule=PathPrefix(`/gerenciamento-posts`)
+      - traefik.http.services.gerenciamento-posts.loadbalancer.server.port=8091
+      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.cors.headers.addvaryheader=true
+      - traefik.http.routers.gerenciamento-posts.middlewares=cors
+    networks:
+      - geo-network
+    restart: always
+
+  geo-cidadao-ui:
+    container_name: geo-cidadao-ui
+    build:
+      context: ../..
+      dockerfile: dockerfiles/geo-cidadao-ui.dockerfile
+    ports:
+      - "5173:80"
+    env_file:
+      - ./default.env
+      - ./geo-cidadao-ui.env
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.geo-cidadao-ui.rule=PathPrefix(`/`)
+      - traefik.http.routers.geo-cidadao-ui.entrypoints=web
+      - traefik.http.routers.geo-cidadao-ui.priority=1
+      - traefik.http.services.geo-cidadao-ui.loadbalancer.server.port=80
+      - traefik.http.middlewares.ui-cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.ui-cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.ui-cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.ui-cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.ui-cors.headers.addvaryheader=true
+      - traefik.http.routers.geo-cidadao-ui.middlewares=ui-cors
+    networks:
+      - geo-network
+    restart: always
+    depends_on:
+      - traefik
+
+  traefik:
+    image: traefik:v2.10
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "${TRAEFIK_SERVICES_PORT}:80"
+      - "${TRAEFIK_DASHBOARD_PORT}:8080"
+    volumes:
+      - ./docker-compose/traefik:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - geo-network
+networks:
+  geo-network:
+    driver: bridge
+volumes:
+  postgres_data:
+  rabbitmq_data:
+  localstack_data:
+  mongo_data:
+  keycloak_data:

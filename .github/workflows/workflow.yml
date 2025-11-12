@@ -1,0 +1,17 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - feature/continuous-integration
+  workflow_dispatch:
+
+env:
+  REGISTRY: docker.io
+  DOCKERHUB_ORG: pedroreis16
+
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+  
