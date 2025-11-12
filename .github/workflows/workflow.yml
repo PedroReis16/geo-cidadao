@@ -1,34 +1,58 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    branches:
-      - master
-      - feature/continuos-integration
   workflow_dispatch:
+    inputs:
+      services:
+        description: 'Serviços para build e deploy (separados por vírgula)'
+        required: true
+        type: choice
+        options:
+          - 'all'
+          - 'geo-cidadao-ui'
+          - 'gerenciamento-usuarios-api'
+          - 'gerenciamento-posts-api'
+          - 'keycloak'
 
 env:
   REGISTRY: docker.io
   DOCKERHUB_ORG: pedroreis16
 
 jobs:
+  prepare-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Set matrix based on input
+        id: set-matrix
+        run: |
+          if [ "${{ github.event.inputs.services }}" == "all" ]; then
+            echo 'matrix=[{"service":"geo-cidadao-ui","dockerfile":"docker-compose/dockerfiles/geo-cidadao-ui.dockerfile","context":"."},{"service":"gerenciamento-usuarios-api","dockerfile":"docker-compose/dockerfiles/gerenciamento-usuarios-api.dockerfile","context":"."},{"service":"gerenciamento-posts-api","dockerfile":"docker-compose/dockerfiles/gerenciamento-posts-api.dockerfile","context":"."},{"service":"keycloak","dockerfile":"docker-compose/dockerfiles/keycloak.dockerfile","context":"docker-compose/prod"}]' >> $GITHUB_OUTPUT
+          else
+            SERVICE="${{ github.event.inputs.services }}"
+            case $SERVICE in
+              geo-cidadao-ui)
+                echo 'matrix=[{"service":"geo-cidadao-ui","dockerfile":"docker-compose/dockerfiles/geo-cidadao-ui.dockerfile","context":"."}]' >> $GITHUB_OUTPUT
+                ;;
+              gerenciamento-usuarios-api)
+                echo 'matrix=[{"service":"gerenciamento-usuarios-api","dockerfile":"docker-compose/dockerfiles/gerenciamento-usuarios-api.dockerfile","context":"."}]' >> $GITHUB_OUTPUT
+                ;;
+              gerenciamento-posts-api)
+                echo 'matrix=[{"service":"gerenciamento-posts-api","dockerfile":"docker-compose/dockerfiles/gerenciamento-posts-api.dockerfile","context":"."}]' >> $GITHUB_OUTPUT
+                ;;
+              keycloak)
+                echo 'matrix=[{"service":"keycloak","dockerfile":"docker-compose/dockerfiles/keycloak.dockerfile","context":"docker-compose/prod"}]' >> $GITHUB_OUTPUT
+                ;;
+            esac
+          fi
+
   build-and-push:
+    needs: prepare-matrix
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - service: geo-cidadao-ui
-            dockerfile: docker-compose/dockerfiles/geo-cidadao-ui.dockerfile
-            context: .
-          - service: gerenciamento-usuarios-api
-            dockerfile: docker-compose/dockerfiles/gerenciamento-usuarios-api.dockerfile
-            context: .
-          - service: gerenciamento-posts-api
-            dockerfile: docker-compose/dockerfiles/gerenciamento-posts-api.dockerfile
-            context: .
-          - service: keycloak
-            dockerfile: docker-compose/dockerfiles/keycloak.dockerfile
-            context: docker-compose/prod
+        include: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
     
     steps:
       - name: Checkout code
