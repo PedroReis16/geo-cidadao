@@ -2,17 +2,14 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using GeoCidadao.Caching.Extensions;
-using GeoCidadao.Database;
-using GeoCidadao.Database.Migrations;
 using GeoCidadao.Models.Middlewares;
-using GeoCidadao.Models.OAuth;
-using < PROJECT_NAME >.Config;
+using <PROJECT_NAME>.Config;
 using System.Text.Json.Serialization;
 using System.Reflection;
-using GeoCidadao.Models.Constants;
-using GeoCidadao.Models.Helpers;
 using GeoCidadao.Models.Config;
 using GeoCidadao.Database.Extensions;
+using GeoCidadao.OAuth.Extensions;
+using GeoCidadao.OAuth.Models;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -77,10 +74,7 @@ builder.Services.AddSwaggerGen(option =>
     option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-builder.Services.ConfigureOAuth([
-    builder.Configuration.GetRequiredSection(AppSettingsProperties.OAuth).Get<OAuthConfiguration>()!,
-    builder.Configuration.GetRequiredSection(AppSettingsProperties.PortalAuthClient).Get<OAuthConfiguration>()!
-]);
+builder.Services.ConfigureOAuth(builder.Configuration.GetRequiredSection("OAuth").Get<OAuthConfiguration>()!);
 
 WebApplication app = builder.Build();
 
