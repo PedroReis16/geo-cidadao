@@ -60,11 +60,13 @@ builder.Services.AddTransient<HttpResponseCacheHandler>();
 builder.Services.AddBucketServices(); // -> Injeta a dependencia dos serviços de Bucket 
 builder.Services.AddTransient<IUserProfileService, UserProfileService>();
 builder.Services.AddTransient<IUserPictureService, UserPictureService>();
+builder.Services.AddTransient<IUserInterestsService, UserInterestsService>();
 builder.Services.AddTransient<IUserCacheService, UserCacheService>();
 
 // DAOs
 builder.Services.AddTransient<IUserProfileDao, UserProfileDao>();
 builder.Services.AddTransient<IUserPictureDao, UserPictureDao>();
+builder.Services.AddTransient<IUserInterestsDao, UserInterestsDao>();
 
 // Dao Cache
 builder.Services.AddTransient<IUserPictureDaoCache, UserPictureDaoCache>();
