@@ -14,6 +14,7 @@ namespace GeoCidadao.Database
         //Gerenciamento de usuários API
         public DbSet<UserProfile> UserProfiles { get; set; } = default!;
         public DbSet<UserPicture> UserPictures { get; set; } = default!;
+        public DbSet<UserInterests> UserInterests { get; set; } = default!;
 
         //Gerenciamento de posts API
         public DbSet<Post> Posts { get; set; } = default!;
@@ -38,6 +39,7 @@ namespace GeoCidadao.Database
             // Gerenciamento de usuários API
             _ = modelBuilder.ApplyConfiguration(new UserProfileConfiguration());
             _ = modelBuilder.ApplyConfiguration(new UserPictureConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new UserInterestsConfiguration());
 
             // Gerenciamento de posts API
 
