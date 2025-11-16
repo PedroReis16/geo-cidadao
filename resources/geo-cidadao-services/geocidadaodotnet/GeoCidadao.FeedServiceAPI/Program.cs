@@ -10,6 +10,10 @@ using GeoCidadao.Models.Config;
 using GeoCidadao.Database.Extensions;
 using GeoCidadao.OAuth.Extensions;
 using GeoCidadao.OAuth.Models;
+using GeoCidadao.FeedServiceAPI.Contracts;
+using GeoCidadao.FeedServiceAPI.Services;
+using Polly;
+using Polly.Extensions.Http;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -35,7 +39,38 @@ builder.Services.AddInMemoryCache(builder.Configuration);
 builder.Services.AddResponseCaching();
 builder.Services.AddTransient<HttpResponseCacheHandler>();
 
+// External Services Configuration
+var externalServicesConfig = builder.Configuration.GetSection("ExternalServices").Get<ExternalServicesConfig>()
+    ?? new ExternalServicesConfig();
+
+// Polly retry policy for resilience
+var retryPolicy = HttpPolicyExtensions
+    .HandleTransientHttpError()
+    .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+
+var circuitBreakerPolicy = HttpPolicyExtensions
+    .HandleTransientHttpError()
+    .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
+
+// HTTP Clients with Polly
+builder.Services.AddHttpClient<IPostsApiClient, PostsApiClient>(client =>
+{
+    client.BaseAddress = new Uri(externalServicesConfig.PostsApiUrl);
+    client.Timeout = TimeSpan.FromSeconds(externalServicesConfig.TimeoutSeconds);
+})
+.AddPolicyHandler(retryPolicy)
+.AddPolicyHandler(circuitBreakerPolicy);
+
+builder.Services.AddHttpClient<IUsersApiClient, UsersApiClient>(client =>
+{
+    client.BaseAddress = new Uri(externalServicesConfig.UsersApiUrl);
+    client.Timeout = TimeSpan.FromSeconds(externalServicesConfig.TimeoutSeconds);
+})
+.AddPolicyHandler(retryPolicy)
+.AddPolicyHandler(circuitBreakerPolicy);
+
 // Services
+builder.Services.AddScoped<IFeedService, FeedService>();
 
 // DAOs
 
