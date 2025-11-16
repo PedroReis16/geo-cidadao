@@ -1,4 +1,5 @@
 using GeoCidadao.GerenciamentoPostsAPI.Contracts;
+using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs;
 using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts;
 using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
 using GeoCidadao.Models.OAuth;
@@ -28,6 +29,50 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         public async Task<IActionResult> GetUserPosts(Guid userId, [FromQuery] int? itemsCount, [FromQuery] int? pageNumber)
         {
             List<PostDTO> posts = await _service.GetUserPostsAsync(userId, itemsCount, pageNumber);
+
+            if (posts.Count == 0)
+                return NoContent();
+
+            return Ok(posts);
+        }
+
+        /// <summary>
+        /// Obter posts por localização
+        /// </summary>
+        /// <param name="latitude">Latitude do ponto central</param>
+        /// <param name="longitude">Longitude do ponto central</param>
+        /// <param name="radiusKm">Raio de busca em quilômetros</param>
+        /// <param name="city">Filtrar por cidade</param>
+        /// <param name="state">Filtrar por estado</param>
+        /// <param name="country">Filtrar por país</param>
+        /// <param name="itemsCount">Número máximo de posts a serem retornados</param>
+        /// <param name="pageNumber">Número da página (iniciando em 1)</param>
+        /// <returns></returns>
+        [HttpGet("by-location")]
+        [Authorize(Policy = "Posts.Read")]
+        public async Task<IActionResult> GetPostsByLocation(
+            [FromQuery] double? latitude,
+            [FromQuery] double? longitude,
+            [FromQuery] double? radiusKm,
+            [FromQuery] string? city,
+            [FromQuery] string? state,
+            [FromQuery] string? country,
+            [FromQuery] int? itemsCount,
+            [FromQuery] int? pageNumber)
+        {
+            var locationQuery = new LocationQueryDTO
+            {
+                Latitude = latitude,
+                Longitude = longitude,
+                RadiusKm = radiusKm,
+                City = city,
+                State = state,
+                Country = country,
+                ItemsCount = itemsCount,
+                PageNumber = pageNumber
+            };
+
+            List<PostWithLocationDTO> posts = await _service.GetPostsByLocationAsync(locationQuery);
 
             if (posts.Count == 0)
                 return NoContent();

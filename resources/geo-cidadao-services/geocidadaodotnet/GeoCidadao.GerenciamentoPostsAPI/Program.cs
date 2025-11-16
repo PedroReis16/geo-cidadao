@@ -50,6 +50,7 @@ builder.Services.AddBucketServices();
 builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<IPostMediaService, PostMediaService>();
 builder.Services.AddTransient<IMediaBucketService, MediaBucketService>();
+builder.Services.AddTransient<ILocationsService, LocationsService>();
 
 // DAOs
 builder.Services.AddTransient<IPostDao, PostDao>();
