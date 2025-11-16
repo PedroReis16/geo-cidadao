@@ -42,6 +42,7 @@ builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
 builder.Services.AddTransient<IAnalyticsProcessingService, AnalyticsProcessingService>();
+builder.Services.AddTransient<IAnalyticsService, AnalyticsService>();
 
 // DAOs
 builder.Services.AddTransient<IProblemEventDao, ProblemEventDao>();
