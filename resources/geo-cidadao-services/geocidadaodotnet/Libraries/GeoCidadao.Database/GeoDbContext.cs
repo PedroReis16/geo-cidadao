@@ -6,6 +6,8 @@ using GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI;
 using Microsoft.EntityFrameworkCore;
 using GeoCidadao.Database.Entities.GerenciamentoPostsAPI;
 using GeoCidadao.Models.Enums;
+using GeoCidadao.Models.Entities.AnalyticsServiceAPI;
+using GeoCidadao.Database.Configurations.AnalyticsServiceAPI;
 
 namespace GeoCidadao.Database
 {
@@ -22,6 +24,9 @@ namespace GeoCidadao.Database
         public DbSet<PostLocation> PostLocations { get; set; } = default!;
         public DbSet<PostLike> PostLikes { get; set; } = default!;
         public DbSet<PostComment> PostComments { get; set; } = default!;
+
+        //Analytics Service API
+        public DbSet<ProblemEvent> ProblemEvents { get; set; } = default!;
 
         static GeoDbContext()
         {
@@ -50,6 +55,10 @@ namespace GeoCidadao.Database
             _ = modelBuilder.ApplyConfiguration(new PostLocationConfiguration());
             _ = modelBuilder.ApplyConfiguration(new PostLikeConfiguration());
             _ = modelBuilder.ApplyConfiguration(new PostCommentConfiguration());
+
+            // Analytics Service API
+
+            _ = modelBuilder.ApplyConfiguration(new ProblemEventConfiguration());
 
             _ = modelBuilder.Ignore<BaseEntity>();
         }
