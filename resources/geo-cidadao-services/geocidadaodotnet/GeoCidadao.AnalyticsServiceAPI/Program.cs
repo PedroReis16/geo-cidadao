@@ -3,23 +3,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using GeoCidadao.Caching.Extensions;
 using GeoCidadao.Models.Middlewares;
-using GeoCidadao.GerenciamentoPostsAPI.Config;
+using GeoCidadao.AnalyticsServiceAPI.Config;
 using System.Text.Json.Serialization;
 using System.Reflection;
 using GeoCidadao.Models.Config;
 using GeoCidadao.Database.Extensions;
-using GeoCidadao.GerenciamentoPostsAPI.Services;
-using GeoCidadao.GerenciamentoPostsAPI.Contracts;
-using GeoCidadao.Cloud.Extensions;
-using GeoCidadao.GerenciamentoPostsAPI.Database.Contracts;
-using GeoCidadao.GerenciamentoPostsAPI.Database.EFDao;
-using GeoCidadao.GerenciamentoPostsAPI.Services.QueueServices;
-using GeoCidadao.GerenciamentoPostsAPI.Contracts.QueueServices;
 using GeoCidadao.OAuth.Extensions;
 using GeoCidadao.OAuth.Models;
-using GeoCidadao.OAuth.Contracts;
-using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
-using GeoCidadao.GerenciamentoPostsAPI.Middlewares;
+using GeoCidadao.AnalyticsServiceAPI.Services;
+using GeoCidadao.AnalyticsServiceAPI.Contracts;
+using GeoCidadao.AnalyticsServiceAPI.Database.Contracts;
+using GeoCidadao.AnalyticsServiceAPI.Database.EFDao;
+using GeoCidadao.AnalyticsServiceAPI.BackgroundServices;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -36,8 +31,8 @@ builder.Services.AddControllers(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-builder.Services.UsePostgreSql(builder.Configuration);
 
+builder.Services.UsePostgreSql(builder.Configuration);
 
 // Middlewares
 builder.Services.AddTransient<GlobalExceptionHandler>();
@@ -46,27 +41,14 @@ builder.Services.AddResponseCaching();
 builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
-builder.Services.AddBucketServices();
-builder.Services.AddTransient<IPostService, PostService>();
-builder.Services.AddTransient<IPostMediaService, PostMediaService>();
-builder.Services.AddTransient<IMediaBucketService, MediaBucketService>();
-builder.Services.AddTransient<ILocationsService, LocationsService>();
-builder.Services.AddTransient<IPostInteractionService, PostInteractionService>();
+builder.Services.AddTransient<IAnalyticsProcessingService, AnalyticsProcessingService>();
+builder.Services.AddTransient<IAnalyticsService, AnalyticsService>();
 
 // DAOs
-builder.Services.AddTransient<IPostDao, PostDao>();
-builder.Services.AddTransient<IPostMediaDao, PostMediaDao>();
-builder.Services.AddTransient<IPostLocationDao, PostLocationDao>();
-builder.Services.AddTransient<IPostLikeDao, PostLikeDao>();
-builder.Services.AddTransient<IPostCommentDao, PostCommentDao>();
+builder.Services.AddTransient<IProblemEventDao, ProblemEventDao>();
 
-// Queue Services
-builder.Services.AddSingleton<INotifyPostChangedService, NotifyPostChangedService>();
-builder.Services.AddSingleton<INotifyPostInteractionService, NotifyPostInteractionService>();
-builder.Services.AddSingleton<INotifyPostAnalyticsService, NotifyPostAnalyticsService>();
-
-// Fetchers (OAuth - Resource Fetchers)
-builder.Services.AddScoped<IResourceFetcher<Post>, PostFetcher>();
+// Background Services
+builder.Services.AddHostedService<PostAnalyticsConsumerService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();
@@ -120,7 +102,7 @@ app.UseSwagger(c =>
 });
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint($"/{basePath}/swagger/v1/swagger.json", "GeoCidadao.GerenciamentoPostsAPI v1");
+    options.SwaggerEndpoint($"/{basePath}/swagger/v1/swagger.json", "GeoCidadao.AnalyticsServiceAPI v1");
     options.RoutePrefix = $"{basePath}/swagger";
 });
 

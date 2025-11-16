@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoCidadao.OAuth", "Librari
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoCidadao.FeedServiceAPI", "GeoCidadao.FeedServiceAPI\GeoCidadao.FeedServiceAPI.csproj", "{DBC24A6F-ABCA-4428-8066-C90C42BD8CF7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoCidadao.AnalyticsServiceAPI", "GeoCidadao.AnalyticsServiceAPI\GeoCidadao.AnalyticsServiceAPI.csproj", "{42850BC9-1231-45AE-8A17-97E3B9902765}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -169,6 +171,18 @@ Global
 		{DBC24A6F-ABCA-4428-8066-C90C42BD8CF7}.Release|x64.Build.0 = Release|Any CPU
 		{DBC24A6F-ABCA-4428-8066-C90C42BD8CF7}.Release|x86.ActiveCfg = Release|Any CPU
 		{DBC24A6F-ABCA-4428-8066-C90C42BD8CF7}.Release|x86.Build.0 = Release|Any CPU
+		{42850BC9-1231-45AE-8A17-97E3B9902765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42850BC9-1231-45AE-8A17-97E3B9902765}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42850BC9-1231-45AE-8A17-97E3B9902765}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{42850BC9-1231-45AE-8A17-97E3B9902765}.Debug|x64.Build.0 = Debug|Any CPU
+		{42850BC9-1231-45AE-8A17-97E3B9902765}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{42850BC9-1231-45AE-8A17-97E3B9902765}.Debug|x86.Build.0 = Debug|Any CPU
+		{42850BC9-1231-45AE-8A17-97E3B9902765}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42850BC9-1231-45AE-8A17-97E3B9902765}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42850BC9-1231-45AE-8A17-97E3B9902765}.Release|x64.ActiveCfg = Release|Any CPU
+		{42850BC9-1231-45AE-8A17-97E3B9902765}.Release|x64.Build.0 = Release|Any CPU
+		{42850BC9-1231-45AE-8A17-97E3B9902765}.Release|x86.ActiveCfg = Release|Any CPU
+		{42850BC9-1231-45AE-8A17-97E3B9902765}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
