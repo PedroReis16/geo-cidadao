@@ -63,6 +63,7 @@ builder.Services.AddTransient<IPostCommentDao, PostCommentDao>();
 // Queue Services
 builder.Services.AddSingleton<INotifyPostChangedService, NotifyPostChangedService>();
 builder.Services.AddSingleton<INotifyPostInteractionService, NotifyPostInteractionService>();
+builder.Services.AddSingleton<INotifyPostAnalyticsService, NotifyPostAnalyticsService>();
 
 // Fetchers (OAuth - Resource Fetchers)
 builder.Services.AddScoped<IResourceFetcher<Post>, PostFetcher>();

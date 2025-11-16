@@ -206,6 +206,21 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                             };
 
                             await _postLocationDao.AddAsync(postLocation);
+                            
+                            // Notify analytics service asynchronously
+                            _ = Task.Run(async () => 
+                            {
+                                try
+                                {
+                                    using var scope = _scopeFactory.CreateScope();
+                                    var analyticsService = scope.ServiceProvider.GetRequiredService<INotifyPostAnalyticsService>();
+                                    await analyticsService.NotifyPostAnalyticsAsync(postId);
+                                }
+                                catch (Exception analyticsEx)
+                                {
+                                    _logger.LogWarning(analyticsEx, $"Falha ao notificar analytics para o post '{postId}'");
+                                }
+                            });
                         }
                     }
                     catch (Exception ex)
