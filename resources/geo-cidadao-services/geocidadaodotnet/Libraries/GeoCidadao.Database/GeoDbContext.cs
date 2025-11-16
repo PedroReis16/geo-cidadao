@@ -14,11 +14,14 @@ namespace GeoCidadao.Database
         //Gerenciamento de usuários API
         public DbSet<UserProfile> UserProfiles { get; set; } = default!;
         public DbSet<UserPicture> UserPictures { get; set; } = default!;
+        public DbSet<UserInterests> UserInterests { get; set; } = default!;
 
         //Gerenciamento de posts API
         public DbSet<Post> Posts { get; set; } = default!;
         public DbSet<PostMedia> PostMedias { get; set; } = default!;
         public DbSet<PostLocation> PostLocations { get; set; } = default!;
+        public DbSet<PostLike> PostLikes { get; set; } = default!;
+        public DbSet<PostComment> PostComments { get; set; } = default!;
 
         static GeoDbContext()
         {
@@ -38,12 +41,15 @@ namespace GeoCidadao.Database
             // Gerenciamento de usuários API
             _ = modelBuilder.ApplyConfiguration(new UserProfileConfiguration());
             _ = modelBuilder.ApplyConfiguration(new UserPictureConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new UserInterestsConfiguration());
 
             // Gerenciamento de posts API
 
             _ = modelBuilder.ApplyConfiguration(new PostConfiguration());
             _ = modelBuilder.ApplyConfiguration(new PostMediaConfiguration());
             _ = modelBuilder.ApplyConfiguration(new PostLocationConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new PostLikeConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new PostCommentConfiguration());
 
             _ = modelBuilder.Ignore<BaseEntity>();
         }

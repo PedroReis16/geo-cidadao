@@ -1,12 +1,15 @@
 using GeoCidadao.GerenciamentoPostsAPI.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Contracts.QueueServices;
 using GeoCidadao.GerenciamentoPostsAPI.Database.Contracts;
+using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs;
 using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts;
 using GeoCidadao.Models.Constants;
 using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
 using GeoCidadao.Models.Enums;
 using GeoCidadao.Models.Exceptions;
 using GeoCidadao.Models.Extensions;
+using GeoCidadao.Database.Entities.GerenciamentoPostsAPI;
+using NetTopologySuite.Geometries;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Services
 {
@@ -14,13 +17,15 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
         ILogger<PostService> logger,
         IHttpContextAccessor? contextAccessor,
         IServiceScopeFactory scopeFactory,
-        IPostDao postDao
+        IPostDao postDao,
+        IPostLocationDao postLocationDao
         ) : IPostService
     {
         private readonly ILogger<PostService> _logger = logger;
         private readonly HttpContext? _context = contextAccessor?.HttpContext;
         private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
         private readonly IPostDao _postDao = postDao;
+        private readonly IPostLocationDao _postLocationDao = postLocationDao;
 
 
         public async Task<PostDTO?> GetPostAsync(Guid postId)
@@ -37,6 +42,40 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
             catch (Exception ex)
             {
                 string errorMsg = $"Ocorreu um erro ao tentar obter o post '{postId}': {ex.GetFullMessage()}";
+                _logger.LogError(ex, errorMsg, _context, new()
+                {
+                    { LogConstants.EntityId, postId },
+                });
+                throw new Exception(errorMsg, ex);
+            }
+        }
+
+        public async Task<PostWithLocationDTO?> GetPostWithLocationAsync(Guid postId)
+        {
+            try
+            {
+                Post? post = await _postDao.FindAsync(postId);
+
+                if (post == null)
+                    return null;
+
+                PostLocation? location = await _postLocationDao.GetPostLocationByPostIdAsync(postId);
+                PostLocationDTO? locationDto = null;
+
+                if (location != null)
+                {
+                    locationDto = new PostLocationDTO
+                    {
+                        Latitude = location.Position.Y,
+                        Longitude = location.Position.X
+                    };
+                }
+
+                return new PostWithLocationDTO(post, locationDto);
+            }
+            catch (Exception ex)
+            {
+                string errorMsg = $"Ocorreu um erro ao tentar obter o post com localização '{postId}': {ex.GetFullMessage()}";
                 _logger.LogError(ex, errorMsg, _context, new()
                 {
                     { LogConstants.EntityId, postId },
@@ -63,6 +102,72 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                 throw new Exception(errorMsg, ex);
             }
         }
+
+        public async Task<List<PostWithLocationDTO>> GetPostsByLocationAsync(LocationQueryDTO locationQuery)
+        {
+            try
+            {
+                List<PostLocation> postLocations;
+
+                // Query by coordinates and radius
+                if (locationQuery.Latitude.HasValue && locationQuery.Longitude.HasValue && locationQuery.RadiusKm.HasValue)
+                {
+                    var geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+                    Point center = geometryFactory.CreatePoint(new Coordinate(locationQuery.Longitude.Value, locationQuery.Latitude.Value));
+                    
+                    postLocations = await _postLocationDao.GetPostsWithinRadiusAsync(
+                        center, 
+                        locationQuery.RadiusKm.Value,
+                        locationQuery.ItemsCount,
+                        locationQuery.PageNumber
+                    );
+                }
+                // Query by city/state
+                else if (!string.IsNullOrEmpty(locationQuery.City) || !string.IsNullOrEmpty(locationQuery.State))
+                {
+                    postLocations = await _postLocationDao.GetPostsByLocationAsync(
+                        locationQuery.City,
+                        locationQuery.State,
+                        locationQuery.Country,
+                        locationQuery.ItemsCount,
+                        locationQuery.PageNumber
+                    );
+                }
+                else
+                {
+                    // No location parameters provided - return empty list
+                    return new List<PostWithLocationDTO>();
+                }
+
+                // Fetch the actual posts and order by relevance
+                var postIds = postLocations.Select(pl => pl.PostId).ToList();
+                var posts = new List<PostWithLocationDTO>();
+
+                foreach (var postLocation in postLocations)
+                {
+                    var post = await _postDao.FindAsync(postLocation.PostId);
+                    if (post != null)
+                    {
+                        var locationDto = new PostLocationDTO
+                        {
+                            Latitude = postLocation.Position.Y,
+                            Longitude = postLocation.Position.X
+                        };
+                        posts.Add(new PostWithLocationDTO(post, locationDto));
+                    }
+                }
+
+                // Sort by relevance score (higher engagement) while maintaining proximity as secondary factor
+                return posts.OrderByDescending(p => p.RelevanceScore).ThenBy(p => p.CreatedAt).ToList();
+            }
+            catch (Exception ex)
+            {
+                string errorMsg = $"Ocorreu um erro ao tentar obter posts por localização: {ex.GetFullMessage()}";
+                _logger.LogError(ex, errorMsg, _context);
+                throw new Exception(errorMsg, ex);
+            }
+        }
+
         public async Task<PostDTO> CreatePostAsync(Guid userId, NewPostDTO newPost)
         {
             Guid postId = Guid.NewGuid();
@@ -78,6 +183,37 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
 
 
                 await _postDao.AddAsync(newPostEntity);
+
+                // Save location if provided
+                if (newPost.Position != null && 
+                    !string.IsNullOrEmpty(newPost.Position.Latitude) && 
+                    !string.IsNullOrEmpty(newPost.Position.Longitude))
+                {
+                    try
+                    {
+                        if (double.TryParse(newPost.Position.Latitude, out double lat) &&
+                            double.TryParse(newPost.Position.Longitude, out double lon))
+                        {
+                            var geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+                            Point position = geometryFactory.CreatePoint(new Coordinate(lon, lat));
+
+                            PostLocation postLocation = new()
+                            {
+                                Id = Guid.NewGuid(),
+                                PostId = postId,
+                                Position = position,
+                                Category = newPostEntity.Category
+                            };
+
+                            await _postLocationDao.AddAsync(postLocation);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, $"Não foi possível salvar a localização do post '{postId}'", _context);
+                        // Continue without location - it's optional
+                    }
+                }
 
                 return new(newPostEntity);
             }
@@ -153,6 +289,19 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                             await postMediaService.DeletePostMediasAsync(postId);
                         }
                         catch(Exception){ /* Ignorar erros de deleção de mídia */ }
+                    }),
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            IPostLocationDao locationDao = scope.ServiceProvider.GetRequiredService<IPostLocationDao>();
+                            PostLocation? location = await locationDao.GetPostLocationByPostIdAsync(postId);
+                            if (location != null)
+                            {
+                                await locationDao.DeleteAsync(location);
+                            }
+                        }
+                        catch(Exception){ /* Ignorar erros de deleção de localização */ }
                     })
                 );
 

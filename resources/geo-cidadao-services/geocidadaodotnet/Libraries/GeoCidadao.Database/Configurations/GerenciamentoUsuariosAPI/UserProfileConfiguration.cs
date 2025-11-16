@@ -37,6 +37,11 @@ namespace GeoCidadao.Database.Configurations.GerenciamentoUsuariosAPI
                 .WithOne(up => up.User)
                 .HasForeignKey<UserPicture>(up => up.Id);
 
+            builder.HasOne(x => x.Interests)
+                .WithOne()
+                .HasForeignKey<UserInterests>(ui => ui.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasIndex(x => x.Username).IsUnique();
             builder.HasIndex(x => x.Email);
         }
