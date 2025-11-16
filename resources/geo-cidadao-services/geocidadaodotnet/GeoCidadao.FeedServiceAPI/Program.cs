@@ -12,6 +12,10 @@ using GeoCidadao.OAuth.Extensions;
 using GeoCidadao.OAuth.Models;
 using GeoCidadao.FeedServiceAPI.Contracts;
 using GeoCidadao.FeedServiceAPI.Services;
+using GeoCidadao.FeedServiceAPI.Services.QueueServices;
+using GeoCidadao.AMQP.Contracts;
+using GeoCidadao.AMQP.Services;
+using GeoCidadao.AMQP.Configuration;
 using Polly;
 using Polly.Extensions.Http;
 
@@ -71,6 +75,21 @@ builder.Services.AddHttpClient<IUsersApiClient, UsersApiClient>(client =>
 
 // Services
 builder.Services.AddScoped<IFeedService, FeedService>();
+
+// RabbitMQ Configuration
+var rabbitMQConfig = builder.Configuration.GetSection("RabbitMQ").Get<RabbitMQConfiguration>()
+    ?? new RabbitMQConfiguration();
+
+builder.Services.AddSingleton<ISubscriberService>(sp => 
+    new RabbitMQSubscriberService(
+        sp.GetRequiredService<ILogger<RabbitMQQueueService>>(),
+        builder.Configuration
+    )
+);
+
+// Background Services (Queue Listeners)
+builder.Services.AddHostedService<PostChangedListenerService>();
+builder.Services.AddHostedService<UserChangedListenerService>();
 
 // DAOs
 
