@@ -50,4 +50,14 @@ public static class RoutingKeyNames
     /// Dead Letter Routing key para notificação de interação em posts
     /// </summary>
     public const string DLQ_POST_INTERACTION_ROUTING_KEY = "post.interaction.dlq";
+
+    /// <summary>
+    /// Routing key para notificação de criação de posts
+    /// </summary>
+    public const string POST_CREATED_ROUTING_KEY = "post.created";
+
+    /// <summary>
+    /// Dead Letter Routing key para notificação de criação de posts
+    /// </summary>
+    public const string DLQ_POST_CREATED_ROUTING_KEY = "post.created.dlq";
 }

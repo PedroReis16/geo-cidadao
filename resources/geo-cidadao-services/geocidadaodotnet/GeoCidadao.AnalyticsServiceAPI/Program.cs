@@ -1,26 +1,20 @@
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using GeoCidadao.Caching.Extensions;
-using GeoCidadao.Models.Middlewares;
-using GeoCidadao.GerenciamentoPostsAPI.Config;
+using GeoCidadao.AnalyticsServiceAPI.Config;
+using GeoCidadao.AnalyticsServiceAPI.Database;
+using GeoCidadao.AnalyticsServiceAPI.Database.Contracts;
+using GeoCidadao.AnalyticsServiceAPI.Database.EFDao;
+using GeoCidadao.AnalyticsServiceAPI.Contracts;
+using GeoCidadao.AnalyticsServiceAPI.Services;
+using GeoCidadao.AnalyticsServiceAPI.Services.BackgroundServices;
 using System.Text.Json.Serialization;
 using System.Reflection;
 using GeoCidadao.Models.Config;
-using GeoCidadao.Database.Extensions;
-using GeoCidadao.GerenciamentoPostsAPI.Services;
-using GeoCidadao.GerenciamentoPostsAPI.Contracts;
-using GeoCidadao.Cloud.Extensions;
-using GeoCidadao.GerenciamentoPostsAPI.Database.Contracts;
-using GeoCidadao.GerenciamentoPostsAPI.Database.EFDao;
-using GeoCidadao.GerenciamentoPostsAPI.Services.QueueServices;
-using GeoCidadao.GerenciamentoPostsAPI.Contracts.QueueServices;
+using GeoCidadao.Caching.Extensions;
+using GeoCidadao.Models.Middlewares;
 using GeoCidadao.OAuth.Extensions;
 using GeoCidadao.OAuth.Models;
-using GeoCidadao.OAuth.Contracts;
-using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
-using GeoCidadao.GerenciamentoPostsAPI.Middlewares;
-
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -36,8 +30,9 @@ builder.Services.AddControllers(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-builder.Services.UsePostgreSql(builder.Configuration);
-
+// Database
+builder.Services.AddDbContext<AnalyticsDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Middlewares
 builder.Services.AddTransient<GlobalExceptionHandler>();
@@ -46,27 +41,14 @@ builder.Services.AddResponseCaching();
 builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
-builder.Services.AddBucketServices();
-builder.Services.AddTransient<IPostService, PostService>();
-builder.Services.AddTransient<IPostMediaService, PostMediaService>();
-builder.Services.AddTransient<IMediaBucketService, MediaBucketService>();
-builder.Services.AddTransient<ILocationsService, LocationsService>();
-builder.Services.AddTransient<IPostInteractionService, PostInteractionService>();
+builder.Services.AddTransient<IAnalyticsService, AnalyticsService>();
 
 // DAOs
-builder.Services.AddTransient<IPostDao, PostDao>();
-builder.Services.AddTransient<IPostMediaDao, PostMediaDao>();
-builder.Services.AddTransient<IPostLocationDao, PostLocationDao>();
-builder.Services.AddTransient<IPostLikeDao, PostLikeDao>();
-builder.Services.AddTransient<IPostCommentDao, PostCommentDao>();
+builder.Services.AddTransient<IPostAnalyticsDao, PostAnalyticsDao>();
+builder.Services.AddTransient<IRegionMetricsDao, RegionMetricsDao>();
 
-// Queue Services
-builder.Services.AddSingleton<INotifyPostChangedService, NotifyPostChangedService>();
-builder.Services.AddSingleton<INotifyPostInteractionService, NotifyPostInteractionService>();
-builder.Services.AddSingleton<INotifyPostCreatedService, NotifyPostCreatedService>();
-
-// Fetchers (OAuth - Resource Fetchers)
-builder.Services.AddScoped<IResourceFetcher<Post>, PostFetcher>();
+// Background Services
+builder.Services.AddHostedService<PostCreatedConsumerService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();
@@ -101,6 +83,7 @@ builder.Services.AddSwaggerGen(option =>
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     option.DocumentFilter<TagDescriptionsDocumentFilter>();
     option.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    option.EnableAnnotations();
 });
 
 builder.Services.ConfigureOAuth(builder.Configuration.GetRequiredSection("OAuth").Get<OAuthConfiguration>()!);
@@ -120,7 +103,7 @@ app.UseSwagger(c =>
 });
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint($"/{basePath}/swagger/v1/swagger.json", "GeoCidadao.GerenciamentoPostsAPI v1");
+    options.SwaggerEndpoint($"/{basePath}/swagger/v1/swagger.json", "GeoCidadao.AnalyticsServiceAPI v1");
     options.RoutePrefix = $"{basePath}/swagger";
 });
 
@@ -131,7 +114,6 @@ app.UseMiddleware<HttpResponseCacheHandler>();
 
 app.UsePathBase($"/{basePath}");
 
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

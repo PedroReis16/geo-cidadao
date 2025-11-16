@@ -215,6 +215,9 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                     }
                 }
 
+                // Notify analytics service about new post creation
+                NotifyPostCreated(postId);
+
                 return new(newPostEntity);
             }
             catch (EntityValidationException)
@@ -324,6 +327,14 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
             INotifyPostChangedService notifyService = scope.ServiceProvider.GetRequiredService<INotifyPostChangedService>();
 
             notifyService.NotifyPostChanged(postId);
+        }
+
+        private void NotifyPostCreated(Guid postId)
+        {
+            using IServiceScope scope = _scopeFactory.CreateScope();
+            INotifyPostCreatedService notifyService = scope.ServiceProvider.GetRequiredService<INotifyPostCreatedService>();
+
+            notifyService.NotifyPostCreated(postId);
         }
 
     }

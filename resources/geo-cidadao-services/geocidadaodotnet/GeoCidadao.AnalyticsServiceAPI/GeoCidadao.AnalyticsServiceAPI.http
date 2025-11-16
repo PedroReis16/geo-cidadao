@@ -1,0 +1,6 @@
+@GeoCidadao.AnalyticsServiceAPI_HostAddress = http://localhost:5078
+
+GET {{GeoCidadao.AnalyticsServiceAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
