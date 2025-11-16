@@ -25,11 +25,12 @@ dotnet add $PROJECT_NAME package Polly.Extensions.Http --version 3.0.0
 dotnet add $PROJECT_NAME package Microsoft.Extensions.Http.Polly --version 8.2.0
 
 # Adiciona referências dos projetos
-dotnet add $PROJECT_NAME reference GeoCidadao.Models
-dotnet add $PROJECT_NAME reference GeoCidadao.Caching
-dotnet add $PROJECT_NAME reference GeoCidadao.Database
-dotnet add $PROJECT_NAME reference GeoCidadao.AMQP
-dotnet add $PROJECT_NAME reference GeoCidadao.Jobs
+dotnet add $PROJECT_NAME reference ./Libraries/GeoCidadao.Models/GeoCidadao.Models.csproj
+dotnet add $PROJECT_NAME reference ./Libraries/GeoCidadao.Caching/GeoCidadao.Caching.csproj
+dotnet add $PROJECT_NAME reference ./Libraries/GeoCidadao.Database/GeoCidadao.Database.csproj
+dotnet add $PROJECT_NAME reference ./Libraries/GeoCidadao.AMQP/GeoCidadao.AMQP.csproj
+dotnet add $PROJECT_NAME reference ./Libraries/GeoCidadao.Jobs/GeoCidadao.Jobs.csproj
+dotnet add $PROJECT_NAME reference ./Libraries/GeoCidadao.OAuth/GeoCidadao.OAuth.csproj
 
 # Cria estrutura de diretórios
 New-Item -Path "$PROJECT_NAME\Controllers" -ItemType Directory
@@ -70,8 +71,11 @@ Copy-Item -Path "Templates\appsettings.json" -Destination "$PROJECT_NAME\appsett
 Copy-Item -Path "Templates\appsettings.Development.json" -Destination "$PROJECT_NAME\appsettings.Development.json"
 (Get-Content "$PROJECT_NAME\appsettings.Development.json") -replace '<API_NAME>', $API_NAME -replace '<LOG_NAME>', ( -join ($API_NAME -split '[-_\s]+' | ForEach-Object { if ($_.Length -gt 0) { $_.Substring(0, 1).ToUpper() + $_.Substring(1).ToLower() } })) | Set-Content "$PROJECT_NAME\appsettings.Development.json"
 
-Copy-Item -Path "Templates\Template.env" -Destination "../../../docker-compose/$API_NAME.env"
-(Get-Content "../../../docker-compose/$API_NAME.env") -replace '<API_NAME>', $API_NAME | Set-Content "../../../docker-compose/$API_NAME.env" 
+Copy-Item -Path "Templates\Template.env" -Destination "../../../docker-compose/prod/$API_NAME.env"
+(Get-Content "../../../docker-compose/prod/$API_NAME.env") -replace '<LOG_NAME>', ( -join ($API_NAME -split '[-_\s]+' | ForEach-Object { if ($_.Length -gt 0) { $_.Substring(0, 1).ToUpper() + $_.Substring(1).ToLower() } })) | Set-Content "../../../docker-compose/prod/$API_NAME.env" 
+
+Copy-Item -Path "Templates\Template.env" -Destination "../../../docker-compose/local/$API_NAME.env"
+(Get-Content "../../../docker-compose/local/$API_NAME.env") -replace '<LOG_NAME>', ( -join ($API_NAME -split '[-_\s]+' | ForEach-Object { if ($_.Length -gt 0) { $_.Substring(0, 1).ToUpper() + $_.Substring(1).ToLower() } })) | Set-Content "../../../docker-compose/local/$API_NAME.env"
 
 # Cria arquivos para deploy
 Copy-Item -Path "Templates\Template.dockerfile" -Destination "../../../docker-compose/dockerfiles/$API_NAME-api.dockerfile"

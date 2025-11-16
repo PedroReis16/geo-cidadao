@@ -193,6 +193,31 @@ services:
     networks:
       - geo-network
     restart: always
+  feed-service:
+    container_name: feed-service
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/feed-service-api.dockerfile
+    ports:
+      - "8092:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/feed-service.env
+    labels:
+      - traefik.http.routers.feed-service.rule=PathPrefix(`/feed-service`)
+      - traefik.http.services.feed-service.loadbalancer.server.port=8092
+      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.cors.headers.addvaryheader=true
+      - traefik.http.routers.feed-service.middlewares=cors
+    networks:
+      - geo-network
+    restart: always
 
   geo-cidadao-ui:
     container_name: geo-cidadao-ui
