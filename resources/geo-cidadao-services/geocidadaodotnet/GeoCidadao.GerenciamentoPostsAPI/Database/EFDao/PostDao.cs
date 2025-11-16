@@ -45,7 +45,11 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Database.EFDao
 
         public  Task<List<Post>> GetUserPostsAsync(Guid userId, int? itemsCount, int? pageNumber)
         {
-            IQueryable<Post> query = _context.Set<Post>().Where(p => p.UserId == userId).OrderByDescending(p => p.CreatedAt);
+            // Order by relevance score first (higher relevance = more engagement), then by creation date for tie-breaking
+            IQueryable<Post> query = _context.Set<Post>()
+                .Where(p => p.UserId == userId)
+                .OrderByDescending(p => p.RelevanceScore)
+                .ThenByDescending(p => p.CreatedAt);
 
             if (itemsCount.HasValue && pageNumber.HasValue && itemsCount > 0 && pageNumber > 0)
             {

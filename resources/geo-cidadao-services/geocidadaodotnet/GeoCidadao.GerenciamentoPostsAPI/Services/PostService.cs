@@ -139,7 +139,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                     return new List<PostWithLocationDTO>();
                 }
 
-                // Fetch the actual posts
+                // Fetch the actual posts and order by relevance
                 var postIds = postLocations.Select(pl => pl.PostId).ToList();
                 var posts = new List<PostWithLocationDTO>();
 
@@ -157,7 +157,8 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                     }
                 }
 
-                return posts;
+                // Sort by relevance score (higher engagement) while maintaining proximity as secondary factor
+                return posts.OrderByDescending(p => p.RelevanceScore).ThenBy(p => p.CreatedAt).ToList();
             }
             catch (Exception ex)
             {

@@ -8,6 +8,9 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts
         public string Content { get; set; } = string.Empty;
         public Guid UserId { get; set; }
         public DateTime CreatedAt { get; set; }
+        public int LikesCount { get; set; }
+        public int CommentsCount { get; set; }
+        public double RelevanceScore { get; set; }
 
         public PostDTO()
         {
@@ -20,6 +23,9 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts
             Content = post.Content;
             UserId = post.UserId;
             CreatedAt = post.CreatedAt;
+            LikesCount = post.LikesCount;
+            CommentsCount = post.CommentsCount;
+            RelevanceScore = post.RelevanceScore;
         }
     }
 }
