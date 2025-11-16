@@ -18,5 +18,6 @@ namespace GeoCidadao.Models.Enums
         POST_NOT_FOUND = 14,
         POST_MEDIA_TYPE_REQUIRED = 15,
         POST_MEDIA_NOT_FOUND = 16,
+        INVALID_POSITION = 17,
     }
 }
