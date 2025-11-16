@@ -62,6 +62,7 @@ builder.Services.AddScoped<IUserDataService, UserDataService>();
 builder.Services.AddHostedService<PostChangedSubscriberService>();
 builder.Services.AddHostedService<UserChangedSubscriberService>();
 builder.Services.AddHostedService<NewUserSubscriberService>();
+builder.Services.AddHostedService<ReindexingBackgroundService>();
 
 // DAOs
 
