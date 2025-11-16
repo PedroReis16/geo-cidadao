@@ -7,7 +7,19 @@ namespace GeoCidadao.FeedServiceAPI.Config
     {
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
-            swaggerDoc.Tags = [];
+            swaggerDoc.Tags = 
+            [
+                new OpenApiTag
+                {
+                    Name = "Feed",
+                    Description = "Endpoints para gerenciamento do feed de usuários. Agrega dados de posts e usuários com suporte a cache para performance otimizada."
+                },
+                new OpenApiTag
+                {
+                    Name = "HealthCheck",
+                    Description = "Endpoint para verificação de saúde da API"
+                }
+            ];
         }
     }
 }
