@@ -20,6 +20,8 @@ namespace GeoCidadao.Database
         public DbSet<Post> Posts { get; set; } = default!;
         public DbSet<PostMedia> PostMedias { get; set; } = default!;
         public DbSet<PostLocation> PostLocations { get; set; } = default!;
+        public DbSet<PostLike> PostLikes { get; set; } = default!;
+        public DbSet<PostComment> PostComments { get; set; } = default!;
 
         static GeoDbContext()
         {
@@ -46,6 +48,8 @@ namespace GeoCidadao.Database
             _ = modelBuilder.ApplyConfiguration(new PostConfiguration());
             _ = modelBuilder.ApplyConfiguration(new PostMediaConfiguration());
             _ = modelBuilder.ApplyConfiguration(new PostLocationConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new PostLikeConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new PostCommentConfiguration());
 
             _ = modelBuilder.Ignore<BaseEntity>();
         }
