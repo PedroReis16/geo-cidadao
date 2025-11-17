@@ -4,15 +4,15 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.AnalyticsServiceAPI/GeoCidadao.AnalyticsServiceAPI.csproj GeoCidadao.AnalyticsServiceAPI/
-COPY resources/geo-cidadao-services/geocidadaodotnet/Labraries/GeoCidadao.AMQP/GeoCidadao.AMQP.csproj GeoCidadao.AMQP/
-COPY resources/geo-cidadao-services/geocidadaodotnet/Labraries/GeoCidadao.Database/GeoCidadao.Database.csproj GeoCidadao.Database/
-COPY resources/geo-cidadao-services/geocidadaodotnet/Labraries/GeoCidadao.Caching/GeoCidadao.Caching.csproj GeoCidadao.Caching/
-COPY resources/geo-cidadao-services/geocidadaodotnet/Labraries/GeoCidadao.Models/GeoCidadao.Models.csproj GeoCidadao.Models/
+COPY resources/geocidadao-services/geocidadaodotnet/GeoCidadao.AnalyticsServiceAPI/GeoCidadao.AnalyticsServiceAPI.csproj GeoCidadao.AnalyticsServiceAPI/
+COPY resources/geocidadao-services/geocidadaodotnet/Labraries/GeoCidadao.AMQP/GeoCidadao.AMQP.csproj GeoCidadao.AMQP/
+COPY resources/geocidadao-services/geocidadaodotnet/Labraries/GeoCidadao.Database/GeoCidadao.Database.csproj GeoCidadao.Database/
+COPY resources/geocidadao-services/geocidadaodotnet/Labraries/GeoCidadao.Caching/GeoCidadao.Caching.csproj GeoCidadao.Caching/
+COPY resources/geocidadao-services/geocidadaodotnet/Labraries/GeoCidadao.Models/GeoCidadao.Models.csproj GeoCidadao.Models/
 
 RUN dotnet restore GeoCidadao.AnalyticsServiceAPI/GeoCidadao.AnalyticsServiceAPI.csproj
 
-COPY resources/geo-cidadao-services/geocidadaodotnet/ ./
+COPY resources/geocidadao-services/geocidadaodotnet/ ./
 
 WORKDIR "/src/GeoCidadao.AnalyticsServiceAPI"
 RUN dotnet build "GeoCidadao.AnalyticsServiceAPI.csproj" -c Release -o /app/build
