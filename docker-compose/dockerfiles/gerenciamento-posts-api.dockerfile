@@ -4,16 +4,16 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY resources/geo-cidadao-services/geocidadaodotnet/GeoCidadao.GerenciamentoPostsAPI/GeoCidadao.GerenciamentoPostsAPI.csproj GeoCidadao.GerenciamentoPostsAPI/
-COPY resources/geo-cidadao-services/geocidadaodotnet/Libraries/GeoCidadao.AMQP/GeoCidadao.AMQP.csproj GeoCidadao.AMQP/
-COPY resources/geo-cidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Database/GeoCidadao.Database.csproj GeoCidadao.Database/
-COPY resources/geo-cidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Caching/GeoCidadao.Caching.csproj GeoCidadao.Caching/
-COPY resources/geo-cidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Models/GeoCidadao.Models.csproj GeoCidadao.Models/
-COPY resources/geo-cidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Cloud/GeoCidadao.Cloud.csproj GeoCidadao.Cloud/
+COPY resources/geocidadao-services/geocidadaodotnet/GeoCidadao.GerenciamentoPostsAPI/GeoCidadao.GerenciamentoPostsAPI.csproj GeoCidadao.GerenciamentoPostsAPI/
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.AMQP/GeoCidadao.AMQP.csproj GeoCidadao.AMQP/
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Database/GeoCidadao.Database.csproj GeoCidadao.Database/
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Caching/GeoCidadao.Caching.csproj GeoCidadao.Caching/
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Models/GeoCidadao.Models.csproj GeoCidadao.Models/
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Cloud/GeoCidadao.Cloud.csproj GeoCidadao.Cloud/
 
 RUN dotnet restore GeoCidadao.GerenciamentoPostsAPI/GeoCidadao.GerenciamentoPostsAPI.csproj
 
-COPY resources/geo-cidadao-services/geocidadaodotnet/ ./
+COPY resources/geocidadao-services/geocidadaodotnet/ ./
 
 WORKDIR "/src/GeoCidadao.GerenciamentoPostsAPI"
 RUN dotnet build "GeoCidadao.GerenciamentoPostsAPI.csproj" -c Release -o /app/build
