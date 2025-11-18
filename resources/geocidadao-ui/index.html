@@ -5,6 +5,18 @@
     <link rel="icon" type="image/svg+xml" href="/src/assets/geo-cidadao_light_logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GeoCidadao</title>
+    <script>
+      // Aplica o tema salvo imediatamente para evitar flash de conteúdo
+      (function() {
+        const savedTheme = localStorage.getItem('theme');
+        const theme = savedTheme || 
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+        if (!savedTheme) {
+          localStorage.setItem('theme', theme);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
