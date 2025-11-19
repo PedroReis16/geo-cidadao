@@ -1,6 +1,6 @@
 // src/data/contexts/RouteProvider.tsx
 import { createBrowserRouter, Outlet, Navigate } from "react-router-dom";
-import Feed from "../../ui/pages/Feed";
+import FeedPage from "../../ui/pages/FeedPage";
 import KeycloakCallback from "../../ui/pages/KeycloakCallback";
 import NotFoundPage from "../../ui/pages/NotFound";
 import ProtectedRouter from "../../ui/components/ProtectedRouter";
@@ -22,7 +22,7 @@ const Router = createBrowserRouter([
       },
       {
         path: "feed",
-        element: <Feed />,
+        element: <FeedPage />,
       },
       {
         path: "*",
