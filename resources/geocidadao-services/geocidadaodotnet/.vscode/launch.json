@@ -95,8 +95,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://localhost:8094;"
       }
-    },
-    
+    }
   ],
   "compounds": [
     {
