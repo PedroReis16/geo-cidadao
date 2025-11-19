@@ -9,6 +9,27 @@ param(
 dotnet new webapi -n $PROJECT_NAME -f net8.0
 dotnet sln add $PROJECT_NAME
 
+# Cria novo projeto de testes unitários e adiciona na solução
+dotnet new xunit -f net8.0 -n "$PROJECT_NAME.UnitTests" -o "./Tests/Unit/$PROJECT_NAME.UnitTests"
+dotnet sln add "./Tests/Unit/$PROJECT_NAME.UnitTests/$PROJECT_NAME.UnitTests.csproj"
+dotnet add "./Tests/Unit/$PROJECT_NAME.UnitTests/$PROJECT_NAME.UnitTests.csproj" reference "./$PROJECT_NAME/$PROJECT_NAME.csproj"
+
+# Adiciona referências e pacotes necessários para os testes unitários
+dotnet add "./Tests/Unit/$PROJECT_NAME.UnitTests/$PROJECT_NAME.UnitTests.csproj" reference "./Tests/MobilePacs.TestShared/MobilePacs.TestShared.csproj"
+dotnet add "./Tests/Unit/$PROJECT_NAME.UnitTests/$PROJECT_NAME.UnitTests.csproj" package FluentAssertions --version 8.3.0
+
+New-Item -Path "./Tests/Unit/$PROJECT_NAME.UnitTests/Services" -ItemType Directory
+
+# Cria novo projeto de testes de integração e adiciona na solução
+dotnet new xunit -f net8.0 -n "$PROJECT_NAME.IntegrationTests" -o "./Tests/Integration/$PROJECT_NAME.IntegrationTests"
+dotnet sln add "./Tests/Integration/$PROJECT_NAME.IntegrationTests/$PROJECT_NAME.IntegrationTests.csproj"
+dotnet add "./Tests/Integration/$PROJECT_NAME.IntegrationTests/$PROJECT_NAME.IntegrationTests.csproj" reference "./$PROJECT_NAME/$PROJECT_NAME.csproj"
+
+# Adiciona referências e pacotes necessários para os testes de integração
+dotnet add "./Tests/Integration/$PROJECT_NAME.IntegrationTests/$PROJECT_NAME.IntegrationTests.csproj" reference "./Tests/MobilePacs.TestShared/MobilePacs.TestShared.csproj"
+dotnet add "./Tests/Integration/$PROJECT_NAME.IntegrationTests/$PROJECT_NAME.IntegrationTests.csproj" package FluentAssertions --version 8.3.0
+
+New-Item -Path "./Tests/Integration/$PROJECT_NAME.IntegrationTests/Services" -ItemType Directory
 
 # Adiciona packages do NuGet (sempre revisar as versões)
 dotnet add $PROJECT_NAME package Microsoft.EntityFrameworkCore --version 8.0.4
@@ -60,6 +81,9 @@ Copy-Item -Path "Templates\Program.cs" -Destination "$PROJECT_NAME\Program.cs"
 
 Copy-Item -Path "Templates\HealthCheckController.cs" -Destination "$PROJECT_NAME\Controllers\HealthCheckController.cs"
 (Get-Content "$PROJECT_NAME\Controllers\HealthCheckController.cs") -replace '<PROJECT_NAME>', $PROJECT_NAME | Set-Content "$PROJECT_NAME\Controllers\HealthCheckController.cs"
+
+Copy-Item -Path "Templates\AssemblyInfo.cs" -Destination "$PROJECT_NAME\Properties\AssemblyInfo.cs"
+(Get-Content "$PROJECT_NAME\Properties\AssemblyInfo.cs") -replace '<PROJECT_NAME>', $PROJECT_NAME | Set-Content "$PROJECT_NAME\Properties\AssemblyInfo.cs"
 
 # Cria arquivos de configurações
 Copy-Item -Path "Templates\launchSettings.json" -Destination "$PROJECT_NAME\Properties\launchSettings.json"
