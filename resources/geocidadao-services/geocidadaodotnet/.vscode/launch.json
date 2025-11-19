@@ -38,14 +38,75 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://localhost:8091;"
       }
-    }
+    },
+    {
+      "name": "FeedServiceAPI",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: FeedServiceAPI",
+      "program": "${workspaceFolder}/GeoCidadao.FeedServiceAPI/bin/Debug/net8.0/GeoCidadao.FeedServiceAPI.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/GeoCidadao.FeedServiceAPI",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/feed-service/swagger"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:8092;"
+      }
+    },
+    {
+      "name": "AnalyticsServiceAPI",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: AnalyticsServiceAPI",
+      "program": "${workspaceFolder}/GeoCidadao.AnalyticsServiceAPI/bin/Debug/net8.0/GeoCidadao.AnalyticsServiceAPI.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/GeoCidadao.AnalyticsServiceAPI",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/analytics-service/swagger"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:8093;"
+      }
+    },
+    {
+      "name": "SearchServiceAPI",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: SearchServiceAPI",
+      "program": "${workspaceFolder}/GeoCidadao.SearchServiceAPI/bin/Debug/net8.0/GeoCidadao.SearchServiceAPI.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/GeoCidadao.SearchServiceAPI",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/search-service/swagger"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:8094;"
+      }
+    },
+    
   ],
   "compounds": [
     {
       "name": "Debug all",
       "configurations": [
         "GerenciamentoUsuariosAPI",
-        "GerenciamentoPostsAPI"
+        "GerenciamentoPostsAPI",
+        "FeedServiceAPI",
+        "AnalyticsServiceAPI",
+        "SearchServiceAPI"
       ],
       "stopAll": true
     }
