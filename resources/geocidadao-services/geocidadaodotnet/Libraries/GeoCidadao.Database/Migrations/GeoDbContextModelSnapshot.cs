@@ -81,6 +81,12 @@ namespace GeoCidadao.Database.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("category");
 
+                    b.Property<int>("CommentsCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("comments_count");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("text")
@@ -91,6 +97,18 @@ namespace GeoCidadao.Database.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("now()");
+
+                    b.Property<int>("LikesCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("likes_count");
+
+                    b.Property<double>("RelevanceScore")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("double precision")
+                        .HasDefaultValue(0.0)
+                        .HasColumnName("relevance_score");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone")
@@ -106,11 +124,98 @@ namespace GeoCidadao.Database.Migrations
 
                     b.HasIndex("CreatedAt");
 
+                    b.HasIndex("RelevanceScore");
+
                     b.HasIndex("UpdatedAt");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("post", (string)null);
+                    b.ToTable("posts", (string)null);
+                });
+
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostComment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("post_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UpdatedAt");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("post_comments", (string)null);
+                });
+
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostLike", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("post_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UpdatedAt");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("PostId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("post_likes", (string)null);
                 });
 
             modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostMedia", b =>
@@ -158,7 +263,59 @@ namespace GeoCidadao.Database.Migrations
 
                     b.HasIndex("UpdatedAt");
 
-                    b.ToTable("post_media", (string)null);
+                    b.ToTable("post_medias", (string)null);
+                });
+
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserInterests", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int[]>("Categories")
+                        .HasColumnType("integer[]")
+                        .HasColumnName("categories");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("city");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Region")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("region");
+
+                    b.Property<string>("State")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("state");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("UpdatedAt");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("user_interests", (string)null);
                 });
 
             modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserPicture", b =>
@@ -193,7 +350,7 @@ namespace GeoCidadao.Database.Migrations
 
                     b.HasIndex("UpdatedAt");
 
-                    b.ToTable("user_picture", (string)null);
+                    b.ToTable("users_picture", (string)null);
                 });
 
             modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserProfile", b =>
@@ -246,7 +403,29 @@ namespace GeoCidadao.Database.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
-                    b.ToTable("user_profile", (string)null);
+                    b.ToTable("user_profiles", (string)null);
+                });
+
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostComment", b =>
+                {
+                    b.HasOne("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.Post", "Post")
+                        .WithMany("Comments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostLike", b =>
+                {
+                    b.HasOne("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.Post", "Post")
+                        .WithMany("Likes")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostMedia", b =>
@@ -258,6 +437,15 @@ namespace GeoCidadao.Database.Migrations
                         .IsRequired();
 
                     b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserInterests", b =>
+                {
+                    b.HasOne("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserProfile", null)
+                        .WithOne("Interests")
+                        .HasForeignKey("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserInterests", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserPicture", b =>
@@ -273,11 +461,17 @@ namespace GeoCidadao.Database.Migrations
 
             modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.Post", b =>
                 {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Likes");
+
                     b.Navigation("Medias");
                 });
 
             modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserProfile", b =>
                 {
+                    b.Navigation("Interests");
+
                     b.Navigation("ProfilePicture");
                 });
 #pragma warning restore 612, 618
