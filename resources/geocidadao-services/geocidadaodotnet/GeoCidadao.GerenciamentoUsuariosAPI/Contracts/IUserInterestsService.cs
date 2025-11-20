@@ -1,12 +1,14 @@
 using GeoCidadao.GerenciamentoUsuariosAPI.Models.DTOs;
+using GeoCidadao.Models.Enums;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Contracts
 {
     public interface IUserInterestsService
     {
         Task<UserInterestsDTO?> GetUserInterestsAsync(Guid userId);
-        Task<UserInterestsDTO> CreateUserInterestsAsync(Guid userId, UpdateUserInterestsDTO interestsDTO);
-        Task<UserInterestsDTO> UpdateUserInterestsAsync(Guid userId, UpdateUserInterestsDTO interestsDTO);
-        Task DeleteUserInterestsAsync(Guid userId);
+        Task UpdateUserFollowedUsersAsync(Guid userId, Guid followedUserId);
+        Task UpdateUserFollowedCitiesAsync(Guid userId, string city);
+        Task UpdateUserFollowedDistrictsAsync(Guid userId, string district);
+        Task UpdateUserFollowedCategoriesAsync(Guid userId, List<PostCategory> categories);
     }
 }
