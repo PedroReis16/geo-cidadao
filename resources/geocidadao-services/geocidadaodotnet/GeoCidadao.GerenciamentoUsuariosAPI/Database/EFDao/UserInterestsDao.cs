@@ -50,7 +50,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
         {
             DbSet<UserInterests> dbSet = _context.Set<UserInterests>();
 
-            UserInterests? interests = dbSet.Where(ui => ui.User.Id == userId).FirstOrDefault();
+            UserInterests? interests = dbSet.Include(x => x.User).Where(ui => ui.User.Id == userId).FirstOrDefault();
 
             if (interests == null)
                 throw new EntityValidationException(nameof(UserInterests), $"O usuário com Id '{userId}' não foi encontrado ou não possui as preferências de postagem configuradas", ErrorCodes.USER_NOT_FOUND);
@@ -78,7 +78,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
         {
             DbSet<UserInterests> dbSet = _context.Set<UserInterests>();
 
-            UserInterests? interests = dbSet.Where(ui => ui.User.Id == userId).FirstOrDefault();
+            UserInterests? interests = dbSet.Include(x => x.User).Where(ui => ui.User.Id == userId).FirstOrDefault();
 
             if (interests == null)
                 throw new EntityValidationException(nameof(UserInterests), $"O usuário com Id '{userId}' não foi encontrado ou não possui as preferências de postagem configuradas", ErrorCodes.USER_NOT_FOUND);
@@ -100,7 +100,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
         {
             DbSet<UserInterests> dbSet = _context.Set<UserInterests>();
 
-            UserInterests? interests = dbSet.Where(ui => ui.User.Id == userId).FirstOrDefault();
+            UserInterests? interests = dbSet.Include(x => x.User).Where(ui => ui.User.Id == userId).FirstOrDefault();
 
             if (interests == null)
                 throw new EntityValidationException(nameof(UserInterests), $"O usuário com Id '{userId}' não foi encontrado ou não possui as preferências de postagem configuradas", ErrorCodes.USER_NOT_FOUND);
@@ -122,7 +122,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
         {
             DbSet<UserInterests> dbSet = _context.Set<UserInterests>();
 
-            UserInterests? interests = dbSet.Where(ui => ui.User.Id == userId).FirstOrDefault();
+            UserInterests? interests = dbSet.Include(x => x.User).Where(ui => ui.User.Id == userId).FirstOrDefault();
 
             if (interests == null)
                 throw new EntityValidationException(nameof(UserInterests), $"O usuário com Id '{userId}' não foi encontrado ou não possui as preferências de postagem configuradas", ErrorCodes.USER_NOT_FOUND);
