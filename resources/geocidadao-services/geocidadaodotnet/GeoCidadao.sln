@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoCidadao.GerenciamentoPos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoCidadao.GerenciamentoUsuariosAPI.IntegrationTests", "Tests\Integration\GeoCidadao.GerenciamentoUsuariosAPI.IntegrationTests\GeoCidadao.GerenciamentoUsuariosAPI.IntegrationTests.csproj", "{EA9E75EA-3A2E-47B4-B02E-AFC1A996BA3F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoCidadao.TestShared", "Tests\GeoCidadao.TestShared\GeoCidadao.TestShared.csproj", "{7D673A09-CA7F-4126-93B1-2886337DE01C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -217,6 +219,18 @@ Global
 		{EA9E75EA-3A2E-47B4-B02E-AFC1A996BA3F}.Release|x64.Build.0 = Release|Any CPU
 		{EA9E75EA-3A2E-47B4-B02E-AFC1A996BA3F}.Release|x86.ActiveCfg = Release|Any CPU
 		{EA9E75EA-3A2E-47B4-B02E-AFC1A996BA3F}.Release|x86.Build.0 = Release|Any CPU
+		{7D673A09-CA7F-4126-93B1-2886337DE01C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D673A09-CA7F-4126-93B1-2886337DE01C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D673A09-CA7F-4126-93B1-2886337DE01C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7D673A09-CA7F-4126-93B1-2886337DE01C}.Debug|x64.Build.0 = Debug|Any CPU
+		{7D673A09-CA7F-4126-93B1-2886337DE01C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7D673A09-CA7F-4126-93B1-2886337DE01C}.Debug|x86.Build.0 = Debug|Any CPU
+		{7D673A09-CA7F-4126-93B1-2886337DE01C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D673A09-CA7F-4126-93B1-2886337DE01C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D673A09-CA7F-4126-93B1-2886337DE01C}.Release|x64.ActiveCfg = Release|Any CPU
+		{7D673A09-CA7F-4126-93B1-2886337DE01C}.Release|x64.Build.0 = Release|Any CPU
+		{7D673A09-CA7F-4126-93B1-2886337DE01C}.Release|x86.ActiveCfg = Release|Any CPU
+		{7D673A09-CA7F-4126-93B1-2886337DE01C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -236,5 +250,6 @@ Global
 		{28A6993C-471E-82FE-7D9E-AD3B1EC22BD9} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{1F85AEF8-7182-4293-9939-011ADFCCA546} = {28A6993C-471E-82FE-7D9E-AD3B1EC22BD9}
 		{EA9E75EA-3A2E-47B4-B02E-AFC1A996BA3F} = {28A6993C-471E-82FE-7D9E-AD3B1EC22BD9}
+		{7D673A09-CA7F-4126-93B1-2886337DE01C} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal

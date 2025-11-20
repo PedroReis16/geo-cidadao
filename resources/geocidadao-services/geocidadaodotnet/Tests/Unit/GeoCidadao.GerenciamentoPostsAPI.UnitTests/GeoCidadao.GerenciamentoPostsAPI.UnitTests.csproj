@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\GeoCidadao.GerenciamentoPostsAPI\GeoCidadao.GerenciamentoPostsAPI.csproj" />
+    <ProjectReference Include="..\..\GeoCidadao.TestShared\GeoCidadao.TestShared.csproj" />
   </ItemGroup>
 
 </Project>
