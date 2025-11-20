@@ -15,7 +15,7 @@ dotnet sln add "./Tests/Unit/$PROJECT_NAME.UnitTests/$PROJECT_NAME.UnitTests.csp
 dotnet add "./Tests/Unit/$PROJECT_NAME.UnitTests/$PROJECT_NAME.UnitTests.csproj" reference "./$PROJECT_NAME/$PROJECT_NAME.csproj"
 
 # Adiciona referências e pacotes necessários para os testes unitários
-dotnet add "./Tests/Unit/$PROJECT_NAME.UnitTests/$PROJECT_NAME.UnitTests.csproj" reference "./Tests/MobilePacs.TestShared/MobilePacs.TestShared.csproj"
+dotnet add "./Tests/Unit/$PROJECT_NAME.UnitTests/$PROJECT_NAME.UnitTests.csproj" reference "./Tests/GeoCidadao.TestShared/GeoCidadao.TestShared.csproj"
 dotnet add "./Tests/Unit/$PROJECT_NAME.UnitTests/$PROJECT_NAME.UnitTests.csproj" package FluentAssertions --version 8.3.0
 
 New-Item -Path "./Tests/Unit/$PROJECT_NAME.UnitTests/Services" -ItemType Directory
@@ -26,7 +26,7 @@ dotnet sln add "./Tests/Integration/$PROJECT_NAME.IntegrationTests/$PROJECT_NAME
 dotnet add "./Tests/Integration/$PROJECT_NAME.IntegrationTests/$PROJECT_NAME.IntegrationTests.csproj" reference "./$PROJECT_NAME/$PROJECT_NAME.csproj"
 
 # Adiciona referências e pacotes necessários para os testes de integração
-dotnet add "./Tests/Integration/$PROJECT_NAME.IntegrationTests/$PROJECT_NAME.IntegrationTests.csproj" reference "./Tests/MobilePacs.TestShared/MobilePacs.TestShared.csproj"
+dotnet add "./Tests/Integration/$PROJECT_NAME.IntegrationTests/$PROJECT_NAME.IntegrationTests.csproj" reference "./Tests/GeoCidadao.TestShared/GeoCidadao.TestShared.csproj"
 dotnet add "./Tests/Integration/$PROJECT_NAME.IntegrationTests/$PROJECT_NAME.IntegrationTests.csproj" package FluentAssertions --version 8.3.0
 
 New-Item -Path "./Tests/Integration/$PROJECT_NAME.IntegrationTests/Services" -ItemType Directory
