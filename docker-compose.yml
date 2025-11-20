@@ -222,6 +222,23 @@ services:
     networks:
       - geo-network
     restart: always
+  post-indexer-worker:
+    container_name: post-indexer-worker
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/post-indexer-worker.dockerfile
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/post-indexer-worker.env
+    networks:
+      - geo-network
+    restart: always
+
   feed-service:
     container_name: feed-service
     build:
@@ -248,33 +265,6 @@ services:
       - geo-network
     restart: always
 
-  search-service:
-    container_name: search-service
-    build:
-      context: .
-      dockerfile: docker-compose/dockerfiles/search-service-api.dockerfile
-    ports:
-      - "8093:8080"
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
-    env_file:
-      - ./docker-compose/local/default.env
-      - ./docker-compose/local/search-service.env
-    labels:
-      - traefik.http.routers.search-service.rule=PathPrefix(`/search-service`)
-      - traefik.http.services.search-service.loadbalancer.server.port=8093
-      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
-      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
-      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
-      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
-      - traefik.http.middlewares.cors.headers.addvaryheader=true
-      - traefik.http.routers.search-service.middlewares=cors
-    networks:
-      - geo-network
-    restart: always
 
   geo-cidadao-ui:
     container_name: geo-cidadao-ui
