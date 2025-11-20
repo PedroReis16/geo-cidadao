@@ -22,5 +22,7 @@ namespace GeoCidadao.TestShared.Fixtures
         }
         public static string GetRandomDate() => new Faker().Date.Past().ToString("yyyy-MM-dd");
         public static string GetRandomTime() => new Faker().Date.Recent().ToString("HH:mm");
+
+        public static string GetRandomEmail() => new Faker().Internet.Email();
     }
 }

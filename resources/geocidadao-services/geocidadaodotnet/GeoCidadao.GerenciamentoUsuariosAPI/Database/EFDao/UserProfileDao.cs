@@ -30,12 +30,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
 
         protected override Task ValidateEntityForUpdate(params UserProfile[] obj)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateUserPictureAsync(Guid userId, string objectKey, string fileHash)
-        {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public override Task<int> DeleteAsync(params object[] keys)
