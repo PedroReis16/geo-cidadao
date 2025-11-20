@@ -83,10 +83,15 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
             if (interests == null)
                 throw new EntityValidationException(nameof(UserInterests), $"O usuário com Id '{userId}' não foi encontrado ou não possui as preferências de postagem configuradas", ErrorCodes.USER_NOT_FOUND);
 
-            if (interests.FollowedCities.Contains(city))
-                interests.FollowedCities.Remove(city);
+            if (string.IsNullOrEmpty(city))
+                return Task.CompletedTask;
+
+            string updatedCity = city.ToLower();
+
+            if (interests.FollowedCities.Contains(updatedCity))
+                interests.FollowedCities.Remove(updatedCity);
             else
-                interests.FollowedCities.Add(city);
+                interests.FollowedCities.Add(updatedCity);
 
             interests.UpdatedAt = DateTime.Now.ToUniversalTime();
 
