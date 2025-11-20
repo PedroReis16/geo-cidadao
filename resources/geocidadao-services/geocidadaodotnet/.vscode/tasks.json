@@ -78,12 +78,69 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "build: SearchServiceAPI",
+      "label": "build: FeedMapAPI",
       "command": "dotnet",
       "type": "shell",
       "args": [
         "build",
-        "${workspaceFolder}/GeoCidadao.SearchServiceAPI/GeoCidadao.SearchServiceAPI.csproj",
+        "${workspaceFolder}/GeoCidadao.FeedMapAPI/GeoCidadao.FeedMapAPI.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "silent"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build: EngagementServiceAPI",
+      "command": "dotnet",
+      "type": "shell",
+      "args": [
+        "build",
+        "${workspaceFolder}/GeoCidadao.EngagementServiceAPI/GeoCidadao.EngagementServiceAPI.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "silent"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build: PostIndexerWorker",
+      "command": "dotnet",
+      "type": "shell",
+      "args": [
+        "build",
+        "${workspaceFolder}/WorkerServices/GeoCidadao.PostIndexerWorker/GeoCidadao.PostIndexerWorker.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "silent"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build: RelevanceWorker",
+      "command": "dotnet",
+      "type": "shell",
+      "args": [
+        "build",
+        "${workspaceFolder}/WorkerServices/GeoCidadao.RelevanceWorker/GeoCidadao.RelevanceWorker.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],
