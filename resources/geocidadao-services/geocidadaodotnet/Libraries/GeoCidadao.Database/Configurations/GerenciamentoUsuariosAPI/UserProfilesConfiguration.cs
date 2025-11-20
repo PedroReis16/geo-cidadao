@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GeoCidadao.Database.Configurations.GerenciamentoUsuariosAPI
 {
-    public class UserProfileConfiguration : BaseConfiguration<UserProfile>
+    public class UserProfilesConfiguration : BaseConfiguration<UserProfile>
     {
         public override void Configure(EntityTypeBuilder<UserProfile> builder)
         {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GeoCidadao.Database.Configurations.GerenciamentoUsuariosAPI
 {
-    public class UserPictureConfiguration : BaseConfiguration<UserPicture>
+    public class UsersPictureConfiguration : BaseConfiguration<UserPicture>
     {
         public override void Configure(EntityTypeBuilder<UserPicture> builder)
         {

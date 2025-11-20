@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GeoCidadao.Database.Configurations.GerenciamentoPostsAPI
 {
-    public class PostConfiguration : BaseConfiguration<Post>
+    public class PostsConfiguration : BaseConfiguration<Post>
     {
         public override void Configure(EntityTypeBuilder<Post> builder)
         {

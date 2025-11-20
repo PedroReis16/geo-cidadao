@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GeoCidadao.Database.Configurations.GerenciamentoPostsAPI
 {
-    public class PostLikeConfiguration : BaseConfiguration<PostLike>
+    public class PostLikesConfiguration : BaseConfiguration<PostLike>
     {
         public override void Configure(EntityTypeBuilder<PostLike> builder)
         {

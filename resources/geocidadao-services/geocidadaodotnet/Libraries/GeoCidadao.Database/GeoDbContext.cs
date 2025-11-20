@@ -42,18 +42,17 @@ namespace GeoCidadao.Database
             _ = modelBuilder.HasPostgresEnum<PostCategory>(name: "post_categories");
 
             // Gerenciamento de usuários API
-            _ = modelBuilder.ApplyConfiguration(new UserProfileConfiguration());
-            _ = modelBuilder.ApplyConfiguration(new UserPictureConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new UserProfilesConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new UsersPictureConfiguration());
             _ = modelBuilder.ApplyConfiguration(new UserInterestsConfiguration());
 
             // Gerenciamento de posts API
 
-            _ = modelBuilder.ApplyConfiguration(new PostConfiguration());
-            _ = modelBuilder.ApplyConfiguration(new PostMediaConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new PostsConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new PostMediasConfiguration());
             _ = modelBuilder.ApplyConfiguration(new PostLocationConfiguration());
-            _ = modelBuilder.ApplyConfiguration(new PostLikeConfiguration());
-            _ = modelBuilder.ApplyConfiguration(new PostCommentConfiguration());
-
+            _ = modelBuilder.ApplyConfiguration(new PostLikesConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new PostCommentsConfiguration());
             // Analytics Service API
             
             _ = modelBuilder.Ignore<BaseEntity>();
