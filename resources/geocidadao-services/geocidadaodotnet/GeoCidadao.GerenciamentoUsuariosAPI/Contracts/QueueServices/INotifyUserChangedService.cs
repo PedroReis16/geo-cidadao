@@ -4,6 +4,5 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices
     {
         void NotifyUserChanged(Guid userId);
         void NotifyUserDeleted(Guid userId);
-        void NotifyUserPhotoChanged(Guid userId);
     }
 }
