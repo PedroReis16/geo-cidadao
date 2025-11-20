@@ -25,7 +25,6 @@ namespace GeoCidadao.Database
 
         //Analytics Service API
         
-
         static GeoDbContext()
         {
 
