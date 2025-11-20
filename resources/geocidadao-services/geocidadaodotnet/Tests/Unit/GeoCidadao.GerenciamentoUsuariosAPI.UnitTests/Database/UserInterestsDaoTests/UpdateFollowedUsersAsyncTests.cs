@@ -11,13 +11,13 @@ using Moq.EntityFrameworkCore;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.UnitTests.Database.UserInterestsDaoTests
 {
-    public class UpdateFollowedCitiesAsyncTests
+    public class UpdateFollowedUsersAsyncTests
     {
         private readonly UserInterestsDao _contextDao;
         private readonly Mock<GeoDbContext> _contextMock;
         private readonly Mock<IUserInterestsDaoCache> _cacheMock;
 
-        public UpdateFollowedCitiesAsyncTests()
+        public UpdateFollowedUsersAsyncTests()
         {
             _cacheMock = new Mock<IUserInterestsDaoCache>();
             _contextMock = GeoCidadaoDatabaseMockTest.CreateMockContext();
@@ -25,73 +25,73 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.UnitTests.Database.UserInterestsDa
         }
 
         [Fact]
-        public async Task UpdateFollowedCitiesAsync_GivenAnInexistentUserId_ShouldThrowEntityValidationException()
+        public async Task UpdateFollowedUsersAsync_GivenAnInexistentUserId_ShouldThrowEntityValidationException()
         {
             _contextMock.Setup(c => c.Set<UserInterests>())
                 .ReturnsDbSet(new List<UserInterests>());
 
-            Func<Task> act = async () => await _contextDao.UpdateFollowedCitiesAsync(Guid.NewGuid(), "SampleCity");
+            Func<Task> act = async () => await _contextDao.UpdateFollowedUsersAsync(Guid.NewGuid(), Guid.NewGuid());
 
             await act.Should().ThrowAsync<EntityValidationException>();
         }
 
         [Fact]
-        public async Task UpdateFollowedCitiesAsync_GivenACityAlreadyFollowed_ShouldRemoveTheCityFromFollowedCities()
+        public async Task UpdateFollowedUserAsync_GivenAUserAlreadyFollowed_ShouldRemoveTheUserFromFollowedUsers()
         {
             // Arrange
             Guid userId = Guid.NewGuid();
-            string cityToRemove = TestFixtures.GetRandomCity().ToLower();
+            Guid userToRemove = Guid.NewGuid();
             UserInterests trackedInterests = UserInterestsFixtures.CreateUserInterests(userId: userId);
-            trackedInterests.FollowedCities.Add(cityToRemove);
+            trackedInterests.FollowedUsers.Add(userToRemove);
 
             _contextMock.Setup(c => c.Set<UserInterests>())
                 .ReturnsDbSet(new List<UserInterests>() { trackedInterests });
 
             // Act
-            await _contextDao.UpdateFollowedCitiesAsync(userId, cityToRemove);
+            await _contextDao.UpdateFollowedUsersAsync(userId, userToRemove);
 
             // Assert
-            trackedInterests.FollowedCities.Should().NotContain(cityToRemove);
+            trackedInterests.FollowedUsers.Should().NotContain(userToRemove);
         }
 
         [Fact]
-        public async Task UpdateFollowedCitiesAsync_GivenACityNotFollowed_ShouldAddTheCityToFollowedCities()
+        public async Task UpdateFollowedUsersAsync_GivenAUserNotFollowed_ShouldAddTheUserToFollowedUsers()
         {
             // Arrange
             Guid userId = Guid.NewGuid();
-            string cityToAdd = TestFixtures.GetRandomCity();
+            Guid userToAdd = Guid.NewGuid();
             UserInterests trackedInterests = UserInterestsFixtures.CreateUserInterests(userId: userId);
 
             _contextMock.Setup(c => c.Set<UserInterests>())
                 .ReturnsDbSet(new List<UserInterests>() { trackedInterests });
 
             // Act
-            await _contextDao.UpdateFollowedCitiesAsync(userId, cityToAdd);
+            await _contextDao.UpdateFollowedUsersAsync(userId, userToAdd);
 
             // Assert
-            trackedInterests.FollowedCities.Should().Contain(cityToAdd.ToLower());
+            trackedInterests.FollowedUsers.Should().Contain(userToAdd);
         }
 
         [Fact]
-        public async Task UpdateFollowedCitiesAsync_GivenACapsLockCityName_ShouldAddTheCityInLowercaseToFollowedCities()
+        public async Task UpdateFollowedUsersAsync_GivenTheSameUserIdAndUserToFollowed_ShouldDoNothing()
         {
             // Arrange
             Guid userId = Guid.NewGuid();
-            string cityToAdd = TestFixtures.GetRandomCity().ToUpper();
             UserInterests trackedInterests = UserInterestsFixtures.CreateUserInterests(userId: userId);
 
             _contextMock.Setup(c => c.Set<UserInterests>())
                 .ReturnsDbSet(new List<UserInterests>() { trackedInterests });
 
             // Act
-            await _contextDao.UpdateFollowedCitiesAsync(userId, cityToAdd);
+            await _contextDao.UpdateFollowedUsersAsync(userId, userId);
 
             // Assert
-            trackedInterests.FollowedCities.Should().Contain(cityToAdd.ToLower());
+            _contextMock.Verify(c => c.SaveChangesAsync(default), Times.Never);
+            _cacheMock.Verify(c => c.RemoveEntity(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
-        public async Task UpdateFollowedCitiesAsync_GivenAnEmptyCityName_ShouldNotModifyFollowedCities()
+        public async Task UpdateFollowedUsersAsync_GivenAnEmptyUserToFollowed_ShouldDoNothing()
         {
             // Arrange
             Guid userId = Guid.NewGuid();
@@ -101,85 +101,85 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.UnitTests.Database.UserInterestsDa
                 .ReturnsDbSet(new List<UserInterests>() { trackedInterests });
 
             // Act
-            await _contextDao.UpdateFollowedCitiesAsync(userId, string.Empty);
+            await _contextDao.UpdateFollowedUsersAsync(userId, Guid.Empty);
 
             // Assert
-            _contextMock.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-            trackedInterests.FollowedCities.Should().BeEmpty();
+            _contextMock.Verify(c => c.SaveChangesAsync(default), Times.Never);
+            _cacheMock.Verify(c => c.RemoveEntity(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
-        public async Task UpdateFollowedCitiesAsync_GivenAnValidCityUpdate_ShouldUpdateTheUpdatedAtTimestamp()
+        public async Task UpdateFollowedUsersAsync_GivenAValidUserSaveCondition_ShouldReturnUpdatedAtPropertyNotNull()
         {
             // Arrange
             Guid userId = Guid.NewGuid();
-            string cityToAdd = TestFixtures.GetRandomCity();
+            Guid userToAdd = Guid.NewGuid();
             UserInterests trackedInterests = UserInterestsFixtures.CreateUserInterests(userId: userId);
 
             _contextMock.Setup(c => c.Set<UserInterests>())
                 .ReturnsDbSet(new List<UserInterests>() { trackedInterests });
 
             // Act
-            await _contextDao.UpdateFollowedCitiesAsync(userId, cityToAdd);
+            await _contextDao.UpdateFollowedUsersAsync(userId, userToAdd);
 
             // Assert
             trackedInterests.UpdatedAt.Should().NotBeNull();
         }
 
         [Fact]
-        public async Task UpdateFollowedCitiesAsync_GivenAnValidCityUpdate_ShouldRemoveTheEntityFromCache()
+        public async Task UpdateFollowedUsersAsync_GivenAValidUserSaveCondition_ShouldRemoveTheEntityFromCache()
         {
             // Arrange
             Guid userId = Guid.NewGuid();
-            string cityToAdd = TestFixtures.GetRandomCity();
+            Guid userToAdd = Guid.NewGuid();
             UserInterests trackedInterests = UserInterestsFixtures.CreateUserInterests(userId: userId);
 
             _contextMock.Setup(c => c.Set<UserInterests>())
                 .ReturnsDbSet(new List<UserInterests>() { trackedInterests });
 
             // Act
-            await _contextDao.UpdateFollowedCitiesAsync(userId, cityToAdd);
+            await _contextDao.UpdateFollowedUsersAsync(userId, userToAdd);
 
             // Assert
-            _cacheMock.Verify(c => c.RemoveEntity(It.Is<UserInterests>(ui => ui.User.Id == userId)), Times.Once);
+            _cacheMock.Verify(c => c.RemoveEntity(trackedInterests), Times.Once);
         }
 
         [Fact]
-        public async Task UpdatedFollowedCitiesAsync_GivenAnValidCityUpdateWithCacheNull_ShouldNotThrowException()
+        public async Task UpdateFollowedUsersAsync_GivenAValidUserSaveConditionWithCacheNull_ShouldSaveChangesAndNotThrowException()
         {
             // Arrange
             Guid userId = Guid.NewGuid();
-            string cityToAdd = TestFixtures.GetRandomCity();
+            Guid userToAdd = Guid.NewGuid();
             UserInterests trackedInterests = UserInterestsFixtures.CreateUserInterests(userId: userId);
 
-            var contextDao = new UserInterestsDao(_contextMock.Object, null!);
+            var contextDao = new UserInterestsDao(_contextMock.Object, null);
 
             _contextMock.Setup(c => c.Set<UserInterests>())
                 .ReturnsDbSet(new List<UserInterests>() { trackedInterests });
 
             // Act
-            Func<Task> act = async () => await contextDao.UpdateFollowedCitiesAsync(userId, cityToAdd);
+            Func<Task> act = async () => await contextDao.UpdateFollowedUsersAsync(userId, userToAdd);
 
             // Assert
             await act.Should().NotThrowAsync();
         }
 
         [Fact]
-        public async Task UpdateFollowedCitiesAsync_GivenAnValidCityUpdate_ShouldSaveChangesToDatabase()
+        public async Task UpdatedFollowedUsersAsync_GivenAValidUserSaveCondition_ShouldSaveChangesToDatabase()
         {
             // Arrange
             Guid userId = Guid.NewGuid();
-            string cityToAdd = TestFixtures.GetRandomCity();
+            Guid userToAdd = Guid.NewGuid();
             UserInterests trackedInterests = UserInterestsFixtures.CreateUserInterests(userId: userId);
 
             _contextMock.Setup(c => c.Set<UserInterests>())
                 .ReturnsDbSet(new List<UserInterests>() { trackedInterests });
 
             // Act
-            await _contextDao.UpdateFollowedCitiesAsync(userId, cityToAdd);
+            await _contextDao.UpdateFollowedUsersAsync(userId, userToAdd);
 
             // Assert
-            _contextMock.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _contextMock.Verify(c => c.SaveChangesAsync(default), Times.Once);
         }
     }
 }

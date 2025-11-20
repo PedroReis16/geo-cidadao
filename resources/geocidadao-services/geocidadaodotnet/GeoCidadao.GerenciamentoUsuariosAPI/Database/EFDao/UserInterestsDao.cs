@@ -78,13 +78,13 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
         {
             DbSet<UserInterests> dbSet = _context.Set<UserInterests>();
 
+            if (string.IsNullOrEmpty(city))
+                return Task.CompletedTask;
+
             UserInterests? interests = dbSet.Include(x => x.User).Where(ui => ui.User.Id == userId).FirstOrDefault();
 
             if (interests == null)
                 throw new EntityValidationException(nameof(UserInterests), $"O usuário com Id '{userId}' não foi encontrado ou não possui as preferências de postagem configuradas", ErrorCodes.USER_NOT_FOUND);
-
-            if (string.IsNullOrEmpty(city))
-                return Task.CompletedTask;
 
             string updatedCity = city.ToLower();
 
@@ -105,10 +105,10 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
         {
             DbSet<UserInterests> dbSet = _context.Set<UserInterests>();
 
-            UserInterests? interests = dbSet.Include(x => x.User).Where(ui => ui.User.Id == userId).FirstOrDefault();
-
             if (string.IsNullOrEmpty(district))
                 return Task.CompletedTask;
+
+            UserInterests? interests = dbSet.Include(x => x.User).Where(ui => ui.User.Id == userId).FirstOrDefault();
 
             if (interests == null)
                 throw new EntityValidationException(nameof(UserInterests), $"O usuário com Id '{userId}' não foi encontrado ou não possui as preferências de postagem configuradas", ErrorCodes.USER_NOT_FOUND);
@@ -132,6 +132,9 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
         {
             DbSet<UserInterests> dbSet = _context.Set<UserInterests>();
 
+            if (userId == followedUserId || followedUserId == Guid.Empty)
+                return Task.CompletedTask;
+
             UserInterests? interests = dbSet.Include(x => x.User).Where(ui => ui.User.Id == userId).FirstOrDefault();
 
             if (interests == null)
@@ -149,6 +152,5 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
 
             return _context.SaveChangesAsync();
         }
-
     }
 }

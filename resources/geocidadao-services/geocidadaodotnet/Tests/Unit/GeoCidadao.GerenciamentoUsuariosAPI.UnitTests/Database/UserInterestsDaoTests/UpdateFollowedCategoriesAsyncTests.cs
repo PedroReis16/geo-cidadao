@@ -92,7 +92,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.UnitTests.Database.UserInterestsDa
         }
 
         [Fact]
-        public async Task UpdateFollowedCategoriesAsync_GivenAnValidCategoryUpdateCondition_ShouldUpdateTheUpdatedAtProperty()
+        public async Task UpdateFollowedCategoriesAsync_GivenAValidCategoryUpdateCondition_ShouldUpdateTheUpdatedAtProperty()
         {
             // Arrange 
             Guid userId = Guid.NewGuid();
@@ -112,7 +112,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.UnitTests.Database.UserInterestsDa
         }
 
         [Fact]
-        public async Task UpdateFollowedCategoriesAsync_GivenAnValidCategoryUpdateCondition_ShouldRemoveTheEntityFromCache()
+        public async Task UpdateFollowedCategoriesAsync_GivenAValidCategoryUpdateCondition_ShouldRemoveTheEntityFromCache()
         {
             // Arrange 
             Guid userId = Guid.NewGuid();
@@ -132,7 +132,29 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.UnitTests.Database.UserInterestsDa
         }
 
         [Fact]
-        public async Task UpdateFollowedCategoriesAsync_GivenAnValidCategoryUpdateCondition_ShouldSaveChangesInDatabase()
+        public async Task UpdatedFollowedCategoriesAsync_GivenAValidCategoryUpdateWithCacheNull_ShouldNotThrowException()
+        {
+            // Arrange 
+            Guid userId = Guid.NewGuid();
+            UserInterests trackedInterests = UserInterestsFixtures.CreateUserInterests(userId: userId);
+
+            PostCategory categoriesToAdd = TestFixtures.GetRandomEnumValue<PostCategory>();
+            trackedInterests.FollowedCategories.Remove(categoriesToAdd);
+
+            var contextDao = new UserInterestsDao(_contextMock.Object, null!);
+
+            _contextMock.Setup(c => c.Set<UserInterests>())
+                .ReturnsDbSet(new List<UserInterests>() { trackedInterests });
+
+            // Act
+            Func<Task> act = async () => await contextDao.UpdateFollowedCategoriesAsync(userId, new List<PostCategory>() { categoriesToAdd });
+
+            // Assert
+            await act.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public async Task UpdateFollowedCategoriesAsync_GivenAValidCategoryUpdateCondition_ShouldSaveChangesInDatabase()
         {
             // Arrange 
             Guid userId = Guid.NewGuid();
