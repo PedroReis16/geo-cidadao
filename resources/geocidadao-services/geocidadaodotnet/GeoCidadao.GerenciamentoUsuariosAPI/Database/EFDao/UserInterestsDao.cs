@@ -107,13 +107,18 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
 
             UserInterests? interests = dbSet.Include(x => x.User).Where(ui => ui.User.Id == userId).FirstOrDefault();
 
+            if (string.IsNullOrEmpty(district))
+                return Task.CompletedTask;
+
             if (interests == null)
                 throw new EntityValidationException(nameof(UserInterests), $"O usuário com Id '{userId}' não foi encontrado ou não possui as preferências de postagem configuradas", ErrorCodes.USER_NOT_FOUND);
 
-            if (interests.FollowedDistricts.Contains(district))
-                interests.FollowedDistricts.Remove(district);
+            string updatedDistrict = district.ToLower();
+
+            if (interests.FollowedDistricts.Contains(updatedDistrict))
+                interests.FollowedDistricts.Remove(updatedDistrict);
             else
-                interests.FollowedDistricts.Add(district);
+                interests.FollowedDistricts.Add(updatedDistrict);
 
             interests.UpdatedAt = DateTime.Now.ToUniversalTime();
 

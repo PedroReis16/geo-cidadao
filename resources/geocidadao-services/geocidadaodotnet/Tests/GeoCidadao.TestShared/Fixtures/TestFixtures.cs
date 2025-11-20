@@ -8,6 +8,7 @@ namespace GeoCidadao.TestShared.Fixtures
         public static string GetRandomWord() => new Faker().Lorem.Word();
         public static string GetRandomName() => new Faker().Person.FullName;
         public static string GetRandomCity() => new Faker().Address.City();
+        public static string GetRandomDistrict() => new Faker().Address.Country();
         public static string? GetRandomComments()
         {
             int random = new Faker().Random.Int(0, 1);
