@@ -71,6 +71,14 @@ services:
       - RABBITMQ_DEFAULT_PASS=admin
     networks:
       - geo-network
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
     container_name: elasticsearch
@@ -317,3 +325,4 @@ volumes:
   mongo_data:
   keycloak_data:
   elasticsearch_data:
+  redis_data:
