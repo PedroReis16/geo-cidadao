@@ -22,7 +22,24 @@
   ],
   "parameters": [],
   "policies": [],
-  "queues": [],
+  "queues": [
+    {
+      "name": "user_management_new_user_queue_name",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "keycloak_events_exchange_dlq"
+      }
+    },
+    {
+      "name": "user_management_new_user_dlq",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
   "exchanges": [
     {
       "name": "keycloak_events_topic_exchange",
