@@ -3,7 +3,6 @@ using GeoCidadao.Database.CacheContracts;
 using GeoCidadao.Database.EFDao;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.CacheContracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
-using GeoCidadao.Models.Entities;
 using GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI;
 using GeoCidadao.Models.Enums;
 using GeoCidadao.Models.Exceptions;

@@ -41,6 +41,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
 
             if (existingPicture != null)
             {
+                existingPicture.FileExtension = fileExtension;
                 existingPicture.FileHash = fileHash;
                 existingPicture.UpdatedAt = DateTime.Now.ToUniversalTime();
 
