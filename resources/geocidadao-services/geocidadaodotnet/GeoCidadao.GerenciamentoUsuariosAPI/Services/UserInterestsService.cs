@@ -10,20 +10,12 @@ using GeoCidadao.Models.Extensions;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
 {
-    internal class UserInterestsService(ILogger<UserInterestsService> logger, IHttpContextAccessor contextAccessor, IServiceScopeFactory scopeFactory) : IUserInterestsService
+    internal class UserInterestsService(ILogger<UserInterestsService> logger, IHttpContextAccessor contextAccessor, IUserInterestsDao userInterestsDao, INotifyUserChangedService notifyUserChangedService) : IUserInterestsService
     {
         private readonly ILogger<UserInterestsService> _logger = logger;
         private readonly HttpContext? _httpContext = contextAccessor?.HttpContext;
-        private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
-
-        private IUserInterestsDao _userInterestsDao
-        {
-            get
-            {
-                using IServiceScope scope = _scopeFactory.CreateScope();
-                return scope.ServiceProvider.GetRequiredService<IUserInterestsDao>();
-            }
-        }
+        private readonly IUserInterestsDao _userInterestsDao = userInterestsDao;
+        private readonly INotifyUserChangedService _notifyUserChangedService = notifyUserChangedService;
 
         public async Task<UserInterestsDTO?> GetUserInterestsAsync(Guid userId)
         {
@@ -128,11 +120,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
             }
         }
 
-        private void NotifyInterestChanged(Guid userId)
-        {
-            using IServiceScope scope = _scopeFactory.CreateScope();
-            INotifyUserChangedService userChangedNotification = scope.ServiceProvider.GetRequiredService<INotifyUserChangedService>();
-            userChangedNotification.NotifyUserChanged(userId);
-        }
+        private void NotifyInterestChanged(Guid userId) =>
+            _notifyUserChangedService.NotifyUserChanged(userId);
     }
 }

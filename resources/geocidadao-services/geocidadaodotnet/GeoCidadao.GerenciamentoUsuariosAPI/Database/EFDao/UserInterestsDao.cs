@@ -33,7 +33,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
                 if (result != null)
                     return result;
             }
-            IQueryable<UserInterests> query = _context.Set<UserInterests>().Where(ui => ui.User.Id == (Guid)key);
+            IQueryable<UserInterests> query = _context.Set<UserInterests>().Include(x => x.User).Where(ui => ui.User.Id == (Guid)key);
 
             if (!track)
                 query = query.AsNoTracking();

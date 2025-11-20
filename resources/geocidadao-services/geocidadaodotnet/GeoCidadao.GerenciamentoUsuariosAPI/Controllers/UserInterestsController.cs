@@ -11,7 +11,6 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Controllers
     /// </summary>
     [ApiController]
     [Route("[controller]/{userId}")]
-    [Authorize]
     public class UserInterestsController(IUserInterestsService service) : ControllerBase
     {
         private readonly IUserInterestsService _service = service;
