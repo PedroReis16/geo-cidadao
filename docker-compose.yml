@@ -264,7 +264,97 @@ services:
     networks:
       - geo-network
     restart: always
-
+  analytics-service:
+    container_name: analytics-service
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/analytics-service-api.dockerfile
+    ports:
+      - "8093:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/analytics-service.env
+    labels:
+      - traefik.http.routers.analytics-service.rule=PathPrefix(`/analytics-service`)
+      - traefik.http.services.analytics-service.loadbalancer.server.port=8092
+      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.cors.headers.addvaryheader=true
+      - traefik.http.routers.analytics-service.middlewares=cors
+    networks:
+      - geo-network
+    restart: always
+  feed-map:
+    container_name: feed-map
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/feed-map-api.dockerfile
+    ports:
+      - "8094:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/feed-map.env
+    labels:
+      - traefik.http.routers.feed-map.rule=PathPrefix(`/feed-map`)
+      - traefik.http.services.feed-map.loadbalancer.server.port=8092
+      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.cors.headers.addvaryheader=true
+      - traefik.http.routers.feed-map.middlewares=cors
+    networks:
+      - geo-network
+    restart: always
+  engagement-service:
+    container_name: engagement-service
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/engagement-service-api.dockerfile
+    ports:
+      - "8094:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/engagement-service.env
+    labels:
+      - traefik.http.routers.engagement-service.rule=PathPrefix(`/engagement-service`)
+      - traefik.http.services.engagement-service.loadbalancer.server.port=8092
+      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.cors.headers.addvaryheader=true
+      - traefik.http.routers.engagement-service.middlewares=cors
+    networks:
+      - geo-network
+    restart: always
+  relevance-worker:
+    container_name: relevance-worker
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/relevance-worker.dockerfile
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/post-indexer-worker.env
+    networks:
+      - geo-network
+    restart: always
 
   geo-cidadao-ui:
     container_name: geo-cidadao-ui
