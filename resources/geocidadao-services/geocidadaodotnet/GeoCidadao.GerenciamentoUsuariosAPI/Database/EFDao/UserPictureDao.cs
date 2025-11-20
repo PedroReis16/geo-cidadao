@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
 {
-    public class UserPictureDao(GeoDbContext context, IUserPictureDaoCache? cache = null) : BaseDao<UserPicture>(context, cache), IUserPictureDao
+    internal class UserPictureDao(GeoDbContext context, IUserPictureDaoCache? cache = null) : BaseDao<UserPicture>(context, cache), IUserPictureDao
     {
         protected override IUserPictureDaoCache? GetCache() => _cache as IUserPictureDaoCache;
 

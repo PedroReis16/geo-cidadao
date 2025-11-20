@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
 {
-    public class UserProfileDao(GeoDbContext context, IUserProfileDaoCache? cache = null) : BaseDao<UserProfile>(context, cache), IUserProfileDao
+    internal class UserProfileDao(GeoDbContext context, IUserProfileDaoCache? cache = null) : BaseDao<UserProfile>(context, cache), IUserProfileDao
     {
         protected override IRepositoryCache<UserProfile>? GetCache() => _cache as IUserProfileDaoCache;
 

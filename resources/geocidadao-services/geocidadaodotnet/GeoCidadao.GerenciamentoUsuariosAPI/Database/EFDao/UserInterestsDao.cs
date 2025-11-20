@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
 {
-    public class UserInterestsDao(GeoDbContext context, IUserInterestsDaoCache? cache = null) : BaseDao<UserInterests>(context, cache), IUserInterestsDao
+    internal class UserInterestsDao(GeoDbContext context, IUserInterestsDaoCache? cache = null) : BaseDao<UserInterests>(context, cache), IUserInterestsDao
     {
         protected override IUserInterestsDaoCache? GetCache() => _cache as IUserInterestsDaoCache;
 
