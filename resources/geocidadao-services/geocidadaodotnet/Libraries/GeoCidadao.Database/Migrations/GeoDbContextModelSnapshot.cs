@@ -470,7 +470,8 @@ namespace GeoCidadao.Database.Migrations
 
             modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserProfile", b =>
                 {
-                    b.Navigation("Interests");
+                    b.Navigation("Interests")
+                        .IsRequired();
 
                     b.Navigation("ProfilePicture");
                 });

@@ -14,7 +14,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GeoCidadao.Database.Migrations
 {
     [DbContext(typeof(GeoDbContext))]
-    [Migration("20251120193732_UpdateUserInterests")]
+    [Migration("20251120200356_UpdateUserInterests")]
     partial class UpdateUserInterests
     {
         /// <inheritdoc />
@@ -473,7 +473,8 @@ namespace GeoCidadao.Database.Migrations
 
             modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI.UserProfile", b =>
                 {
-                    b.Navigation("Interests");
+                    b.Navigation("Interests")
+                        .IsRequired();
 
                     b.Navigation("ProfilePicture");
                 });

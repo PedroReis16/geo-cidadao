@@ -27,11 +27,6 @@ namespace GeoCidadao.Database.Configurations.GerenciamentoUsuariosAPI
             builder
                 .Property(ui => ui.InterestRange)
                 .HasColumnName("interest_range");
-
-            builder
-                .HasOne(ui => ui.User)
-                .WithOne(up => up.Interests)
-                .HasForeignKey<UserInterests>(ui => ui.Id);
         }
     }
 }
