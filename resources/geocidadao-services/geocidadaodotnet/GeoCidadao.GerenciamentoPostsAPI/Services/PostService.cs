@@ -284,9 +284,6 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
         {
             try
             {
-                using IServiceScope scope = _scopeFactory.CreateScope();
-                IPostDao postRepository = scope.ServiceProvider.GetRequiredService<IPostDao>();
-
                 Post? postToDelete = await _postDao.FindAsync(postId);
 
                 if (postToDelete == null)
@@ -294,33 +291,17 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
 
                 //TODO: Implementar a validação de propriedade do post antes de deletar
 
-                await Task.WhenAll(
-                    postRepository.DeleteAsync(postToDelete),
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            IPostMediaService postMediaService = scope.ServiceProvider.GetRequiredService<IPostMediaService>();
-                            await postMediaService.DeletePostMediasAsync(postId);
-                        }
-                        catch(Exception){ /* Ignorar erros de deleção de mídia */ }
-                    }),
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            IPostLocationDao locationDao = scope.ServiceProvider.GetRequiredService<IPostLocationDao>();
-                            PostLocation? location = await locationDao.GetPostLocationByPostIdAsync(postId);
-                            if (location != null)
-                            {
-                                await locationDao.DeleteAsync(location);
-                            }
-                        }
-                        catch(Exception){ /* Ignorar erros de deleção de localização */ }
-                    })
-                );
+                using IServiceScope scope = _scopeFactory.CreateScope();
+                IPostMediaService postMediaService = scope.ServiceProvider.GetRequiredService<IPostMediaService>();
+                await postMediaService.DeletePostMediasAsync(postId);
 
-                NotifyPostChanged(postId);
+                IPostDao postRepository = scope.ServiceProvider.GetRequiredService<IPostDao>();
+
+                await postRepository.DeleteAsync(postId);
+
+                INotifyPostChangedService notifyService = scope.ServiceProvider.GetRequiredService<INotifyPostChangedService>();
+                notifyService.NotifyPostDeleted(postId);
+
             }
             catch (Exception ex)
             {

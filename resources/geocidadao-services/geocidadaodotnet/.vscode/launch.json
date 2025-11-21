@@ -158,6 +158,17 @@
         "RelevanceWorker"
       ],
       "stopAll": true
+    },
+    {
+      "name": "PostManagement",
+      "configurations": [
+        "GerenciamentoUsuariosAPI",
+        "GerenciamentoPostsAPI",
+        "EngagementServiceAPI",
+        "PostIndexerWorker",
+        "RelevanceWorker"
+      ],
+      "stopAll": true
     }
   ]
 }
