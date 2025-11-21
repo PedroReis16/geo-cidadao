@@ -60,4 +60,14 @@ public static class RoutingKeyNames
     /// Dead Letter Routing key para notificação de posts deletados
     /// </summary>
     public const string DLQ_POST_DELETED_ROUTING_KEY = "post.deleted.dlq";
+
+    /// <summary>
+    /// Routing key para notificação de usuários deletados
+    /// </summary>
+    public const string USER_DELETED_ROUTING_KEY = "user.deleted";
+
+    /// <summary>
+    /// Dead Letter Routing key para notificação de usuários deletados
+    /// </summary>
+    public const string DLQ_USER_DELETED_ROUTING_KEY = "user.deleted.dlq";
 }
