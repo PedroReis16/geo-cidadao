@@ -162,6 +162,7 @@
     {
       "name": "PostManagement",
       "configurations": [
+        "GerenciamentoUsuariosAPI",
         "GerenciamentoPostsAPI",
         "EngagementServiceAPI",
         "PostIndexerWorker",

@@ -4,8 +4,6 @@ using GeoCidadao.AMQP.Messages;
 using GeoCidadao.AMQP.Services;
 using GeoCidadao.GerenciamentoPostsAPI.Contracts;
 using GeoCidadao.GerenciamentoPostsAPI.Contracts.QueueServices;
-using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts;
-using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
 using GeoCidadao.Models.Extensions;
 using RabbitMQ.Client.Events;
 
@@ -38,20 +36,11 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services.QueueServices
                 if (message != null)
                 {
                     using IServiceScope scope = _scopeFactory.CreateScope();
-                    IPostService postService = scope.ServiceProvider.GetRequiredService<IPostService>();
+                    IUserPostService userPostService = scope.ServiceProvider.GetRequiredService<IUserPostService>();
 
-                    List<PostDTO> userPosts = postService.GetUserPostsAsync(message.UserId).GetAwaiter().GetResult();
+                    userPostService.RemoveAllUserContentAsync(message.UserId).GetAwaiter().GetResult();
 
-                    List<Task> deleteTasks = new();
-
-                    foreach (PostDTO post in userPosts)
-                    {
-                        deleteTasks.Add(postService.DeletePostAsync(post.Id));
-                    }
-
-                    Task.WaitAll(deleteTasks.ToArray());
-
-                    Logger.LogInformation($"Foram deletados {userPosts.Count} posts do usuário de ID {message.UserId}.");
+                    Logger.LogInformation($"Foram deletados posts do usuário de ID {message.UserId}.");
                 }
                 Channel?.BasicAck(e.DeliveryTag, false);
             }

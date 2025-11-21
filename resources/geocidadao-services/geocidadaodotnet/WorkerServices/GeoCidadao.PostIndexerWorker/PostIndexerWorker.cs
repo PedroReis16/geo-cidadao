@@ -23,7 +23,7 @@ namespace GeoCidadao.PostIndexerWorker
 
                     newPostQueueService.ConsumeQueue();
                     postDeletedQueueService.ConsumeQueue();
-                    postInterectedQueueService.ConsumeQueue();
+                    // postInterectedQueueService.ConsumeQueue();
 
                 }
                 catch (Exception ex)
