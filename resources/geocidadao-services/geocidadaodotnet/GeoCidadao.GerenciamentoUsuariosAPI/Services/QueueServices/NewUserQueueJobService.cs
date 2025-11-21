@@ -52,7 +52,8 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices
                             LastName = message.LastName,
                         };
 
-                        _ = userDao.AddAsync(newUser);
+                        userDao.AddAsync(newUser).GetAwaiter().GetResult();
+
                         Logger.LogInformation($"Novo usuário criado com sucesso: {newUser.Id} - {newUser.Username}.");
                     }
                 }
