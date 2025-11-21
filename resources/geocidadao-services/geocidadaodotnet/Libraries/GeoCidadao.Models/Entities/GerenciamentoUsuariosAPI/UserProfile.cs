@@ -7,6 +7,6 @@ namespace GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public UserPicture? ProfilePicture { get; set; }
-        public UserInterests? Interests { get; set; }
+        public UserInterests Interests { get; set; } = new();
     }
 }

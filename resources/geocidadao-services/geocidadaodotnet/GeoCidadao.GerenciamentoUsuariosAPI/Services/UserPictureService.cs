@@ -184,7 +184,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
 
             pictureCacheService.RemovePictureUrl(userId);
 
-            notifyService.NotifyUserPhotoChanged(userId);
+            notifyService.NotifyUserChanged(userId);
         }
 
     }

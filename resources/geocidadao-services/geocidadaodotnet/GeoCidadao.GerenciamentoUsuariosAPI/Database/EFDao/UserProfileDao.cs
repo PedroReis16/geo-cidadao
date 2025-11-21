@@ -3,7 +3,6 @@ using GeoCidadao.Database.CacheContracts;
 using GeoCidadao.Database.EFDao;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.CacheContracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
-using GeoCidadao.Models.Entities;
 using GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI;
 using GeoCidadao.Models.Enums;
 using GeoCidadao.Models.Exceptions;
@@ -11,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
 {
-    public class UserProfileDao(GeoDbContext context, IUserProfileDaoCache? cache = null) : BaseDao<UserProfile>(context, cache), IUserProfileDao
+    internal class UserProfileDao(GeoDbContext context, IUserProfileDaoCache? cache = null) : BaseDao<UserProfile>(context, cache), IUserProfileDao
     {
         protected override IRepositoryCache<UserProfile>? GetCache() => _cache as IUserProfileDaoCache;
 
@@ -31,12 +30,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Database.EFDao
 
         protected override Task ValidateEntityForUpdate(params UserProfile[] obj)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateUserPictureAsync(Guid userId, string objectKey, string fileHash)
-        {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public override Task<int> DeleteAsync(params object[] keys)
