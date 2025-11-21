@@ -1,5 +1,6 @@
 using System.Text.Json;
 using GeoCidadao.AMQP.Configuration;
+using GeoCidadao.AMQP.Messages;
 using GeoCidadao.AMQP.Services;
 using GeoCidadao.Models.Extensions;
 using GeoCidadao.PostIndexerWorker.Contracts;
@@ -30,16 +31,16 @@ namespace GeoCidadao.PostIndexerWorker.Services.QueueServices
             try
             {
                 var byteMessage = e.Body.ToArray();
-                Guid? postId = JsonSerializer.Deserialize<Guid>(byteMessage);
+                PostChangedMessage? message = JsonSerializer.Deserialize<PostChangedMessage>(byteMessage);
 
-                if (postId != null)
+                if (message?.PostId != null)
                 {
                     using IServiceScope scope = _scopeFactory.CreateScope();
                     IElasticSearchService indexService = scope.ServiceProvider.GetRequiredService<IElasticSearchService>();
 
-                    indexService.DeletePostIndexAsync(postId.Value).GetAwaiter().GetResult();
+                    indexService.DeletePostIndexAsync(message.PostId).GetAwaiter().GetResult();
 
-                    Logger.LogInformation($"A solicitação de remoção do post '{postId}' foi processada com sucesso");
+                    Logger.LogInformation($"A solicitação de remoção do post '{message.PostId}' foi processada com sucesso");
                 }
                 Channel?.BasicAck(e.DeliveryTag, false);
             }
