@@ -1,0 +1,275 @@
+/* ===========================
+   FEED CONTAINER E LAYOUT
+   =========================== */
+
+.feed-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", sans-serif;
+  overflow: hidden;
+}
+
+.feed-header {
+  background: #fff;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.feed-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon-blue {
+  color: #2563eb;
+}
+
+.toggle-map-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-map-btn:hover {
+  background: #1e40af;
+  transform: scale(1.05);
+}
+
+.feed-main {
+  flex: 1;
+  position: relative;
+  display: flex;
+  transition: all 0.5s ease;
+  height: calc(100vh - 0px); /* Garante altura total disponível */
+  overflow: hidden; /* Evita overflow no container principal */
+}
+
+/* ===========================
+   FEED LISTA E ITENS
+   =========================== */
+
+/* ===========================
+   MODAL (Adicionar item)
+   =========================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+  z-index: 50;
+}
+
+.modal {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  animation: scaleIn 0.3s ease;
+}
+
+.modal h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.modal input,
+.modal textarea {
+  width: 100%;
+  margin-top: 0.3rem;
+  margin-bottom: 1rem;
+  padding: 0.6rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  transition: border-color 0.2s;
+}
+
+.modal input:focus,
+.modal textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.modal-actions button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.modal-actions button:first-child {
+  background: #e5e7eb;
+}
+
+.modal-actions button:last-child {
+  background: #2563eb;
+  color: white;
+}
+
+.modal-actions button:last-child:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===========================
+   MAPA - EXPANSÃO SUAVE
+   =========================== */
+
+.map-wrapper {
+  position: fixed;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: bottom right; /* FIX principal */
+  will-change: transform, width, height;
+}
+
+/* Mini-mapa (colapsado) */
+.map-wrapper.collapsed {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    width: 320px;
+    height: 240px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.25);
+    transform: scale(1);
+    opacity: 1;
+    transition:
+        width 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        height 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        border-radius 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        right 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mapa expandido (tela cheia) */
+.map-wrapper.expanded {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    transform: scale(1);
+    opacity: 1;
+    z-index: 30;
+    transition:
+        width 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        height 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        border-radius 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        right 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animações controladas por estado */
+.feed-container.map-open .map-wrapper.collapsed {
+  animation: expandFromCorner 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.feed-container:not(.map-open) .map-wrapper.expanded {
+  animation: collapseToCorner 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Keyframes para o movimento fluido */
+@keyframes expandFromCorner {
+  0% {
+    transform-origin: bottom right;
+    transform: scale(0.2);
+    opacity: 0.6;
+  }
+  100% {
+    transform-origin: bottom right;
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes collapseToCorner {
+  0% {
+    transform-origin: bottom right;
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform-origin: bottom right;
+    transform: scale(0.2);
+    opacity: 0.6;
+  }
+}
+
+/* ===========================
+   ANIMAÇÕES GERAIS
+   =========================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ===========================
+   RESPONSIVIDADE
+   =========================== */
+
+@media (max-width: 768px) {
+  .feed-item-actions {
+    justify-content: space-between;
+  }
+
+  .feed-item-content {
+    font-size: 0.9rem;
+  }
+
+  .map-wrapper.collapsed {
+    width: 280px;
+    height: 200px;
+  }
+}

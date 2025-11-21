@@ -35,16 +35,6 @@ namespace GeoCidadao.AMQP.Configuration
         /// </summary>
         public const string DLQ_POSTS_MANAGEMENT_TOPIC_EXCHANGE_NAME = "posts_management_topic_exchange_dlq";
 
-
-        /// <summary>
-        /// Exchange para controle de relevância de posts
-        /// </summary>
-        public const string RELEVANCE_WORKER_DIRECT_EXCHANGE_NAME = "relevance_worker_direct_exchange";
-
-        /// <summary>
-        /// Dead Letter Exchange para controle de relevância de posts
-        /// </summary>
-        public const string DLQ_RELEVANCE_WORKER_DIRECT_EXCHANGE_NAME = "relevance_worker_direct_exchange_dlq";
     }
 
 }
