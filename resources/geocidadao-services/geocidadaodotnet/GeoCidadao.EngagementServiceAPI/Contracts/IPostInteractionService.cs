@@ -1,6 +1,6 @@
 namespace GeoCidadao.EngagementServiceAPI.Contracts
 {
-    public interface IPostLikesService
+    public interface IPostInteractionService
     {
         
     }

@@ -10,6 +10,8 @@ using GeoCidadao.Models.Config;
 using GeoCidadao.Database.Extensions;
 using GeoCidadao.OAuth.Extensions;
 using GeoCidadao.OAuth.Models;
+using GeoCidadao.EngagementServiceAPI.Contracts;
+using GeoCidadao.EngagementServiceAPI.Services;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -36,6 +38,8 @@ builder.Services.AddResponseCaching();
 builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
+builder.Services.AddTransient<IPostInteractionService, PostInteractionService>();
+builder.Services.AddTransient<IPostCommentsService, PostCommentsService>();
 
 // DAOs
 
