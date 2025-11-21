@@ -80,26 +80,28 @@ services:
       - redis_data:/data
     command: redis-server --appendonly yes
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.0 # Use a versão desejada
     container_name: elasticsearch
-    restart: always
+    ports:
+      - "9200:9200"
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m # Desabilita segurança/autenticação para simplificar o desenvolvimento local
     networks:
       - geo-network
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.0.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200 # Usa o nome do serviço do ES como hostname
+    networks:
+      - geo-network
+    depends_on:
+      - elasticsearch
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog
@@ -226,8 +228,6 @@ services:
       context: .
       dockerfile: docker-compose/dockerfiles/post-indexer-worker.dockerfile
     depends_on:
-      elasticsearch:
-        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     env_file:

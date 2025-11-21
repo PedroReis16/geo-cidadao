@@ -8,6 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Elastic.Clients.Elasticsearch" Version="9.2.1" />
+    <PackageReference Include="Elastic.Transport" Version="0.10.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageReference Include="Quartz" Version="3.8.1" />
+    <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.8.1" />
+		<PackageReference Include="Quartz.Extensions.Hosting" Version="3.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\GeoCidadao.Models\GeoCidadao.Models.csproj" />
+    <ProjectReference Include="..\..\Libraries\GeoCidadao.Jobs\GeoCidadao.Jobs.csproj" />
+    <ProjectReference Include="..\..\Libraries\GeoCidadao.AMQP\GeoCidadao.AMQP.csproj" />
   </ItemGroup>
 </Project>

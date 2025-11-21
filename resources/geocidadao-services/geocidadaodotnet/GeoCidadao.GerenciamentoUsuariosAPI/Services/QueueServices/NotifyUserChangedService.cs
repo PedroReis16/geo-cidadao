@@ -20,9 +20,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices
         public void NotifyUserChanged(Guid userId) =>
             PublishMessage(new UserChangedMessage() { UserId = userId }, ExchangeNames.USER_MANAGEMENT_TOPIC_EXCHANGE_NAME, RoutingKeyNames.USER_CHANGED_ACTIONS_ROUTING_KEY);
 
-        public void NotifyUserDeleted(Guid userId)
-        {
-
-        }
+        public void NotifyUserDeleted(Guid userId) =>
+            PublishMessage(new UserChangedMessage() { UserId = userId }, ExchangeNames.USER_MANAGEMENT_TOPIC_EXCHANGE_NAME, RoutingKeyNames.USER_DELETED_ROUTING_KEY);
     }
 }
