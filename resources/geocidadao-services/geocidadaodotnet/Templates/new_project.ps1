@@ -29,6 +29,12 @@ dotnet add "./Tests/Integration/$PROJECT_NAME.IntegrationTests/$PROJECT_NAME.Int
 dotnet add "./Tests/Integration/$PROJECT_NAME.IntegrationTests/$PROJECT_NAME.IntegrationTests.csproj" reference "./Tests/GeoCidadao.TestShared/GeoCidadao.TestShared.csproj"
 dotnet add "./Tests/Integration/$PROJECT_NAME.IntegrationTests/$PROJECT_NAME.IntegrationTests.csproj" package FluentAssertions --version 8.3.0
 
+
+# Adiciona packages do NuGet (sempre revisar as versões)
+dotnet add "./WorkerServices/$PROJECT_NAME/$PROJECT_NAME.csproj" package Quartz --version 3.8.1
+dotnet add "./WorkerServices/$PROJECT_NAME/$PROJECT_NAME.csproj" package Quartz.Extensions.DependencyInjection --version 3.8.1
+dotnet add "./WorkerServices/$PROJECT_NAME/$PROJECT_NAME.csproj" package Quartz.Extensions.Hosting --version 3.8.1
+
 New-Item -Path "./Tests/Integration/$PROJECT_NAME.IntegrationTests/Services" -ItemType Directory
 
 # Adiciona packages do NuGet (sempre revisar as versões)

@@ -1,0 +1,67 @@
+.post-card {
+  background-color: var(--color-card);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 0; 
+  box-shadow: var(--shadow);
+  border: 1px solid var(--color-border);
+  transition: all 0.3s ease;
+  flex-shrink: 0; 
+  width: 100%; 
+}
+
+.post-text {
+  padding: 0 16px 16px 16px;
+  color: var(--color-text);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.post-text--compact {
+  font-size: 15px;
+}
+
+.post-text--expanded {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.post-actions {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  border-top: 1px solid var(--color-border);
+}
+
+.post-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  opacity: 0.7;
+}
+
+.post-action-btn:hover {
+  background-color: var(--color-hover);
+}
+
+.post-action-btn--liked {
+  color: var(--color-alert);
+  opacity: 1;
+}
+
+.post-action-icon {
+  transition: transform 0.2s ease;
+}
+
+.post-action-btn:hover .post-action-icon {
+  transform: scale(1.1);
+}

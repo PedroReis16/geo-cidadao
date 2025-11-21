@@ -2,6 +2,7 @@ using GeoCidadao.Models.Constants;
 using GeoCidadao.Models.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
@@ -11,6 +12,41 @@ namespace GeoCidadao.Models.Config
 {
     public static class LogExtensions
     {
+        public static IServiceCollection ConfigureServiceLogs(this IServiceCollection services)
+        {
+            bool useSeriLog = services.BuildServiceProvider().GetRequiredService<IConfiguration>().GetValue<bool>("UseSerilog");
+
+            if (useSeriLog)
+            {
+                services.AddSerilog(
+                    (context, configuration) =>
+                    {
+                        bool isProduction = services.BuildServiceProvider().GetRequiredService<IHostEnvironment>().IsProduction();
+                        LogEventLevel logMinimumLevel = isProduction ? LogEventLevel.Information : LogEventLevel.Debug;
+
+                        configuration
+                            .WriteTo.Async(wt =>
+                            {
+                                wt.Console(
+                                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message:lj}{NewLine}{Exception}",
+                                    restrictedToMinimumLevel: logMinimumLevel,
+                                        theme: Serilog.Sinks.SystemConsole.Themes.SystemConsoleTheme.Colored
+                                    );
+                            })
+                            .WriteTo.Logger(logger =>
+                                logger
+                                   .WriteTo.MongoDB(
+                                       databaseUrl: services.BuildServiceProvider().GetRequiredService<IConfiguration>().GetConnectionString("GeoLogsDb")!
+                                       )
+                            );
+                    }
+                );
+            }
+
+
+            return services;
+        }
+
         public static WebApplicationBuilder ConfigureServiceLogs(this WebApplicationBuilder builder)
         {
             bool useSeriLog = builder.Configuration.GetValue<bool>("UseSerilog");
