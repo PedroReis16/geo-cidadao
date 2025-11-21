@@ -3,13 +3,17 @@ using GeoCidadao.AMQP.Configuration;
 using GeoCidadao.AMQP.Messages;
 using GeoCidadao.AMQP.Services;
 using GeoCidadao.Models.Extensions;
+using GeoCidadao.PostIndexerWorker.Contracts;
 using GeoCidadao.PostIndexerWorker.Contracts.QueueServices;
+using GeoCidadao.PostIndexerWorker.Models.DTOs;
 using RabbitMQ.Client.Events;
 
 namespace GeoCidadao.PostIndexerWorker.Services.QueueServices
 {
-    public class NewPostQueueService(ILogger<NewPostQueueService> logger, IConfiguration configuration) : RabbitMQSubscriberService(logger, configuration), INewPostQueueService
+    public class NewPostQueueService(ILogger<NewPostQueueService> logger, IConfiguration configuration, IServiceScopeFactory scopeFactory) : RabbitMQSubscriberService(logger, configuration), INewPostQueueService
     {
+        private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
+
         public void ConsumeQueue()
         {
             ConsumeQueue(
@@ -32,7 +36,23 @@ namespace GeoCidadao.PostIndexerWorker.Services.QueueServices
 
                 if (message != null)
                 {
+                    using IServiceScope scope = _scopeFactory.CreateScope();
+                    IElasticSearchService service = scope.ServiceProvider.GetRequiredService<IElasticSearchService>();
 
+                    PostDocument newPost = new()
+                    {
+                        Id = message.Id,
+                        PostOwnerId = message.PostOwnerId,
+                        Content = message.Content,
+                        City = message.City,
+                        Latitude = message.Latitude,
+                        Longitude = message.Longitude,
+                        Tags = message.Tags
+                    };
+
+                    _ = service.IndexPostAsync(newPost);
+
+                    Logger.LogInformation($"O post '{message.Id}' foi recebido e processado com sucesso pela fila de novos posts.");
                 }
 
                 Channel?.BasicAck(e.DeliveryTag, false);

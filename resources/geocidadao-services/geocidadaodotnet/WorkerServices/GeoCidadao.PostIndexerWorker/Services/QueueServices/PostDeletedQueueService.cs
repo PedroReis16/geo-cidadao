@@ -1,12 +1,17 @@
+using System.Text.Json;
 using GeoCidadao.AMQP.Configuration;
 using GeoCidadao.AMQP.Services;
+using GeoCidadao.Models.Extensions;
+using GeoCidadao.PostIndexerWorker.Contracts;
 using GeoCidadao.PostIndexerWorker.Contracts.QueueServices;
 using RabbitMQ.Client.Events;
 
 namespace GeoCidadao.PostIndexerWorker.Services.QueueServices
 {
-    public class PostDeletedQueueService(ILogger<PostDeletedQueueService> logger, IConfiguration configuration) : RabbitMQSubscriberService(logger, configuration), IPostDeletedQueueService
+    public class PostDeletedQueueService(ILogger<PostDeletedQueueService> logger, IConfiguration configuration, IServiceScopeFactory scopeFactory) : RabbitMQSubscriberService(logger, configuration), IPostDeletedQueueService
     {
+        private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
+
         public void ConsumeQueue()
         {
             ConsumeQueue(
@@ -22,7 +27,27 @@ namespace GeoCidadao.PostIndexerWorker.Services.QueueServices
 
         private void OnPostDeleted(object? sender, BasicDeliverEventArgs e)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var byteMessage = e.Body.ToArray();
+                Guid? postId = JsonSerializer.Deserialize<Guid>(byteMessage);
+
+                if (postId != null)
+                {
+                    using IServiceScope scope = _scopeFactory.CreateScope();
+                    IElasticSearchService indexService = scope.ServiceProvider.GetRequiredService<IElasticSearchService>();
+
+                    indexService.DeletePostIndexAsync(postId.Value).GetAwaiter().GetResult();
+
+                    Logger.LogInformation($"A solicitação de remoção do post '{postId}' foi processada com sucesso");
+                }
+                Channel?.BasicAck(e.DeliveryTag, false);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"Houve um erro ao tentar processar a mensagem de posts deletados: {ex.GetFullMessage()}");
+                Channel?.BasicNack(e.DeliveryTag, false, false);
+            }
         }
     }
 }

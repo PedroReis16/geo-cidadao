@@ -1,6 +1,6 @@
-namespace GeoCidadao.AMQP.Messages
+namespace GeoCidadao.PostIndexerWorker.Models.DTOs
 {
-    public class NewPostMessage
+    public class PostDocument
     {
         public Guid Id { get; set; }
         public Guid PostOwnerId { get; set; }
@@ -8,6 +8,7 @@ namespace GeoCidadao.AMQP.Messages
         public string? City { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
-        public string[] Tags { get; set; } = Array.Empty<string>();//Categorias da postagem
+        public string[] Tags { get; set; } = Array.Empty<string>(); //Categorias da postagem
+        public double RelevanceScore { get; set; } = 1.0;
     }
 }
