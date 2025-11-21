@@ -20,8 +20,6 @@ namespace GeoCidadao.Database
         public DbSet<Post> Posts { get; set; } = default!;
         public DbSet<PostMedia> PostMedias { get; set; } = default!;
         public DbSet<PostLocation> PostLocations { get; set; } = default!;
-        public DbSet<PostLike> PostLikes { get; set; } = default!;
-        public DbSet<PostComment> PostComments { get; set; } = default!;
 
         //Analytics Service API
         
@@ -50,8 +48,6 @@ namespace GeoCidadao.Database
             _ = modelBuilder.ApplyConfiguration(new PostsConfiguration());
             _ = modelBuilder.ApplyConfiguration(new PostMediasConfiguration());
             _ = modelBuilder.ApplyConfiguration(new PostLocationConfiguration());
-            _ = modelBuilder.ApplyConfiguration(new PostLikesConfiguration());
-            _ = modelBuilder.ApplyConfiguration(new PostCommentsConfiguration());
             // Analytics Service API
             
             _ = modelBuilder.Ignore<BaseEntity>();
