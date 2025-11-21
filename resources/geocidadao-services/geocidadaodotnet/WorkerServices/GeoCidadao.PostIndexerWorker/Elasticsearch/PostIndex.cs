@@ -25,12 +25,10 @@ namespace GeoCidadao.PostIndexerWorker.Elasticsearch
                       .Mappings(m => m
                           .Properties(p => p
                               .Text("content")
-                              .Keyword("postId")
                               .Keyword("postOwnerId")
                               .Keyword("city")
                               .GeoPoint("location")
                               .Keyword("tags")
-                              .FloatNumber("relevanceScore")
                           )
                       )
                   );
