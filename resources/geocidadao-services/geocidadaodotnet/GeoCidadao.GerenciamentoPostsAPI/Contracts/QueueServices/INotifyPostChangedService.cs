@@ -7,6 +7,6 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Contracts.QueueServices
     {
         void NotifyNewPost(NewPostMessage newPostMessage);
         void NotifyPostChanged(Guid postId);
-        void NotifyPostDelete(Guid postId);
+        void NotifyPostDeleted(Guid postId);
     }
 }
