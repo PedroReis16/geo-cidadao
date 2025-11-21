@@ -4,6 +4,7 @@ namespace GeoCidadao.PostIndexerWorker.Config
     {
         public const string MaxConcurrency = "MaxConcurrency";
         public const string RabbitMQ = "RabbitMQ";
+        public const string ElasticSearch = "ElasticSearch";
 
     }
 }

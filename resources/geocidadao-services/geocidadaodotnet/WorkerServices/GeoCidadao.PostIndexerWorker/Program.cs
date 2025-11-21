@@ -6,11 +6,17 @@ using GeoCidadao.Jobs.Config;
 using GeoCidadao.Jobs.Listeners;
 using GeoCidadao.PostIndexerWorker.Config;
 using GeoCidadao.PostIndexerWorker.Jobs;
+using GeoCidadao.PostIndexerWorker.Services;
+using GeoCidadao.PostIndexerWorker.Contracts;
+using GeoCidadao.PostIndexerWorker.Models.Extensions;
 
 
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.ConfigureServiceLogs();
+
+//Services
+builder.Services.AddSingleton<IElasticSearchService, ElasticSearchService>();
 
 // Queue Services
 builder.Services.AddSingleton<INewPostQueueService, NewPostQueueService>();
@@ -82,6 +88,11 @@ builder.Services.AddQuartzHostedService(options =>
     options.WaitForJobsToComplete = true;
 });
 
+// Elastic Search Configuration
+builder.Services.AddElasticSearchService();
 
 var host = builder.Build();
-host.Run();
+
+await host.Services.InitializeElasticSearchAsync();
+
+await host.RunAsync();
