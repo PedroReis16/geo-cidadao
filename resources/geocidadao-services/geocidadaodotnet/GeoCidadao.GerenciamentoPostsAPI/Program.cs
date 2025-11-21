@@ -59,8 +59,6 @@ builder.Services.AddTransient<IPostLocationDao, PostLocationDao>();
 
 // Queue Services
 builder.Services.AddSingleton<INotifyPostChangedService, NotifyPostChangedService>();
-builder.Services.AddSingleton<INotifyPostInteractionService, NotifyPostInteractionService>();
-builder.Services.AddSingleton<INotifyPostAnalyticsService, NotifyPostAnalyticsService>();
 
 // Fetchers (OAuth - Resource Fetchers)
 builder.Services.AddScoped<IResourceFetcher<Post>, PostFetcher>();
