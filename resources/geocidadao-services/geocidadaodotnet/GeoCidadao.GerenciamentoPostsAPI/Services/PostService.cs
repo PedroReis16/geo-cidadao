@@ -114,9 +114,9 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                 {
                     var geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
                     Point center = geometryFactory.CreatePoint(new Coordinate(locationQuery.Longitude.Value, locationQuery.Latitude.Value));
-
+                    
                     postLocations = await _postLocationDao.GetPostsWithinRadiusAsync(
-                        center,
+                        center, 
                         locationQuery.RadiusKm.Value,
                         locationQuery.ItemsCount,
                         locationQuery.PageNumber
@@ -184,67 +184,51 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
 
                 await _postDao.AddAsync(newPostEntity);
 
-                // // Save location if provided
-                // if (newPost.Position != null &&
-                //     !string.IsNullOrEmpty(newPost.Position.Latitude) &&
-                //     !string.IsNullOrEmpty(newPost.Position.Longitude))
-                // {
-                //     try
-                //     {
-                //         if (double.TryParse(newPost.Position.Latitude, out double lat) &&
-                //             double.TryParse(newPost.Position.Longitude, out double lon))
-                //         {
-                //             var geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
-                //             Point position = geometryFactory.CreatePoint(new Coordinate(lon, lat));
-
-                //             PostLocation postLocation = new()
-                //             {
-                //                 Id = Guid.NewGuid(),
-                //                 PostId = postId,
-                //                 Position = position,
-                //                 Category = newPostEntity.Category
-                //             };
-
-                //             await _postLocationDao.AddAsync(postLocation);
-
-                //             // Notify analytics service asynchronously
-                //             _ = Task.Run(async () =>
-                //             {
-                //                 try
-                //                 {
-                //                     using var scope = _scopeFactory.CreateScope();
-                //                     var analyticsService = scope.ServiceProvider.GetRequiredService<INotifyPostAnalyticsService>();
-                //                     await analyticsService.NotifyPostAnalyticsAsync(postId);
-                //                 }
-                //                 catch (Exception analyticsEx)
-                //                 {
-                //                     _logger.LogWarning(analyticsEx, $"Falha ao notificar analytics para o post '{postId}'");
-                //                 }
-                //             });
-                //         }
-                //     }
-                //     catch (Exception ex)
-                //     {
-                //         _logger.LogWarning(ex, $"Não foi possível salvar a localização do post '{postId}'", _context);
-                //         // Continue without location - it's optional
-                //     }
-                // }
-
-                _ = Task.Run(() =>
+                // Save location if provided
+                if (newPost.Position != null && 
+                    !string.IsNullOrEmpty(newPost.Position.Latitude) && 
+                    !string.IsNullOrEmpty(newPost.Position.Longitude))
                 {
-                    using var scope = _scopeFactory.CreateScope();
-                    var notifyService = scope.ServiceProvider.GetRequiredService<INotifyPostChangedService>();
-                    notifyService.NotifyNewPost(new()
+                    try
                     {
-                        Id = newPostEntity.Id,
-                        PostOwnerId = newPostEntity.UserId,
-                        Content = newPostEntity.Content,
-                        City = newPost.Position?.City,
-                        Latitude = double.TryParse(newPost.Position?.Latitude, out double lat) ? lat : null,
-                        Longitude = double.TryParse(newPost.Position?.Longitude, out double lon) ? lon : null,
-                        // Tags = newPost.Tags ?? Array.Empty<string>()
-                    });
-                });
+                        if (double.TryParse(newPost.Position.Latitude, out double lat) &&
+                            double.TryParse(newPost.Position.Longitude, out double lon))
+                        {
+                            var geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+                            Point position = geometryFactory.CreatePoint(new Coordinate(lon, lat));
+
+                            PostLocation postLocation = new()
+                            {
+                                Id = Guid.NewGuid(),
+                                PostId = postId,
+                                Position = position,
+                                Category = newPostEntity.Category
+                            };
+
+                            await _postLocationDao.AddAsync(postLocation);
+                            
+                            // Notify analytics service asynchronously
+                            _ = Task.Run(async () => 
+                            {
+                                try
+                                {
+                                    using var scope = _scopeFactory.CreateScope();
+                                    var analyticsService = scope.ServiceProvider.GetRequiredService<INotifyPostAnalyticsService>();
+                                    await analyticsService.NotifyPostAnalyticsAsync(postId);
+                                }
+                                catch (Exception analyticsEx)
+                                {
+                                    _logger.LogWarning(analyticsEx, $"Falha ao notificar analytics para o post '{postId}'");
+                                }
+                            });
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, $"Não foi possível salvar a localização do post '{postId}'", _context);
+                        // Continue without location - it's optional
+                    }
+                }
 
                 return new(newPostEntity);
             }
@@ -281,14 +265,8 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                 // TODO: Adicionar a validação de alteração de localização do post
 
                 await _postDao.UpdateAsync(existingPost);
-
-                _ = Task.Run(() =>
-                {
-                    using IServiceScope scope = _scopeFactory.CreateScope();
-                    INotifyPostChangedService notifyService = scope.ServiceProvider.GetRequiredService<INotifyPostChangedService>();
-
-                    notifyService.NotifyPostChanged(postId);
-                });
+                
+                NotifyPostChanged(postId);    
             }
             catch (EntityValidationException) { throw; }
             catch (Exception ex)
@@ -325,7 +303,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                             IPostMediaService postMediaService = scope.ServiceProvider.GetRequiredService<IPostMediaService>();
                             await postMediaService.DeletePostMediasAsync(postId);
                         }
-                        catch (Exception) { /* Ignorar erros de deleção de mídia */ }
+                        catch(Exception){ /* Ignorar erros de deleção de mídia */ }
                     }),
                     Task.Run(async () =>
                     {
@@ -338,17 +316,11 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                                 await locationDao.DeleteAsync(location);
                             }
                         }
-                        catch (Exception) { /* Ignorar erros de deleção de localização */ }
+                        catch(Exception){ /* Ignorar erros de deleção de localização */ }
                     })
                 );
 
-                _ = Task.Run(() =>
-                {
-                    using IServiceScope scope = _scopeFactory.CreateScope();
-                    INotifyPostChangedService notifyService = scope.ServiceProvider.GetRequiredService<INotifyPostChangedService>();
-
-                    notifyService.NotifyPostDeleted(postId);
-                });
+                NotifyPostChanged(postId);
             }
             catch (Exception ex)
             {
@@ -359,6 +331,14 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                 });
                 throw new Exception(errorMsg, ex);
             }
+        }
+
+        private void NotifyPostChanged(Guid postId)
+        {
+            using IServiceScope scope = _scopeFactory.CreateScope();
+            INotifyPostChangedService notifyService = scope.ServiceProvider.GetRequiredService<INotifyPostChangedService>();
+
+            notifyService.NotifyPostChanged(postId);
         }
 
     }

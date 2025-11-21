@@ -18,10 +18,6 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services.QueueServices
             );
         }
 
-        public void NotifyNewPost(NewPostMessage newPostMessage)=> PublishMessage(newPostMessage, exchange: ExchangeNames.POSTS_MANAGEMENT_TOPIC_EXCHANGE_NAME, routingKey: RoutingKeyNames.NEW_POST_ROUTING_KEY);
-
         public void NotifyPostChanged(Guid postId) => PublishMessage(new PostChangedMessage() { PostId = postId }, exchange: ExchangeNames.POSTS_MANAGEMENT_TOPIC_EXCHANGE_NAME, routingKey: RoutingKeyNames.POST_CHANGED_ROUTING_KEY);
-
-        public void NotifyPostDeleted(Guid postId) => PublishMessage(new PostChangedMessage() { PostId = postId }, exchange: ExchangeNames.POSTS_MANAGEMENT_TOPIC_EXCHANGE_NAME, routingKey: RoutingKeyNames.POST_DELETED_ROUTING_KEY);
     }
 }

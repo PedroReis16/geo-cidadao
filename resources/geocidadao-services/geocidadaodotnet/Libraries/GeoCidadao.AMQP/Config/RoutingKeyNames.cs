@@ -32,42 +32,22 @@ public static class RoutingKeyNames
     public const string DLQ_POST_CHANGED_ROUTING_KEY = "post.changed.dlq";
 
     /// <summary>
-    /// Routing key para notificação de novos posts
+    /// Routing key para notificação de interação em posts (curtidas e comentários)
     /// </summary>
-    public const string NEW_POST_ROUTING_KEY = "post.new";
+    public const string POST_INTERACTION_ROUTING_KEY = "post.interaction";
 
     /// <summary>
-    /// Dead Letter Routing key para notificação de novos posts
+    /// Dead Letter Routing key para notificação de interação em posts
     /// </summary>
-    public const string DLQ_NEW_POST_ROUTING_KEY = "post.new.dlq";
+    public const string DLQ_POST_INTERACTION_ROUTING_KEY = "post.interaction.dlq";
 
     /// <summary>
-    /// Routing key para notificação de interações em posts
+    /// Routing key para notificação de eventos de analytics de posts com localização
     /// </summary>
-    public const string POST_INTERACTED_ROUTING_KEY = "post.interacted";
+    public const string POST_ANALYTICS_ROUTING_KEY = "post.analytics";
 
     /// <summary>
-    /// Dead Letter Routing key para notificação de interações em posts
+    /// Dead Letter Routing key para notificação de eventos de analytics de posts
     /// </summary>
-    public const string DLQ_POST_INTERACTED_ROUTING_KEY = "post.interacted.dlq";
-
-    /// <summary>
-    /// Routing key para notificação de posts deletados
-    /// </summary>
-    public const string POST_DELETED_ROUTING_KEY = "post.deleted";
-
-    /// <summary>
-    /// Dead Letter Routing key para notificação de posts deletados
-    /// </summary>
-    public const string DLQ_POST_DELETED_ROUTING_KEY = "post.deleted.dlq";
-
-    /// <summary>
-    /// Routing key para notificação de usuários deletados
-    /// </summary>
-    public const string USER_DELETED_ROUTING_KEY = "user.deleted";
-
-    /// <summary>
-    /// Dead Letter Routing key para notificação de usuários deletados
-    /// </summary>
-    public const string DLQ_USER_DELETED_ROUTING_KEY = "user.deleted.dlq";
+    public const string DLQ_POST_ANALYTICS_ROUTING_KEY = "post.analytics.dlq";
 }
