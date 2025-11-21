@@ -51,14 +51,11 @@ builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<IPostMediaService, PostMediaService>();
 builder.Services.AddTransient<IMediaBucketService, MediaBucketService>();
 builder.Services.AddTransient<ILocationsService, LocationsService>();
-builder.Services.AddTransient<IPostInteractionService, PostInteractionService>();
 
 // DAOs
 builder.Services.AddTransient<IPostDao, PostDao>();
 builder.Services.AddTransient<IPostMediaDao, PostMediaDao>();
 builder.Services.AddTransient<IPostLocationDao, PostLocationDao>();
-builder.Services.AddTransient<IPostLikeDao, PostLikeDao>();
-builder.Services.AddTransient<IPostCommentDao, PostCommentDao>();
 
 // Queue Services
 builder.Services.AddSingleton<INotifyPostChangedService, NotifyPostChangedService>();
