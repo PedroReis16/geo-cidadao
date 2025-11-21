@@ -53,6 +53,28 @@ namespace GeoCidadao.AMQP.Configuration
         /// Dead Letter Queue para o recebimento de eventos relacionadas a exclusão de usuários para o serviço de gerenciamento de posts
         /// </summary>
         public const string DLQ_POST_MANAGEMENT_USER_DELETED_QUEUE_NAME = "post_management_user_deleted_dlq";
+
+        /// <summary>
+        /// Fila para o recebimento de eventos vindos da criação de novos posts para o worker de relevância
+        /// </summary>
+        public const string RELEVANCE_WORKER_NEW_POST_QUEUE_NAME = "relevance_worker_new_post_queue_name";
+
+        /// <summary>
+        /// Dead Letter Queue para o recebimento de eventos vindos da criação de novos posts para o worker de relevância
+        /// </summary>
+        public const string DLQ_RELEVANCE_WORKER_NEW_POST_QUEUE_NAME = "relevance_worker_new_post_dlq";
+    
+    
+        /// <summary>
+        /// Fila para o recebimento de eventos relacionados a exclusão de postagens de uma usuário para o worker de relevância
+        /// </summary>
+        public const string RELEVANCE_WORKER_DELETED_POST_QUEUE_NAME = "relevance_worker_deleted_post_queue_name";
+
+        /// <summary>
+        /// Dead Letter Queue para o recebimento de eventos relacionados a exclusão de postagens de
+        /// uma usuário para o worker de relevância
+        /// </summary>
+        public const string DLQ_RELEVANCE_WORKER_DELETED_POST_QUEUE_NAME = "relevance_worker_deleted_post_dlq";
     }
 
 }
