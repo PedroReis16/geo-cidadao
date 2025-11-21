@@ -8,8 +8,6 @@ WORKDIR /src
 COPY resources/geocidadao-services/geocidadaodotnet/WorkerServices/GeoCidadao.PostIndexerWorker/GeoCidadao.PostIndexerWorker.csproj GeoCidadao.PostIndexerWorker/
 COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.AMQP/GeoCidadao.AMQP.csproj GeoCidadao.AMQP/
 COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Models/GeoCidadao.Models.csproj GeoCidadao.Models/
-COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.SearchEngine/GeoCidadao.SearchEngine.csproj GeoCidadao.SearchEngine/
-
 RUN dotnet restore GeoCidadao.PostIndexerWorker/GeoCidadao.PostIndexerWorker.csproj
 
 COPY resources/geocidadao-services/geocidadaodotnet/WorkerServices ./

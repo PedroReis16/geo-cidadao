@@ -20,6 +20,10 @@ using GeoCidadao.OAuth.Models;
 using GeoCidadao.OAuth.Contracts;
 using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
 using GeoCidadao.GerenciamentoPostsAPI.Middlewares;
+using Quartz;
+using GeoCidadao.Jobs.Config;
+using GeoCidadao.Jobs.Listeners;
+using GeoCidadao.GerenciamentoPostsAPI.Jobs.QueueJobs;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -51,19 +55,15 @@ builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<IPostMediaService, PostMediaService>();
 builder.Services.AddTransient<IMediaBucketService, MediaBucketService>();
 builder.Services.AddTransient<ILocationsService, LocationsService>();
-builder.Services.AddTransient<IUserPostService, UserPostService>();
 
 // DAOs
 builder.Services.AddTransient<IPostDao, PostDao>();
 builder.Services.AddTransient<IPostMediaDao, PostMediaDao>();
 builder.Services.AddTransient<IPostLocationDao, PostLocationDao>();
-builder.Services.AddTransient<IPostLikeDao, PostLikeDao>();
-builder.Services.AddTransient<IPostCommentDao, PostCommentDao>();
 
 // Queue Services
 builder.Services.AddSingleton<INotifyPostChangedService, NotifyPostChangedService>();
-builder.Services.AddSingleton<INotifyPostInteractionService, NotifyPostInteractionService>();
-builder.Services.AddSingleton<INotifyPostAnalyticsService, NotifyPostAnalyticsService>();
+builder.Services.AddSingleton<IUserDeletedQueueService, UserDeletedQueueService>();
 
 // Fetchers (OAuth - Resource Fetchers)
 builder.Services.AddScoped<IResourceFetcher<Post>, PostFetcher>();
@@ -104,6 +104,48 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 builder.Services.ConfigureOAuth(builder.Configuration.GetRequiredSection("OAuth").Get<OAuthConfiguration>()!);
+
+//Quartz Settings
+builder.Services.Configure<QuartzOptions>(options =>
+{
+    options.Scheduling.IgnoreDuplicates = true;
+    options.Scheduling.OverWriteExistingData = false;
+});
+
+builder.Services.AddQuartz(q =>
+{
+    q.SchedulerId = q.SchedulerName = JobConstants.SchedulerName;
+
+    q.AddJobListener<JobChainListener>();
+
+    q.UseSimpleTypeLoader();
+    q.UseInMemoryStore();
+    q.UseDefaultThreadPool(tp =>
+    {
+        int maxConcurrency = builder.Configuration
+                      .GetRequiredSection(AppSettingsProperties.MaxConcurrency)
+                      .Get<int>();
+
+        tp.MaxConcurrency = maxConcurrency > 0 ? maxConcurrency : Environment.ProcessorCount;
+    });
+    q.AddJob<UserDeletedQueueJob>(j =>
+    {
+        j.WithIdentity(nameof(UserDeletedQueueJob));
+    });
+
+    q.AddTrigger(t =>
+    {
+        t.ForJob(nameof(UserDeletedQueueJob));
+        t.StartNow();
+    });
+
+});
+
+builder.Services.AddQuartzHostedService(options =>
+{
+    options.WaitForJobsToComplete = true;
+});
+
 
 WebApplication app = builder.Build();
 

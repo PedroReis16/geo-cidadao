@@ -1,0 +1,44 @@
+/* ===========================
+   FEED PAGE LAYOUT
+   =========================== */
+
+.feed-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", sans-serif;
+  background: var(--color-background);
+}
+
+.feed-main {
+  flex: 1;
+  position: relative;
+  display: flex;
+  transition: all 0.5s ease;
+  min-height: calc(100vh - 56px);
+}
+
+.feed-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+/* Para centralizar o feed */
+.feed-wrapper .feed-list {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+/* ===========================
+   RESPONSIVIDADE
+   =========================== */
+
+@media (max-width: 768px) {
+  .feed-wrapper .feed-list {
+    max-width: 100%;
+    padding: 16px 12px;
+  }
+}

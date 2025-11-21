@@ -423,3 +423,4 @@ resources/geocidadao-services/keycloak-rabbitmq-spi/target
 
 docker-compose/geocidadao
 
+resources/geocidadao-ui/package-lock.json

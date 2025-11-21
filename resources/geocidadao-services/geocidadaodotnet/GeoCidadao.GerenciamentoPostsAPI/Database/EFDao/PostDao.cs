@@ -43,7 +43,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Database.EFDao
             return await _context.SaveChangesAsync();
         }
 
-        public Task<List<Post>> GetUserPostsAsync(Guid userId, int? itemsCount, int? pageNumber)
+        public  Task<List<Post>> GetUserPostsAsync(Guid userId, int? itemsCount, int? pageNumber)
         {
             // Order by relevance score first (higher relevance = more engagement), then by creation date for tie-breaking
             IQueryable<Post> query = _context.Set<Post>()
@@ -62,22 +62,6 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Database.EFDao
             }
 
             return query.ToListAsync();
-        }
-
-        public Task<List<Post>> GetUserContentAsync(Guid userId)
-        {
-            return _context.Set<Post>()
-                .Include(p => p.Medias)
-                .Where(p => p.UserId == userId)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
-        public Task DeleteUserPostsAsync(Guid userId)
-        {
-            return _context.Set<Post>()
-                .Where(p => p.UserId == userId)
-                .ExecuteDeleteAsync();
         }
     }
 }
