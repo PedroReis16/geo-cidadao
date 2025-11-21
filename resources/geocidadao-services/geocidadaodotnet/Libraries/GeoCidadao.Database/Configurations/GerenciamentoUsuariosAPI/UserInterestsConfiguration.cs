@@ -1,5 +1,4 @@
 using GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI;
-using GeoCidadao.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,35 +10,23 @@ namespace GeoCidadao.Database.Configurations.GerenciamentoUsuariosAPI
         {
             base.Configure(builder);
 
-            _ = builder
-                .Property(x => x.UserId)
-                .HasColumnName("user_id")
-                .IsRequired();
+            builder
+                .Property(ui=>ui.FollowedCategories)
+                .HasColumnName("followed_categories");
 
-            _ = builder
-                .Property(x => x.Region)
-                .HasColumnName("region")
-                .HasMaxLength(100)
-                .IsRequired(false);
+            builder
+                .Property(ui => ui.FollowedUsers)
+                .HasColumnName("followed_users");
+            builder
+                .Property(ui => ui.FollowedCities)
+                .HasColumnName("followed_cities");
 
-            _ = builder
-                .Property(x => x.City)
-                .HasColumnName("city")
-                .HasMaxLength(100)
-                .IsRequired(false);
-
-            _ = builder
-                .Property(x => x.State)
-                .HasColumnName("state")
-                .HasMaxLength(50)
-                .IsRequired(false);
-
-            _ = builder
-                .Property(x => x.Categories)
-                .HasColumnName("categories")
-                .IsRequired(false);
-
-            builder.HasIndex(x => x.UserId).IsUnique();
+            builder
+                .Property(ui => ui.FollowedDistricts)
+                .HasColumnName("followed_districts");
+            builder
+                .Property(ui => ui.InterestRange)
+                .HasColumnName("interest_range");
         }
     }
 }

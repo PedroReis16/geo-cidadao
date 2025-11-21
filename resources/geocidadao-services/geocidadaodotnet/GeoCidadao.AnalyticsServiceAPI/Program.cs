@@ -10,11 +10,6 @@ using GeoCidadao.Models.Config;
 using GeoCidadao.Database.Extensions;
 using GeoCidadao.OAuth.Extensions;
 using GeoCidadao.OAuth.Models;
-using GeoCidadao.AnalyticsServiceAPI.Services;
-using GeoCidadao.AnalyticsServiceAPI.Contracts;
-using GeoCidadao.AnalyticsServiceAPI.Database.Contracts;
-using GeoCidadao.AnalyticsServiceAPI.Database.EFDao;
-using GeoCidadao.AnalyticsServiceAPI.BackgroundServices;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -41,14 +36,8 @@ builder.Services.AddResponseCaching();
 builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
-builder.Services.AddTransient<IAnalyticsProcessingService, AnalyticsProcessingService>();
-builder.Services.AddTransient<IAnalyticsService, AnalyticsService>();
 
 // DAOs
-builder.Services.AddTransient<IProblemEventDao, ProblemEventDao>();
-
-// Background Services
-builder.Services.AddHostedService<PostAnalyticsConsumerService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();
@@ -113,7 +102,6 @@ app.UseMiddleware<HttpResponseCacheHandler>();
 
 app.UsePathBase($"/{basePath}");
 
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -69,7 +69,8 @@ builder.Services.AddTransient<IUserPictureDao, UserPictureDao>();
 builder.Services.AddTransient<IUserInterestsDao, UserInterestsDao>();
 
 // Dao Cache
-builder.Services.AddTransient<IUserPictureDaoCache, UserPictureDaoCache>();
+builder.Services.AddSingleton<IUserPictureDaoCache, UserPictureDaoCache>();
+builder.Services.AddSingleton<IUserInterestsDaoCache, UserInterestsDaoCache>();
 
 // Queue Services
 builder.Services.AddSingleton<INewUserQueueJobService, NewUserQueueJobService>();

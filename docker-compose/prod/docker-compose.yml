@@ -187,6 +187,18 @@ services:
     networks:
       - geo-network
     restart: always
+  post-indexer-worker:
+    image: pedroreis16/post-indexing-worker:latest
+    container_name: post-indexer-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./default.env
+      - ./post-indexer-worker.env
+    networks:
+      - geo-network
+    restart: always
   feed-service:
     container_name: feed-service
     image: pedroreis16/feed-service-api:latest

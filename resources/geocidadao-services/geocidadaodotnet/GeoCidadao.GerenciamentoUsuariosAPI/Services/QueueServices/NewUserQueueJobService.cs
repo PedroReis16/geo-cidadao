@@ -39,6 +39,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices
                 {
                     using IServiceScope scope = _serviceProvider.CreateScope();
                     IUserProfileDao? userDao = scope.ServiceProvider.GetRequiredService<IUserProfileDao>();
+                    IUserInterestsDao? interestsDao = scope.ServiceProvider.GetRequiredService<IUserInterestsDao>();
 
                     if (userDao is not null)
                     {
@@ -52,7 +53,7 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services.QueueServices
                         };
 
                         _ = userDao.AddAsync(newUser);
-                        Logger.LogInformation($"Novo usuário criado com sucesso: {newUser.Id} - {newUser.Username}");
+                        Logger.LogInformation($"Novo usuário criado com sucesso: {newUser.Id} - {newUser.Username}.");
                     }
                 }
                 Channel?.BasicAck(e.DeliveryTag, false);

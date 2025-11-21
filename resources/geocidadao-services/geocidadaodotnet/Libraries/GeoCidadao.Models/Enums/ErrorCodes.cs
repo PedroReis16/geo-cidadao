@@ -26,5 +26,6 @@ namespace GeoCidadao.Models.Enums
         COMMENT_CONTENT_TOO_LONG = 22,
         UNAUTHORIZED_COMMENT_EDIT = 23,
         UNAUTHORIZED_COMMENT_DELETE = 24,
+        INVALID_USER_INTERESTS = 25,
     }
 }

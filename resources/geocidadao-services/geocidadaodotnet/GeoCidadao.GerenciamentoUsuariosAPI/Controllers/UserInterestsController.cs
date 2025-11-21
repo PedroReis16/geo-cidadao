@@ -1,5 +1,6 @@
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Models.DTOs;
+using GeoCidadao.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,76 +10,76 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Controllers
     /// Controller for managing user interests (regions, cities, and post categories)
     /// </summary>
     [ApiController]
-    [Route("[controller]")]
-    public class UserInterestsController : ControllerBase
+    [Route("[controller]/{userId}")]
+    public class UserInterestsController(IUserInterestsService service) : ControllerBase
     {
-        private readonly IUserInterestsService _service;
+        private readonly IUserInterestsService _service = service;
 
-        public UserInterestsController(IUserInterestsService service)
-        {
-            _service = service;
-        }
 
         /// <summary>
-        /// Get user interests by user ID
+        /// Buscar preferências de postagem do usuário pelo Id
         /// </summary>
-        /// <param name="userId">The user ID</param>
-        /// <returns>User interests or NotFound if not configured</returns>
-        [HttpGet("{userId}")]
-        [ProducesResponseType(typeof(UserInterestsDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        /// <param name="userId">O Id do usuário</param>
+        /// <returns>Preferências de postagem do usuário ou NoContent se não configurado</returns>
+        [HttpGet]
         public async Task<IActionResult> GetUserInterests(Guid userId)
         {
             UserInterestsDTO? interests = await _service.GetUserInterestsAsync(userId);
 
             if (interests == null)
-                return NotFound();
+                return NoContent();
 
             return Ok(interests);
         }
 
         /// <summary>
-        /// Create user interests
+        /// Atualizar as categorias seguidas pelo usuário
         /// </summary>
-        /// <param name="userId">The user ID</param>
-        /// <param name="interestsDTO">The interests data</param>
-        /// <returns>Created user interests</returns>
-        [HttpPost("{userId}")]
-        [ProducesResponseType(typeof(UserInterestsDTO), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateUserInterests(Guid userId, [FromBody] UpdateUserInterestsDTO interestsDTO)
+        /// <param name="userId">O Id do usuário</param>
+        /// <param name="categories">Lista de categorias a serem seguidas ou deixadas de seguir</param>
+        [HttpPatch("categories")]
+        public async Task<IActionResult> UpdateFollowedCategories(Guid userId, [FromBody] List<PostCategory> categories)
         {
-            UserInterestsDTO interests = await _service.CreateUserInterestsAsync(userId, interestsDTO);
-            return CreatedAtAction(nameof(GetUserInterests), new { userId }, interests);
-        }
-
-        /// <summary>
-        /// Update user interests
-        /// </summary>
-        /// <param name="userId">The user ID</param>
-        /// <param name="interestsDTO">The updated interests data</param>
-        /// <returns>Updated user interests</returns>
-        [HttpPut("{userId}")]
-        [ProducesResponseType(typeof(UserInterestsDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateUserInterests(Guid userId, [FromBody] UpdateUserInterestsDTO interestsDTO)
-        {
-            UserInterestsDTO interests = await _service.UpdateUserInterestsAsync(userId, interestsDTO);
-            return Ok(interests);
-        }
-
-        /// <summary>
-        /// Delete user interests
-        /// </summary>
-        /// <param name="userId">The user ID</param>
-        /// <returns>NoContent on success</returns>
-        [HttpDelete("{userId}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteUserInterests(Guid userId)
-        {
-            await _service.DeleteUserInterestsAsync(userId);
+            await _service.UpdateUserFollowedCategoriesAsync(userId, categories);
             return NoContent();
         }
+
+        /// <summary>
+        /// Atualizar os perfis de interesse do usuário
+        /// </summary>
+        /// <param name="userId">O Id do usuário</param>
+        /// <param name="followedUserId">Id do perfil a ser seguido ou deixado de seguir</param>
+        [HttpPatch("users")]
+        public async Task<IActionResult> UpdateFollowedUser(Guid userId, [FromBody] Guid followedUserId)
+        {
+            await _service.UpdateUserFollowedUsersAsync(userId, followedUserId);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Atualizar as cidades seguidas pelo usuário
+        /// </summary>
+        /// <param name="userId">O Id do usuário</param>
+        /// <param name="city">Nome da cidade a ser seguida ou deixada de seguir</param>
+        [HttpPatch("cities")]
+        public async Task<IActionResult> UpdateFollowedCity(Guid userId, [FromBody] string city)
+        {
+            await _service.UpdateUserFollowedCitiesAsync(userId, city);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Atualizar os bairros seguidos pelo usuário
+        /// </summary>
+        /// <param name="userId">O Id do usuário</param>
+        /// <param name="district">Nome do bairro a ser seguido ou deixado de seguir</param>
+        /// <returns></returns>
+        [HttpPatch("districts")]
+        public async Task<IActionResult> UpdateFollowedDistrict(Guid userId, [FromBody] string district)
+        {
+            await _service.UpdateUserFollowedDistrictsAsync(userId, district);
+            return NoContent();
+        }
+
     }
 }
