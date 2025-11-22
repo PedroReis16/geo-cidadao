@@ -1,5 +1,6 @@
 using GeoCidadao.EngagementServiceAPI.Contracts;
 using GeoCidadao.EngagementServiceAPI.Models.DTOs;
+using GeoCidadao.Models.OAuth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace GeoCidadao.EngagementServiceAPI.Controllers
 {
     [ApiController]
     [Route("interactions/{postId}")]
+    [Authorize]
     public class PostInteractionController(IPostInteractionService interactionService) : ControllerBase
     {
         private readonly IPostInteractionService _interactionService = interactionService;
@@ -20,9 +22,9 @@ namespace GeoCidadao.EngagementServiceAPI.Controllers
         [Authorize(Policy = "Posts.Read")]
         public async Task<IActionResult> LikePost(Guid postId)
         {
-            // Guid userId = HttpContext.User.GetUserId();
-            // PostLikeDTO like = await _interactionService.LikePostAsync(postId, userId);
-            return Ok();
+            Guid userId = HttpContext.User.GetUserId();
+            await _interactionService.LikePostAsync(postId, userId);
+            return Created();
         }
 
         /// <summary>
@@ -34,8 +36,8 @@ namespace GeoCidadao.EngagementServiceAPI.Controllers
         [Authorize(Policy = "Posts.Read")]
         public async Task<IActionResult> UnlikePost(Guid postId)
         {
-            // Guid userId = HttpContext.User.GetUserId();
-            // await _interactionService.UnlikePostAsync(postId, userId);
+            Guid userId = HttpContext.User.GetUserId();
+            await _interactionService.UnlikePostAsync(postId, userId);
             return NoContent();
         }
 
@@ -49,7 +51,10 @@ namespace GeoCidadao.EngagementServiceAPI.Controllers
         [Authorize(Policy = "Posts.Read")]
         public async Task<IActionResult> DelatePost(Guid postId, [FromBody] DelationDTO delationDetails)
         {
-            return NoContent();
+            Guid userId = HttpContext.User.GetUserId();
+            await _interactionService.ReportPostAsync(postId, userId, delationDetails);
+
+            return Created();
         }
     }
 }
