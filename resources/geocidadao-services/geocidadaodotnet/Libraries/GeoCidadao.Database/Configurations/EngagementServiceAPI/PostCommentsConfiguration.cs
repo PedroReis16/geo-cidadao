@@ -1,8 +1,8 @@
-using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
+using GeoCidadao.Models.Entities.EngagementServiceAPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace GeoCidadao.Database.Configurations.GerenciamentoPostsAPI
+namespace GeoCidadao.Database.Configurations.EngagementServiceAPI
 {
     public class PostCommentsConfiguration : BaseConfiguration<PostComment>
     {
@@ -11,29 +11,27 @@ namespace GeoCidadao.Database.Configurations.GerenciamentoPostsAPI
             base.Configure(builder);
 
             builder
-                .Property(pc => pc.PostId)
-                .HasColumnName("post_id")
-                .IsRequired();
-
-            builder
                 .Property(pc => pc.UserId)
                 .HasColumnName("user_id")
                 .IsRequired();
 
             builder
-                .Property(pc => pc.Content)
-                .HasColumnName("content")
-                .HasMaxLength(500)
+                .Property(pc => pc.PostId)
+                .HasColumnName("post_id")
                 .IsRequired();
 
             builder
-                .HasOne(pc => pc.Post)
-                .WithMany(p => p.Comments)
-                .HasForeignKey(pc => pc.PostId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .Property(pc => pc.Content)
+                .HasColumnName("content")
+                .IsRequired();
 
-            builder.HasIndex(pc => pc.PostId);
+            builder
+             .HasMany(pc => pc.Likes)
+             .WithOne(cl => cl.Comment);
+
             builder.HasIndex(pc => pc.UserId);
+            builder.HasIndex(pc => pc.PostId);
+
         }
     }
 }

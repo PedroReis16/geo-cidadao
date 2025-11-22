@@ -17,7 +17,6 @@ builder.Services.AddSingleton<IElasticSearchService, ElasticSearchService>();
 
 // Queue Services
 builder.Services.AddSingleton<INewPostQueueService, NewPostQueueService>();
-builder.Services.AddSingleton<IPostInterectedQueueService, PostInteractedQueueService>();
 builder.Services.AddSingleton<IPostDeletedQueueService, PostDeletedQueueService>();
 
 

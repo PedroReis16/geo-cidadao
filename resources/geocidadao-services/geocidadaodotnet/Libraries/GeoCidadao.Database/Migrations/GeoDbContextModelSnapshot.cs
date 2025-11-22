@@ -71,45 +71,21 @@ namespace GeoCidadao.Database.Migrations
                     b.ToTable("post_location", (string)null);
                 });
 
-            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.Post", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.EngagementServiceAPI.CommentLike", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<int>("Category")
-                        .HasColumnType("integer")
-                        .HasColumnName("category");
-
-                    b.Property<int>("CommentsCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("comments_count");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("content");
+                    b.Property<Guid>("CommentId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("now()");
-
-                    b.Property<int>("LikesCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("likes_count");
-
-                    b.Property<double>("RelevanceScore")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("double precision")
-                        .HasDefaultValue(0.0)
-                        .HasColumnName("relevance_score");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone")
@@ -121,20 +97,21 @@ namespace GeoCidadao.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Category");
+                    b.HasIndex("CommentId");
 
                     b.HasIndex("CreatedAt");
-
-                    b.HasIndex("RelevanceScore");
 
                     b.HasIndex("UpdatedAt");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("posts", (string)null);
+                    b.HasIndex("Id", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("comment_likes", (string)null);
                 });
 
-            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostComment", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.EngagementServiceAPI.PostComment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -143,8 +120,7 @@ namespace GeoCidadao.Database.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("text")
                         .HasColumnName("content");
 
                     b.Property<DateTime>("CreatedAt")
@@ -178,12 +154,14 @@ namespace GeoCidadao.Database.Migrations
                     b.ToTable("post_comments", (string)null);
                 });
 
-            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostLike", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.EngagementServiceAPI.PostLike", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("user_id");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -191,9 +169,51 @@ namespace GeoCidadao.Database.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<Guid>("PostId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("uuid")
-                        .HasColumnName("post_id");
+                        .HasColumnName("id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("UserId", "PostId");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UpdatedAt");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("Id", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("post_likes", (string)null);
+                });
+
+            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.Post", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("integer")
+                        .HasColumnName("category");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone")
@@ -205,18 +225,15 @@ namespace GeoCidadao.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedAt");
+                    b.HasIndex("Category");
 
-                    b.HasIndex("PostId");
+                    b.HasIndex("CreatedAt");
 
                     b.HasIndex("UpdatedAt");
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("PostId", "UserId")
-                        .IsUnique();
-
-                    b.ToTable("post_likes", (string)null);
+                    b.ToTable("posts", (string)null);
                 });
 
             modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostMedia", b =>
@@ -404,26 +421,15 @@ namespace GeoCidadao.Database.Migrations
                     b.ToTable("user_profiles", (string)null);
                 });
 
-            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostComment", b =>
+            modelBuilder.Entity("GeoCidadao.Models.Entities.EngagementServiceAPI.CommentLike", b =>
                 {
-                    b.HasOne("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.Post", "Post")
-                        .WithMany("Comments")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
-                });
-
-            modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostLike", b =>
-                {
-                    b.HasOne("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.Post", "Post")
+                    b.HasOne("GeoCidadao.Models.Entities.EngagementServiceAPI.PostComment", "Comment")
                         .WithMany("Likes")
-                        .HasForeignKey("PostId")
+                        .HasForeignKey("CommentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Post");
+                    b.Navigation("Comment");
                 });
 
             modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.PostMedia", b =>
@@ -459,12 +465,13 @@ namespace GeoCidadao.Database.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("GeoCidadao.Models.Entities.EngagementServiceAPI.PostComment", b =>
+                {
+                    b.Navigation("Likes");
+                });
+
             modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.Post", b =>
                 {
-                    b.Navigation("Comments");
-
-                    b.Navigation("Likes");
-
                     b.Navigation("Medias");
                 });
 

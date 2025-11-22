@@ -1,4 +1,4 @@
-namespace GeoCidadao.Models.Entities.GerenciamentoPostsAPI
+namespace GeoCidadao.Models.Entities.EngagementServiceAPI
 {
     public class PostComment : BaseEntity
     {
@@ -6,7 +6,6 @@ namespace GeoCidadao.Models.Entities.GerenciamentoPostsAPI
         public Guid UserId { get; set; }
         public string Content { get; set; } = string.Empty;
 
-        // Navigation properties
-        public Post? Post { get; set; }
+        public List<CommentLike> Likes { get; set; } = null!;
     }
 }

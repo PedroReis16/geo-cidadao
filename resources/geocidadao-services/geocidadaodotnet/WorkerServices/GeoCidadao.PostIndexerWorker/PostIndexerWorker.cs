@@ -19,11 +19,9 @@ namespace GeoCidadao.PostIndexerWorker
 
                     INewPostQueueService newPostQueueService = scope.ServiceProvider.GetRequiredService<INewPostQueueService>();
                     IPostDeletedQueueService postDeletedQueueService = scope.ServiceProvider.GetRequiredService<IPostDeletedQueueService>();
-                    IPostInterectedQueueService postInterectedQueueService = scope.ServiceProvider.GetRequiredService<IPostInterectedQueueService>();
-
+                  
                     newPostQueueService.ConsumeQueue();
                     postDeletedQueueService.ConsumeQueue();
-                    postInterectedQueueService.ConsumeQueue();
 
                 }
                 catch (Exception ex)

@@ -6,6 +6,8 @@ using GeoCidadao.Models.Entities.GerenciamentoUsuariosAPI;
 using Microsoft.EntityFrameworkCore;
 using GeoCidadao.Database.Entities.GerenciamentoPostsAPI;
 using GeoCidadao.Models.Enums;
+using GeoCidadao.Database.Configurations.EngagementServiceAPI;
+using GeoCidadao.Models.Entities.EngagementServiceAPI;
 
 namespace GeoCidadao.Database
 {
@@ -20,11 +22,12 @@ namespace GeoCidadao.Database
         public DbSet<Post> Posts { get; set; } = default!;
         public DbSet<PostMedia> PostMedias { get; set; } = default!;
         public DbSet<PostLocation> PostLocations { get; set; } = default!;
-        public DbSet<PostLike> PostLikes { get; set; } = default!;
-        public DbSet<PostComment> PostComments { get; set; } = default!;
 
-        //Analytics Service API
-        
+        //Engagement Service API
+        public DbSet<PostComment> PostComments { get; set; } = default!;
+        public DbSet<CommentLike> CommentLikes { get; set; } = default!;
+        public DbSet<PostLike> PostLikes { get; set; } = default!;
+
         static GeoDbContext()
         {
 
@@ -50,10 +53,13 @@ namespace GeoCidadao.Database
             _ = modelBuilder.ApplyConfiguration(new PostsConfiguration());
             _ = modelBuilder.ApplyConfiguration(new PostMediasConfiguration());
             _ = modelBuilder.ApplyConfiguration(new PostLocationConfiguration());
-            _ = modelBuilder.ApplyConfiguration(new PostLikesConfiguration());
+
+            // Engagement Service API
             _ = modelBuilder.ApplyConfiguration(new PostCommentsConfiguration());
-            // Analytics Service API
-            
+            _ = modelBuilder.ApplyConfiguration(new CommentLikesConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new PostLikesConfiguration());
+
+
             _ = modelBuilder.Ignore<BaseEntity>();
         }
     }

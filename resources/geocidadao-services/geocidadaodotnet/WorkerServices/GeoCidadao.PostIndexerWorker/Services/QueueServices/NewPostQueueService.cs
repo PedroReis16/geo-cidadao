@@ -41,7 +41,6 @@ namespace GeoCidadao.PostIndexerWorker.Services.QueueServices
 
                     PostDocument newPost = new()
                     {
-                        Id = message.Id,
                         PostOwnerId = message.PostOwnerId,
                         Content = message.Content,
                         City = message.City,
@@ -50,7 +49,7 @@ namespace GeoCidadao.PostIndexerWorker.Services.QueueServices
                         Tags = message.Tags
                     };
 
-                    _ = service.IndexPostAsync(newPost);
+                    _ = service.IndexPostAsync(message.Id, newPost);
 
                     Logger.LogInformation($"O post '{message.Id}' foi recebido e processado com sucesso pela fila de novos posts.");
                 }
