@@ -1,83 +1,107 @@
+using GeoCidadao.EngagementServiceAPI.Contracts;
+using GeoCidadao.EngagementServiceAPI.Models.DTOs.Comments;
+using GeoCidadao.Models.OAuth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeoCidadao.EngagementServiceAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class CommentsController : ControllerBase
+    [Route("{postId}/[controller]")]
+    [Authorize]
+    public class CommentsController(IPostCommentsService service) : ControllerBase
     {
+        private readonly IPostCommentsService _service = service;
 
-        // /// <summary>
-        // /// Criar comentário em um post
-        // /// </summary>
-        // /// <param name="postId">Id do post</param>
-        // /// <param name="createCommentDto">Dados do comentário</param>
-        // /// <returns></returns>
-        // [HttpPost("{postId}/comments")]
-        // [Authorize(Policy = "Posts.Read")]
-        // public async Task<IActionResult> CreateComment(Guid postId, [FromBody] CreateCommentDTO createCommentDto)
-        // {
-        //     // Guid userId = HttpContext.User.GetUserId();
-        //     // PostCommentDTO comment = await _interactionService.CreateCommentAsync(postId, userId, createCommentDto);
-        //     // return CreatedAtAction(nameof(GetPostComments), new { postId }, comment);
-        
-        //     return Ok();
-        // }
+        /// <summary>
+        /// Obtém os comentários de um post específico.
+        /// </summary>
+        /// <param name="postId">Id do post</param>
+        /// <param name="itemsCount">Total de itens por consulta</param>
+        /// <param name="pageNumber">Número da página</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetPostCommentsAsync(Guid postId, [FromQuery] int? itemsCount, [FromQuery] int? pageNumber, CancellationToken cancellationToken)
+        {
+            List<CommentDTO>? comments = await _service.GetPostCommentsAsync(postId, itemsCount, pageNumber, cancellationToken);
 
-        // /// <summary>
-        // /// Editar comentário
-        // /// </summary>
-        // /// <param name="postId">Id do post</param>
-        // /// <param name="commentId">Id do comentário</param>
-        // /// <param name="updateCommentDto">Dados atualizados do comentário</param>
-        // /// <returns></returns>
-        // [HttpPut("{postId}/comments/{commentId}")]
-        // [Authorize(Policy = "Posts.Read")]
-        // public async Task<IActionResult> UpdateComment(Guid postId, Guid commentId, [FromBody] UpdateCommentDTO updateCommentDto)
-        // {
-        //     // Guid userId = HttpContext.User.GetUserId();
-        //     // PostCommentDTO comment = await _interactionService.UpdateCommentAsync(postId, commentId, userId, updateCommentDto);
-        //     // return Ok(comment);
-        //     return Ok();
-        // }
+            if (comments == null || comments.Count == 0)
+                return NoContent();
 
-        // /// <summary>
-        // /// Deletar comentário
-        // /// </summary>
-        // /// <param name="postId">Id do post</param>
-        // /// <param name="commentId">Id do comentário</param>
-        // /// <returns></returns>
-        // [HttpDelete("{postId}/comments/{commentId}")]
-        // [Authorize(Policy = "Posts.Read")]
-        // public async Task<IActionResult> DeleteComment(Guid postId, Guid commentId)
-        // {
-        //     // Guid userId = HttpContext.User.GetUserId();
-        //     // bool isModerator = HttpContext.User.IsInRole("Moderators");
 
-        //     // await _interactionService.DeleteCommentAsync(postId, commentId, userId, isModerator);
-        //     return NoContent();
-        // }
+            return Ok(comments);
+        }
 
-        // /// <summary>
-        // /// Listar comentários de um post
-        // /// </summary>
-        // /// <param name="postId">Id do post</param>
-        // /// <param name="itemsCount">Número máximo de comentários a serem retornados</param>
-        // /// <param name="pageNumber">Número da página (iniciando em 1)</param>
-        // /// <returns></returns>
-        // [HttpGet("{postId}/comments")]
-        // [Authorize(Policy = "Posts.Read")]
-        // public async Task<IActionResult> GetPostComments(Guid postId, [FromQuery] int? itemsCount, [FromQuery] int? pageNumber)
-        // {
-        //     // List<PostCommentDTO> comments = await _interactionService.GetPostCommentsAsync(postId, itemsCount, pageNumber);
+        /// <summary>
+        /// Adiciona um novo comentário a um post.
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> AddPostComment(Guid postId, [FromBody] NewCommentDTO newComment, CancellationToken cancellationToken)
+        {
+            Guid userId = HttpContext.User.GetUserId();
 
-        //     // if (comments.Count == 0)
-        //     //     return NoContent();
+            CommentDTO createdComment = await _service.AddPostCommentAsync(postId, userId, newComment, cancellationToken);
 
-        //     // return Ok(comments);
-        
-        //     return Ok();
-        // }
+            return Created();
+        }
+
+        /// <summary>
+        /// Atualiza um comentário existente.
+        /// </summary>
+        [HttpPut("{commentId}")]
+        public async Task<IActionResult> UpdatePostComment(Guid postId, Guid commentId, [FromBody] UpdateCommentDTO updatedComment, CancellationToken cancellationToken)
+        {
+            Guid userId = HttpContext.User.GetUserId();
+
+            CommentDTO comment = await _service.UpdatePostCommentAsync(postId, commentId, updatedComment, cancellationToken);
+
+            return Ok(comment);
+        }
+
+        /// <summary>
+        /// Remove um comentário de um post.
+        /// </summary>
+        /// <param name="postId">Id do post</param>
+        /// <param name="commentId">Id do comentário</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpDelete("{commentId}")]
+        public async Task<IActionResult> DeletePostCommentAsync(Guid postId, Guid commentId, CancellationToken cancellationToken)
+        {
+            Guid userId = HttpContext.User.GetUserId();
+            await _service.DeletePostCommentAsync(postId, commentId, cancellationToken);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Adiciona um like a um comentário.
+        /// </summary>
+        /// <param name="postId">Id do post</param>
+        /// <param name="commentId">Id do comentário</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPatch("{commentId}/like")]
+        public async Task<IActionResult> LikePostCommentAsync(Guid postId,  Guid commentId, CancellationToken cancellationToken)
+        {
+            Guid userId = HttpContext.User.GetUserId();
+            await _service.LikePostCommentAsync(postId, commentId, userId, cancellationToken);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Remove um like de um comentário.
+        /// </summary>
+        /// <param name="postId">Id do post</param>
+        /// <param name="commentId">Id do comentário</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPatch("{commentId}/unlike")]
+        public async Task<IActionResult> UnlikePostCommentAsync(Guid postId, Guid commentId, CancellationToken cancellationToken)
+        {
+            Guid userId = HttpContext.User.GetUserId();
+            await _service.UnlikePostCommentAsync(postId, commentId, userId, cancellationToken);
+            return NoContent();
+        }
     }
 }

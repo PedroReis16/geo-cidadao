@@ -3,6 +3,7 @@ using GeoCidadao.Database.EFDao;
 using GeoCidadao.EngagementServiceAPI.Database.CacheContracts;
 using GeoCidadao.EngagementServiceAPI.Database.Contracts;
 using GeoCidadao.Models.Entities.EngagementServiceAPI;
+using Microsoft.EntityFrameworkCore;
 
 namespace GeoCidadao.EngagementServiceAPI.Database.EFDao
 {

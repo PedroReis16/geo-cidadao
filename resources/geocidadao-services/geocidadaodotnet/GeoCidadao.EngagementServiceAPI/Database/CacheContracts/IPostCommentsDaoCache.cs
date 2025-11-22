@@ -5,6 +5,6 @@ namespace GeoCidadao.EngagementServiceAPI.Database.CacheContracts
 {
     public interface IPostCommentsDaoCache : IRepositoryCache<PostComment>
     {
-
+        PostComment? GetPostComment(Guid commentId, Guid postId);
     }
 }
