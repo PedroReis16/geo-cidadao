@@ -11,18 +11,28 @@ namespace GeoCidadao.RelevanceWorker.Services.QueueServices
     public class PostInteractQueueService(ILogger<PostInteractQueueService> logger, IConfiguration configuration, IServiceScopeFactory serviceScopeFactory) : RabbitMQSubscriberService(logger, configuration), IPostInteractQueueService
     {
         private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
+        private static SemaphoreSlim _semaphore = new SemaphoreSlim(1, 5);
 
         public void ConsumeQueue()
         {
-            ConsumeQueue(
-                exchangeName: ExchangeNames.POST_ENGAGEMENT_TOPIC_EXCHANGE,
-                queueName: QueueNames.RELEVANCE_WORKER_POST_INTERACT_QUEUE,
-                routingKey: RoutingKeyNames.POST_INTERACTED_ROUTING_KEY,
-                onNewMessage: OnNewInteract,
-                dlqExchangeName: ExchangeNames.DLQ_POST_ENGAGEMENT_TOPIC_EXCHANGE,
-                dlqQueueName: QueueNames.DLQ_RELEVANCE_WORKER_POST_INTERACT_QUEUE,
-                dlqRoutingKeyName: RoutingKeyNames.DLQ_POST_INTERACTED_ROUTING_KEY
-            );
+            try
+            {
+                _semaphore.Wait();
+
+                ConsumeQueue(
+                    exchangeName: ExchangeNames.POST_ENGAGEMENT_TOPIC_EXCHANGE,
+                    queueName: QueueNames.RELEVANCE_WORKER_POST_INTERACT_QUEUE,
+                    routingKey: RoutingKeyNames.POST_INTERACTED_ROUTING_KEY,
+                    onNewMessage: OnNewInteract,
+                    dlqExchangeName: ExchangeNames.DLQ_POST_ENGAGEMENT_TOPIC_EXCHANGE,
+                    dlqQueueName: QueueNames.DLQ_RELEVANCE_WORKER_POST_INTERACT_QUEUE,
+                    dlqRoutingKeyName: RoutingKeyNames.DLQ_POST_INTERACTED_ROUTING_KEY
+                );
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         private void OnNewInteract(object? sender, BasicDeliverEventArgs e)
@@ -35,9 +45,9 @@ namespace GeoCidadao.RelevanceWorker.Services.QueueServices
                 if (message != null)
                 {
                     using IServiceScope scope = _serviceScopeFactory.CreateScope();
-                    IElasticSearchService elasticSearchService = scope.ServiceProvider.GetRequiredService<IElasticSearchService>();
+                    IInteractionService interactionService = scope.ServiceProvider.GetRequiredService<IInteractionService>();
 
-                    elasticSearchService.UpdatePostRelevanceInteractionsAsync(message.PostId, message.InteractionType).GetAwaiter().GetResult();
+                    interactionService.UpdatePostInteractionAsync(message.PostId, message.InteractionType).GetAwaiter().GetResult();
 
                     Logger.LogInformation("Mensagem de interação de post recebida: {@Message}", message);
                 }

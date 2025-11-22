@@ -14,6 +14,7 @@ builder.Services.ConfigureServiceLogs();
 
 //Services
 builder.Services.AddSingleton<IElasticSearchService, ElasticSearchService>();
+builder.Services.AddSingleton<IInteractionService, InteractionService>();
 
 // Queue Services
 builder.Services.AddSingleton<INewPostQueueService, NewPostQueueService>();
