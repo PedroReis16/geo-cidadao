@@ -1,8 +1,7 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useRef, useEffect } from "react";
 import "../styles/pages/FeedPage.css";
-import type { Coordinates } from "../../data/@types/Coordinates";
 import FeedList from "../components/FeedList";
-import MapComponent from "../components/MapComponent";
+import { useMap } from "../../data/hooks/useMap";
 import type { Post } from "../../data/@types/Post";
 
 // Mock data temporário - será substituído por chamadas à API
@@ -58,60 +57,28 @@ const POSTS: Post[] = [
 ];
 
 const FeedPage: React.FC = () => {
-  const [items] = useState<Post[]>(POSTS);
-  const [zoom, setZoom] = useState<number>(12);
-  const [center, setCenter] = useState<Coordinates>({
-    lat: -23.5505,
-    lng: -46.6333,
-  });
-  const [isMapExpanded, setIsMapExpanded] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<Post | null>(null);
-
   const feedRef = useRef<HTMLDivElement>(null!);
+  const { setPosts, setIsMapExpanded, isMapExpanded } = useMap();
 
-  // Filtra posts que possuem coordenadas
-  const postsWithLocation = useMemo(
-    () => items.filter((post) => post.coordinates),
-    [items]
-  );
+  // Carrega os posts no contexto do mapa quando o componente monta
+  useEffect(() => {
+    setPosts(POSTS);
+  }, [setPosts]);
 
   const handleMapItemClick = (post: Post) => {
-    setSelectedItem(post);
     if (post.coordinates) {
-      setCenter(post.coordinates);
       setIsMapExpanded(true);
     }
   };
 
   return (
-    <div className="feed-page">
-      <main className="feed-main">
-        <div className="feed-wrapper">
-          <FeedList
-            isMapExpanded={isMapExpanded}
-            feedRef={feedRef}
-            items={items}
-            onMapItemClick={handleMapItemClick}
-          />
-        </div>
-      </main>
-
-      {/* Minimapa fixo - só aparece se houver posts com localização */}
-      {postsWithLocation.length > 0 && (
-        <div className={`map-wrapper ${isMapExpanded ? "expanded" : "collapsed"}`}>
-          <MapComponent
-            items={postsWithLocation}
-            center={center}
-            zoom={zoom}
-            setZoom={setZoom}
-            setCenter={setCenter}
-            isMapExpanded={isMapExpanded}
-            setIsMapExpanded={setIsMapExpanded}
-            selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
-          />
-        </div>
-      )}
+    <div>
+      <FeedList
+        isMapExpanded={isMapExpanded}
+        feedRef={feedRef}
+        items={POSTS}
+        onMapItemClick={handleMapItemClick}
+      />
     </div>
   );
 };

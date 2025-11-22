@@ -1,105 +1,55 @@
 .feed-container {
-  min-height: 100vh;
-  background: var(--color-bg);
-  padding-bottom: 2rem;
-}
-
-.feed-content {
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
-.pull-to-refresh {
+  width: 100%;
+  height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  font-family: "Inter", sans-serif;
   overflow: hidden;
-  color: var(--color-primary);
 }
 
-.posts-list {
+.feed-header {
+  background: #fff;
+  padding: 1rem;
   display: flex;
-  flex-direction: column;
-}
-
-.loading-indicator,
-.end-of-feed {
-  display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  color: var(--color-text);
-  opacity: 0.7;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
 }
 
-.loading-indicator svg {
-  margin-bottom: 0.5rem;
+.feed-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.loading-indicator .spinning {
-  animation: spin 1s linear infinite;
+.icon-blue {
+  color: #2563eb;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.toggle-map-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.end-of-feed p {
-  margin: 0;
-  text-align: center;
+.toggle-map-btn:hover {
+  background: #1e40af;
+  transform: scale(1.05);
 }
 
-/* Desktop - Layout centralizado estilo LinkedIn */
-@media (min-width: 1024px) {
-  .feed-content {
-    max-width: 680px;
-    padding: 2rem 1rem;
-  }
-}
-
-/* Tablet */
-@media (min-width: 769px) and (max-width: 1023px) {
-  .feed-content {
-    max-width: 600px;
-    padding: 1.5rem 1rem;
-  }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .feed-container {
-    padding-bottom: 80px; /* Espaço para barra de menu inferior */
-  }
-
-  .feed-content {
-    padding: 0;
-  }
-
-  .posts-list {
-    gap: 0;
-  }
-}
-
-/* Animações */
-.create-post,
-.post-card {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.feed-main {
+  flex: 1;
+  position: relative;
+  display: flex;
+  transition: all 0.5s ease;
+  height: calc(100vh - 0px); /* Garante altura total disponível */
+  overflow: hidden; /* Evita overflow no container principal */
 }
