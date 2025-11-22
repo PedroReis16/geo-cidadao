@@ -236,7 +236,7 @@
 }
 
 .map-overlay-content {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-alert);
   padding: 0.5rem 1rem;
   border-radius: 9999px;
   display: flex;
@@ -258,7 +258,7 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: white;
+  background: var(--color-primary);
   border: none;
   border-radius: 8px;
   padding: 0.6rem;
@@ -269,7 +269,7 @@
 }
 
 .btn-close:hover {
-  background: #f3f4f6;
+  background: var(--color-primary);
   transform: scale(1.05);
 }
 
@@ -285,7 +285,7 @@
 }
 
 .zoom-controls button {
-  background: white;
+  background: var(--color-primary);
   border: none;
   border-radius: 8px;
   padding: 0.6rem;
@@ -298,7 +298,7 @@
 }
 
 .zoom-controls button:hover {
-  background: #f3f4f6;
+  background: var(--color-primary);
   transform: scale(1.05);
 }
 

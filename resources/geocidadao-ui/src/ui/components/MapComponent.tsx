@@ -95,9 +95,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
     const container = document.createElement("div");
     container.className = "custom-popup";
 
-    const mediaHtml = item.media && item.media.length > 0
-      ? `<img src="${item.media[0].url}" alt="Post media" class="popup-image" />`
-      : "";
+    const mediaHtml =
+      item.media && item.media.length > 0
+        ? `<img src="${item.media[0].url}" alt="Post media" class="popup-image" />`
+        : "";
 
     container.innerHTML = `
       <div class="popup-content">
@@ -281,7 +282,9 @@ const MapComponent: React.FC<MapComponentProps> = ({
           ],
         });
 
-        marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon })
+        marker = L.marker([item.coordinates.lat, item.coordinates.lng], {
+          icon,
+        })
           .addTo(map)
           .on("click", () => {
             if (isMapExpanded) {
