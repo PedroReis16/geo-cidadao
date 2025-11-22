@@ -40,63 +40,6 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "build: FeedServiceAPI",
-      "command": "dotnet",
-      "type": "shell",
-      "args": [
-        "build",
-        "${workspaceFolder}/GeoCidadao.FeedServiceAPI/GeoCidadao.FeedServiceAPI.csproj",
-        "/property:GenerateFullPaths=true",
-        "/consoleloggerparameters:NoSummary"
-      ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "presentation": {
-        "reveal": "silent"
-      },
-      "problemMatcher": "$msCompile"
-    },
-    {
-      "label": "build: AnalyticsServiceAPI",
-      "command": "dotnet",
-      "type": "shell",
-      "args": [
-        "build",
-        "${workspaceFolder}/GeoCidadao.AnalyticsServiceAPI/GeoCidadao.AnalyticsServiceAPI.csproj",
-        "/property:GenerateFullPaths=true",
-        "/consoleloggerparameters:NoSummary"
-      ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "presentation": {
-        "reveal": "silent"
-      },
-      "problemMatcher": "$msCompile"
-    },
-    {
-      "label": "build: FeedMapAPI",
-      "command": "dotnet",
-      "type": "shell",
-      "args": [
-        "build",
-        "${workspaceFolder}/GeoCidadao.FeedMapAPI/GeoCidadao.FeedMapAPI.csproj",
-        "/property:GenerateFullPaths=true",
-        "/consoleloggerparameters:NoSummary"
-      ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "presentation": {
-        "reveal": "silent"
-      },
-      "problemMatcher": "$msCompile"
-    },
-    {
       "label": "build: EngagementServiceAPI",
       "command": "dotnet",
       "type": "shell",
