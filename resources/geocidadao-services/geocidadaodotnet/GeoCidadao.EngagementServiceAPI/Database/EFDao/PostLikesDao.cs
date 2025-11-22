@@ -6,7 +6,7 @@ using GeoCidadao.Models.Entities.EngagementServiceAPI;
 
 namespace GeoCidadao.EngagementServiceAPI.Database.EFDao
 {
-    public class PostLikeDao(GeoDbContext context, IPostLikeDaoCache? cache = null) : BaseDao<PostLike>(context, cache), IPostLikesDao
+    public class PostLikesDao(GeoDbContext context, IPostLikeDaoCache? cache = null) : BaseDao<PostLike>(context, cache), IPostLikesDao
     {
         protected override IPostLikeDaoCache? GetCache() => _cache as IPostLikeDaoCache;
 
@@ -19,5 +19,18 @@ namespace GeoCidadao.EngagementServiceAPI.Database.EFDao
         {
             return Task.CompletedTask;
         }
+
+        public Task RemovePostLikeAsync(Guid postId, Guid userId)
+        {
+            PostLike? trackedLike = _context.Set<PostLike>().FirstOrDefault(pl => pl.PostId == postId && pl.UserId == userId);
+
+            if (trackedLike != null)
+            {
+                _context.Set<PostLike>().Remove(trackedLike);
+                return _context.SaveChangesAsync();
+            }
+            return Task.CompletedTask;
+        }
+
     }
 }

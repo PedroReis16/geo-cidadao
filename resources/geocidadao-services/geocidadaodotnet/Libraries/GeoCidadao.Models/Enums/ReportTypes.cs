@@ -1,6 +1,6 @@
 namespace GeoCidadao.Models.Enums
 {
-    public enum DelationTypes
+    public enum ReportTypes
     {
         FakeNews,
         HateSpeech,

@@ -3,7 +3,7 @@ using GeoCidadao.Models.Entities.EngagementServiceAPI;
 
 namespace GeoCidadao.EngagementServiceAPI.Database.CacheContracts
 {
-    public interface ICommentLikeDaoCache : IRepositoryCache<CommentLike>
+    public interface ICommentLikesDaoCache : IRepositoryCache<CommentLike>
     {
 
     }

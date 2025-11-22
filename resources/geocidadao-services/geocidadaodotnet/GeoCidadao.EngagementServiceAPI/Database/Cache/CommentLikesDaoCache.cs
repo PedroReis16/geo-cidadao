@@ -5,7 +5,7 @@ using GeoCidadao.Models.Entities.EngagementServiceAPI;
 
 namespace GeoCidadao.EngagementServiceAPI.Database.Cache
 {
-    public class CommentLikeDaoCache(IInMemoryCacheService cacheService) : RepositoryCache<CommentLike>(cacheService), ICommentLikeDaoCache
+    public class CommentLikesDaoCache(IInMemoryCacheService cacheService) : RepositoryCache<CommentLike>(cacheService), ICommentLikesDaoCache
     {
 
     }
