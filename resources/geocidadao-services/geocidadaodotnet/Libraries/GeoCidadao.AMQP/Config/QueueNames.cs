@@ -106,6 +106,17 @@ namespace GeoCidadao.AMQP.Configuration
         /// serviço de engajamento
         /// </summary>
         public const string DLQ_ENGAGEMENT_SERVICE_USER_DELETED_QUEUE_NAME = "engagement_service_user_deleted_dlq";
+
+        /// <summary>
+        /// Fila para o recebimento de eventos relacionados a interações em posts para o worker de relevância
+        /// </summary>
+        public const string RELEVANCE_WORKER_POST_INTERACT_QUEUE = "relevance_worker_post_interact_queue";
+
+        /// <summary>
+        /// Dead Letter Queue para o recebimento de eventos relacionados a interações em posts para o
+        ///  worker de relevância
+        /// </summary>
+        public const string DLQ_RELEVANCE_WORKER_POST_INTERACT_QUEUE = "relevance_worker_post_interact_dlq";
     }
 
 }
