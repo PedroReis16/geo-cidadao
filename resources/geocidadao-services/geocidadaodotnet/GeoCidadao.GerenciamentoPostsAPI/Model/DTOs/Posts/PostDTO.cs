@@ -23,9 +23,6 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts
             Content = post.Content;
             UserId = post.UserId;
             CreatedAt = post.CreatedAt;
-            LikesCount = post.LikesCount;
-            CommentsCount = post.CommentsCount;
-            RelevanceScore = post.RelevanceScore;
         }
     }
 }
