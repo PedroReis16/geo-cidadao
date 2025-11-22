@@ -12,6 +12,11 @@ using GeoCidadao.OAuth.Extensions;
 using GeoCidadao.OAuth.Models;
 using GeoCidadao.EngagementServiceAPI.Contracts;
 using GeoCidadao.EngagementServiceAPI.Services;
+using GeoCidadao.EngagementServiceAPI.Database.Contracts;
+using GeoCidadao.EngagementServiceAPI.Database.EFDao;
+using GeoCidadao.Models.Entities.EngagementServiceAPI;
+using GeoCidadao.EngagementServiceAPI.Contracts.QueueServices;
+using GeoCidadao.EngagementServiceAPI.Services.QueueServices;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -42,6 +47,12 @@ builder.Services.AddTransient<IPostInteractionService, PostInteractionService>()
 builder.Services.AddTransient<IPostCommentsService, PostCommentsService>();
 
 // DAOs
+builder.Services.AddTransient<IPostLikesDao, PostLikesDao>();
+builder.Services.AddTransient<IPostCommentsDao, PostCommentsDao>();
+builder.Services.AddTransient<ICommentLikesDao, CommentLikesDao>();
+
+// Queue Services
+builder.Services.AddSingleton<INotifyPostInteraction, NotifyPostInteractionService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();
@@ -111,3 +122,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+internal class PostCommentLikesDao
+{
+}
