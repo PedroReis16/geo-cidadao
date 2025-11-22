@@ -45,6 +45,7 @@ builder.Services.AddControllers(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+builder.Services.Configure<KeycloakAdminOptions>(builder.Configuration.GetSection(AppSettingsProperties.Keycloak).GetSection(AppSettingsProperties.KeycloakAdmin)!);
 
 builder.Services.UsePostgreSql(builder.Configuration);
 
