@@ -9,15 +9,15 @@ namespace GeoCidadao.PostIndexerWorker.Services
         private readonly ILogger<ElasticSearchService> _logger = logger;
         private readonly ElasticsearchClient _client = client;
 
-        public async Task IndexPostAsync(PostDocument postDocument, CancellationToken cancellationToken = default)
+        public async Task IndexPostAsync(Guid postId, PostDocument postDocument, CancellationToken cancellationToken = default)
         {
             try
             {
-                var response = await _client.IndexAsync(postDocument, i => i.Id(postDocument.Id), cancellationToken);
+                var response = await _client.IndexAsync(postDocument, i => i.Id(postId), cancellationToken);
 
                 if (!response.IsValidResponse)
                 {
-                    string errorMessage = $"Houve uma falha ao tentar indexar o post '{postDocument.Id}' no Elastic Search. " +
+                    string errorMessage = $"Houve uma falha ao tentar indexar o post '{postId}' no Elastic Search. " +
                         $"Response Debug Information: {response.DebugInformation}";
 
                     _logger.LogError(errorMessage);
@@ -26,7 +26,7 @@ namespace GeoCidadao.PostIndexerWorker.Services
             }
             catch (Exception ex)
             {
-                string errorMessage = $"Houve uma falha ao tentar indexar o post '{postDocument.Id}' no Elastic Search.";
+                string errorMessage = $"Houve uma falha ao tentar indexar o post '{postId}' no Elastic Search.";
                 _logger.LogError(ex, errorMessage);
                 throw;
             }
@@ -53,22 +53,6 @@ namespace GeoCidadao.PostIndexerWorker.Services
                 _logger.LogError(ex, errorMessage);
                 throw;
             }
-        }
-
-        public Task UpdatePostIndexAsync(UpdatedPostDocument postDocument, CancellationToken cancellationToken = default)
-        {
-            return Task.CompletedTask;
-
-            // try
-            // {
-            //     return Task.CompletedTask;
-            // }
-            // catch (Exception ex)
-            // {
-            //     string errorMessage = $"Houve uma falha ao tentar atualizar o índico do post '{postDocument.Id}' no Elastic Search.";
-            //     _logger.LogError(ex, errorMessage);
-            //     throw;
-            // }
         }
 
     }
