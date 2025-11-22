@@ -21,6 +21,14 @@ using Quartz;
 using GeoCidadao.Jobs.Config;
 using GeoCidadao.Jobs.Listeners;
 using GeoCidadao.EngagementServiceAPI.Jobs.QueueJobs;
+using GeoCidadao.EngagementServiceAPI.Middlewares;
+using GeoCidadao.EngagementServiceAPI.Contracts.CacheServices;
+using GeoCidadao.EngagementServiceAPI.Services.CacheServices;
+using GeoCidadao.EngagementServiceAPI.Contracts.ConnectionServices;
+using GeoCidadao.EngagementServiceAPI.Services.ConnectionServices;
+using Microsoft.Extensions.Options;
+using GeoCidadao.EngagementServiceAPI.Database.CacheContracts;
+using GeoCidadao.EngagementServiceAPI.Database.Cache;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -60,8 +68,35 @@ builder.Services.AddSingleton<INotifyPostInteraction, NotifyPostInteractionServi
 builder.Services.AddSingleton<IPostDeletedQueueService, PostDeletedQueueService>();
 builder.Services.AddSingleton<IUserChangedQueueService, UserChangedQueueService>();
 
+// Cache Services
+builder.Services.AddSingleton<IKeycloakAdminCacheService, KeycloakAdminCacheService>();
+builder.Services.AddSingleton<IUserCacheService, UserCacheService>();
+builder.Services.AddSingleton<IPostCommentsDaoCache, PostCommentsDaoCache>();
+
+//Connection Services
+builder.Services.AddTransient<IUserManagementService, UserManagementService>();
+
+//Keycloak
+builder.Services.AddSingleton<IKeycloakTokenProvider, KeycloakTokenProvider>();
+builder.Services.AddTransient<KeycloakAdminHandler>();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();
+
+//Http Clients
+builder.Services.AddHttpClient<IKeycloakTokenProvider, KeycloakTokenProvider>(AppSettingsProperties.TokenClient, (sp, httpClient) =>
+{
+    var admin = sp.GetRequiredService<IOptions<KeycloakAdminOptions>>().Value;
+    httpClient.BaseAddress = new Uri($"{admin.BaseUrl}/realms/{admin.Realm}/protocol/openid-connect/token");
+});
+
+builder.Services.AddHttpClient<IUserManagementService, UserManagementService>(AppSettingsProperties.UserManagementClient, (sp, httpClient) =>
+{
+    IConfigurationSection apiUrlSection = builder.Configuration.GetRequiredSection(AppSettingsProperties.ApiUrls);
+    httpClient.BaseAddress = new Uri(apiUrlSection.GetValue<string>(AppSettingsProperties.GerenciamentoUsuariosAPI)!);
+})
+.AddHttpMessageHandler<KeycloakAdminHandler>();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
