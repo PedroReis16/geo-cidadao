@@ -5,5 +5,6 @@ namespace GeoCidadao.EngagementServiceAPI.Database.Contracts
 {
     public interface IPostCommentsDao : IRepository<PostComment>
     {
+        Task DeletePostCommentsAsync(Guid postId);
     }
 }

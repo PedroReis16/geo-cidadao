@@ -17,6 +17,10 @@ using GeoCidadao.EngagementServiceAPI.Database.EFDao;
 using GeoCidadao.Models.Entities.EngagementServiceAPI;
 using GeoCidadao.EngagementServiceAPI.Contracts.QueueServices;
 using GeoCidadao.EngagementServiceAPI.Services.QueueServices;
+using Quartz;
+using GeoCidadao.Jobs.Config;
+using GeoCidadao.Jobs.Listeners;
+using GeoCidadao.EngagementServiceAPI.Jobs.QueueJobs;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -53,6 +57,8 @@ builder.Services.AddTransient<ICommentLikesDao, CommentLikesDao>();
 
 // Queue Services
 builder.Services.AddSingleton<INotifyPostInteraction, NotifyPostInteractionService>();
+builder.Services.AddSingleton<IPostDeletedQueueService, PostDeletedQueueService>();
+builder.Services.AddSingleton<IUserChangedQueueService, UserChangedQueueService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();
@@ -90,6 +96,63 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 builder.Services.ConfigureOAuth(builder.Configuration.GetRequiredSection("OAuth").Get<OAuthConfiguration>()!);
+
+
+//Quartz Settings
+builder.Services.Configure<QuartzOptions>(options =>
+{
+    options.Scheduling.IgnoreDuplicates = true;
+    options.Scheduling.OverWriteExistingData = false;
+});
+
+builder.Services.AddQuartz(q =>
+{
+    q.SchedulerId = q.SchedulerName = JobConstants.SchedulerName;
+
+    q.AddJobListener<JobChainListener>();
+
+    q.UseSimpleTypeLoader();
+    q.UseInMemoryStore();
+    q.UseDefaultThreadPool(tp =>
+    {
+        int maxConcurrency = builder.Configuration
+                      .GetRequiredSection(AppSettingsProperties.MaxConcurrency)
+                      .Get<int>();
+
+        tp.MaxConcurrency = maxConcurrency > 0 ? maxConcurrency : Environment.ProcessorCount;
+    });
+
+    // Jobs para consumo da fila de exclusão dos posts
+    q.AddJob<PostDeletedQueueJob>(j =>
+    {
+        j.WithIdentity(nameof(PostDeletedQueueJob));
+    });
+
+    q.AddTrigger(t =>
+    {
+        t.ForJob(nameof(PostDeletedQueueJob));
+        t.StartNow();
+    });
+
+    // Jobs para consumo da fila de alterações nos perfis dos usuários
+    q.AddJob<PostDeletedQueueJob>(j =>
+    {
+        j.WithIdentity(nameof(PostDeletedQueueJob));
+    });
+
+    q.AddTrigger(t =>
+    {
+        t.ForJob(nameof(PostDeletedQueueJob));
+        t.StartNow();
+    });
+
+});
+
+builder.Services.AddQuartzHostedService(options =>
+{
+    options.WaitForJobsToComplete = true;
+});
+
 
 WebApplication app = builder.Build();
 

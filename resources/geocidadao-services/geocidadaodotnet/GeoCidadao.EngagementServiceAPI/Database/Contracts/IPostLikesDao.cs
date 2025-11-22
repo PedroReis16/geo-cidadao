@@ -6,5 +6,6 @@ namespace GeoCidadao.EngagementServiceAPI.Database.Contracts
     public interface IPostLikesDao : IRepository<PostLike>
     {
         Task RemovePostLikeAsync(Guid postId, Guid userId);
+        Task DeletePostLikesAsync(Guid postId);
     }
 }
