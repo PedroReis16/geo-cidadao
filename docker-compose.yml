@@ -190,7 +190,7 @@ services:
     image: mediagis/nominatim:4.2 
     container_name: nominatim-app
     ports:
-      - "8081:8080"
+      - "8083:8080"
     depends_on:
       db:
         condition: service_healthy
@@ -204,11 +204,13 @@ services:
       
       - NOMINATIM_SCHEMA=nominatim_schema 
 
-      - PBF_URL=https://download.geofabrik.de/south-america/brazil-latest.osm.pbf
       - IMPORT_WIKI=true
       - IMPORT_WIKIMEDIA=true
 
+      - PBF_PATH=/opt/nominatim/data/abc_paulista.osm.pbf
+
     volumes:
+      - ./docker-compose/local/nominatim/abc_paulista.osm.pbf:/opt/nominatim/data/abc_paulista.osm.pbf
       - nominatim-app-data:/var/lib/nominatim
     restart: always
     networks:
