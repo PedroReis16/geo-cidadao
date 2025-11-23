@@ -36,7 +36,6 @@ namespace GeoCidadao.EngagementServiceAPI.Controllers
         /// <param name="postId">Id do post</param>
         /// <returns></returns>
         [HttpPost("{postId}/like")]
-        [Authorize(Policy = "Posts.Read")]
         public async Task<IActionResult> LikePost(Guid postId)
         {
             Guid userId = HttpContext.User.GetUserId();
@@ -50,7 +49,6 @@ namespace GeoCidadao.EngagementServiceAPI.Controllers
         /// <param name="postId">Id do post</param>
         /// <returns></returns>
         [HttpDelete("{postId}/like")]
-        [Authorize(Policy = "Posts.Read")]
         public async Task<IActionResult> UnlikePost(Guid postId)
         {
             Guid userId = HttpContext.User.GetUserId();
@@ -63,9 +61,9 @@ namespace GeoCidadao.EngagementServiceAPI.Controllers
         /// Denunciar um post
         /// </summary>
         /// <param name="postId">Id do post</param>
+        /// <param name="delationDetails">Detalhes da denúncia</param>
         /// <returns></returns>
         [HttpPost("{postId}/delation")]
-        [Authorize(Policy = "Posts.Read")]
         public async Task<IActionResult> DelatePost(Guid postId, [FromBody] DelationDTO delationDetails)
         {
             Guid userId = HttpContext.User.GetUserId();
