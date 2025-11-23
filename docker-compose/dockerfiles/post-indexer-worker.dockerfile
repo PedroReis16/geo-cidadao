@@ -10,16 +10,15 @@ COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.AMQP/Ge
 COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Models/GeoCidadao.Models.csproj GeoCidadao.Models/
 RUN dotnet restore GeoCidadao.PostIndexerWorker/GeoCidadao.PostIndexerWorker.csproj
 
-COPY resources/geocidadao-services/geocidadaodotnet/WorkerServices ./
+COPY resources/geocidadao-services/geocidadaodotnet/WorkerServices/GeoCidadao.PostIndexerWorker ./WorkerServices/GeoCidadao.PostIndexerWorker
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.AMQP ./Libraries/GeoCidadao.AMQP
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Models ./Libraries/GeoCidadao.Models
 
-WORKDIR "/src/GeoCidadao.PostIndexerWorker"
-RUN dotnet publish "GeoCidadao.PostIndexerWorker.csproj" -c Release -o /app/publish 
-
-FROM build AS publish
+WORKDIR "/src/WorkerServices/GeoCidadao.PostIndexerWorker"
 RUN dotnet publish "GeoCidadao.PostIndexerWorker.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # runtime
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "GeoCidadao.PostIndexerWorker.dll"]

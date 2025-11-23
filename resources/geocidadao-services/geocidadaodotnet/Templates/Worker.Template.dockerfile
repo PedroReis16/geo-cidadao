@@ -8,19 +8,17 @@ WORKDIR /src
 COPY resources/geocidadao-services/geocidadaodotnet/WorkerServices/<PROJECT_NAME>/<PROJECT_NAME>.csproj <PROJECT_NAME>/
 COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.AMQP/GeoCidadao.AMQP.csproj GeoCidadao.AMQP/
 COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Models/GeoCidadao.Models.csproj GeoCidadao.Models/
-
 RUN dotnet restore <PROJECT_NAME>/<PROJECT_NAME>.csproj
 
-COPY resources/geocidadao-services/geocidadaodotnet/WorkerServices ./
+COPY resources/geocidadao-services/geocidadaodotnet/WorkerServices/<PROJECT_NAME> ./WorkerServices/<PROJECT_NAME>
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.AMQP ./Libraries/GeoCidadao.AMQP
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Models ./Libraries/GeoCidadao.Models
 
-WORKDIR "/src/<PROJECT_NAME>"
-RUN dotnet publish "<PROJECT_NAME>.csproj" -c Release -o /app/publish 
-
-FROM build AS publish
+WORKDIR "/src/WorkerServices/<PROJECT_NAME>"
 RUN dotnet publish "<PROJECT_NAME>.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # runtime
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "<PROJECT_NAME>.dll"]

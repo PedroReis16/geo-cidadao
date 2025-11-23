@@ -16,8 +16,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - service: geo-cidadao-ui
-            dockerfile: docker-compose/dockerfiles/geo-cidadao-ui.dockerfile
+          - service: geocidadao-ui
+            dockerfile: docker-compose/dockerfiles/geocidadao-ui.dockerfile
             context: .
           - service: gerenciamento-usuarios-api
             dockerfile: docker-compose/dockerfiles/gerenciamento-usuarios-api.dockerfile
@@ -25,9 +25,15 @@ jobs:
           - service: gerenciamento-posts-api
             dockerfile: docker-compose/dockerfiles/gerenciamento-posts-api.dockerfile
             context: .
-          - service: keycloak
-            dockerfile: docker-compose/dockerfiles/keycloak.dockerfile
-            context: docker-compose/prod
+          - service: engagement-service-api
+            dockerfile: docker-compose/dockerfiles/engagement-service-api.dockerfile
+            context: .
+          - service: post-indexing-worker
+            dockerfile: docker-compose/dockerfiles/post-indexing-worker.dockerfile
+            context: .
+          - service: relevance-worker
+            dockerfile: docker-compose/dockerfiles/relevance-worker.dockerfile
+            context: .
     
     steps:
       - name: Checkout code

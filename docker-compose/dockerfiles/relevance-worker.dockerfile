@@ -10,16 +10,15 @@ COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.AMQP/Ge
 COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Models/GeoCidadao.Models.csproj GeoCidadao.Models/
 RUN dotnet restore GeoCidadao.RelevanceWorker/GeoCidadao.RelevanceWorker.csproj
 
-COPY resources/geocidadao-services/geocidadaodotnet/WorkerServices ./
+COPY resources/geocidadao-services/geocidadaodotnet/WorkerServices/GeoCidadao.RelevanceWorker ./WorkerServices/GeoCidadao.RelevanceWorker
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.AMQP ./Libraries/GeoCidadao.AMQP
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Models ./Libraries/GeoCidadao.Models
 
-WORKDIR "/src/GeoCidadao.RelevanceWorker"
-RUN dotnet publish "GeoCidadao.RelevanceWorker.csproj" -c Release -o /app/publish 
-
-FROM build AS publish
+WORKDIR "/src/WorkerServices/GeoCidadao.RelevanceWorker"
 RUN dotnet publish "GeoCidadao.RelevanceWorker.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # runtime
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "GeoCidadao.RelevanceWorker.dll"]

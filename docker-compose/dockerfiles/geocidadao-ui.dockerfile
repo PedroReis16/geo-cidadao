@@ -4,14 +4,14 @@ FROM node:18-alpine AS build
 WORKDIR /app
 
 # Copy package files
-COPY resources/geo-cidadao-ui/package*.json ./
-COPY resources/geo-cidadao-ui/yarn.lock* ./
+COPY resources/geocidadao-ui/package*.json ./
+COPY resources/geocidadao-ui/yarn.lock* ./
 
 # Install dependencies (including dev dependencies for build)
 RUN npm ci
 
 # Copy source code
-COPY resources/geo-cidadao-ui/ ./
+COPY resources/geocidadao-ui/ ./
 
 # Build the application (using vite build directly to bypass TypeScript errors)
 RUN npx vite build
