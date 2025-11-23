@@ -7,6 +7,7 @@ export interface Post {
   content: string;
   media?: MediaItem[];
   likes: number;
+  comments: number;
   timestamp: string;
   coordinates?: Coordinates;
 }
