@@ -71,14 +71,6 @@ services:
       - RABBITMQ_DEFAULT_PASS=admin
     networks:
       - geo-network
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    command: redis-server --appendonly yes
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:9.0.0 # Use a versão desejada
     container_name: elasticsearch
@@ -95,7 +87,6 @@ services:
       - ES_JAVA_OPTS=-Xms512m -Xmx512m # Desabilita segurança/autenticação para simplificar o desenvolvimento local
     networks:
       - geo-network
-
   kibana:
     image: docker.elastic.co/kibana/kibana:9.0.0
     container_name: kibana
@@ -177,6 +168,51 @@ services:
       - ./docker-compose/local/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
       - ./docker-compose/local/keycloak/themes:/opt/keycloak/themes/custom-theme
       - keycloak_data:/opt/keycloak/data
+  init-nominatim-db:
+    image: postgres:15-alpine
+    container_name: init-nominatim-schema
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Usa a senha do seu usuário geo
+      PGPASSWORD: geo
+    command: >
+      sh -c '
+        echo "[init] Garantindo schema nominatim_schema no database geodb..."
+        # Conecta ao geodb com o usuário geo e cria o SCHEMA
+        psql -h db -U geo -d geodb -v ON_ERROR_STOP=1 -c "CREATE SCHEMA IF NOT EXISTS nominatim_schema AUTHORIZATION geo";
+        echo "[init] OK: Schema nominatim_schema criado e de propriedade do usuário geo."
+      '
+    networks:
+      - geo-network
+  nominatim:
+    image: mediagis/nominatim:4.2 
+    container_name: nominatim-app
+    ports:
+      - "8081:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+      init-nominatim-db:
+        condition: service_completed_successfully
+    environment:
+      - NOMINATIM_DATABASE_HOST=db       
+      - NOMINATIM_DATABASE_USER=geo
+      - NOMINATIM_DATABASE_PASS=geo
+      - NOMINATIM_DATABASE_NAME=geodb   
+      
+      - NOMINATIM_SCHEMA=nominatim_schema 
+
+      - PBF_URL=https://download.geofabrik.de/south-america/brazil-latest.osm.pbf
+      - IMPORT_WIKI=true
+      - IMPORT_WIKIMEDIA=true
+
+    volumes:
+      - nominatim-app-data:/var/lib/nominatim
+    restart: always
+    networks:
+      - geo-network
   gerenciamento-usuarios:
     container_name: gerenciamento-usuarios
     build:
@@ -381,4 +417,4 @@ volumes:
   mongo_data:
   keycloak_data:
   elasticsearch_data:
-  redis_data:
+  nominatim-app-data:
