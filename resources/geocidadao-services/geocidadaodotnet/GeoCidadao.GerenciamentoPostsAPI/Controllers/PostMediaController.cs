@@ -8,25 +8,19 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
 {
     [ApiController]
     [Route("posts/{postId}/media")]
-    [Authorize]
     public class PostMediaController(IPostMediaService service) : ControllerBase
     {
         private readonly IPostMediaService _service = service;
 
         /// <summary>
-        /// Incrementar media para um post
+        /// Buscar mídia do post
         /// </summary>
-        /// <param name="postId">Identificador do post</param>
-        /// <param name="mediaFile">Arquivo de mídia</param>
-        /// <param name="order">Ordem de exibição da mídia. Padrão 0. Se não for específicado, as mídias serão exibidas na ordem em que foram adicionadas.</param>
-        /// <returns></returns>
-        [HttpPatch]
-        [OwnerOrPermissionByProperty<Post>("UserId", "Posts.Edit.Self")]
-        public async Task<IActionResult> UploadPostMedia(Guid postId, [FromForm] IFormFile mediaFile, [FromForm] int order = 0)
+        ///<returns></returns>
+        [HttpGet("{mediaId}")]
+        public async Task<IActionResult> GetPostMediaUrl(Guid postId, Guid mediaId)
         {
-            await _service.UploadPostMediaAsync(postId, order, mediaFile);
-
-            return Ok();
+            string mediaUrl = await _service.GetPostMediaUrlAsync(postId, mediaId);
+            return Ok(mediaUrl);
         }
 
         /// <summary>
@@ -36,6 +30,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         /// <param name="mediaIdsInOrder">Lista de IDs de mídias na ordem desejada</param>
         /// <returns></returns>
         [HttpPatch("reorder")]
+        [Authorize]
         [OwnerOrPermissionByProperty<Post>("UserId", "Posts.Edit.Self", "Posts.Edit.Any")]
         public async Task<IActionResult> ReorderPostMedias(Guid postId, [FromBody] List<Guid> mediaIdsInOrder)
         {
@@ -51,6 +46,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         /// <param name="mediaId">Identificador da mídia</param>
         /// <returns></returns>
         [HttpDelete("{mediaId}")]
+        [Authorize]
         [OwnerOrPermissionByProperty<Post>("UserId", "Posts.Edit.Self", "Posts.Edit.Any")]
         public async Task<IActionResult> DeletePostMedia(Guid postId, Guid mediaId)
         {

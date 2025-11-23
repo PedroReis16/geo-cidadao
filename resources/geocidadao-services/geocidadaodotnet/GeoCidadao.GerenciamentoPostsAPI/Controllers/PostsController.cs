@@ -37,50 +37,6 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         }
 
         /// <summary>
-        /// Obter posts por localização
-        /// </summary>
-        /// <param name="latitude">Latitude do ponto central</param>
-        /// <param name="longitude">Longitude do ponto central</param>
-        /// <param name="radiusKm">Raio de busca em quilômetros</param>
-        /// <param name="city">Filtrar por cidade</param>
-        /// <param name="state">Filtrar por estado</param>
-        /// <param name="country">Filtrar por país</param>
-        /// <param name="itemsCount">Número máximo de posts a serem retornados</param>
-        /// <param name="pageNumber">Número da página (iniciando em 1)</param>
-        /// <returns></returns>
-        [HttpGet("by-location")]
-        [Authorize(Policy = "Posts.Read")]
-        public async Task<IActionResult> GetPostsByLocation(
-            [FromQuery] double? latitude,
-            [FromQuery] double? longitude,
-            [FromQuery] double? radiusKm,
-            [FromQuery] string? city,
-            [FromQuery] string? state,
-            [FromQuery] string? country,
-            [FromQuery] int? itemsCount,
-            [FromQuery] int? pageNumber)
-        {
-            var locationQuery = new LocationQueryDTO
-            {
-                Latitude = latitude,
-                Longitude = longitude,
-                RadiusKm = radiusKm,
-                City = city,
-                State = state,
-                Country = country,
-                ItemsCount = itemsCount,
-                PageNumber = pageNumber
-            };
-
-            List<PostWithLocationDTO> posts = await _service.GetPostsByLocationAsync(locationQuery);
-
-            if (posts.Count == 0)
-                return NoContent();
-
-            return Ok(posts);
-        }
-
-        /// <summary>
         /// Obter post por Id
         /// </summary>
         /// <param name="postId">Id do post</param>
@@ -104,11 +60,9 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize(Policy = "Posts.Create")]
-        public async Task<IActionResult> CreateNewPost([FromBody] NewPostDTO newPost)
+        public async Task<IActionResult> CreateNewPost([FromForm] NewPostDTO newPost)
         {
-            Guid userId = HttpContext.User.GetUserId();
-
-            PostDTO createdPost = await _service.CreatePostAsync(userId, newPost);
+            PostDTO createdPost = await _service.CreatePostAsync(newPost);
 
             return CreatedAtAction(nameof(GetPost), new { postId = createdPost.Id }, createdPost);
         }
