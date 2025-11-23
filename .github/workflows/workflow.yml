@@ -16,8 +16,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - service: geo-cidadao-ui
-            dockerfile: docker-compose/dockerfiles/geo-cidadao-ui.dockerfile
+          - service: geocidadao-ui
+            dockerfile: docker-compose/dockerfiles/geocidadao-ui.dockerfile
             context: .
           - service: gerenciamento-usuarios-api
             dockerfile: docker-compose/dockerfiles/gerenciamento-usuarios-api.dockerfile
