@@ -1,3 +1,4 @@
+using GeoCidadao.Database.Entities.GerenciamentoPostsAPI;
 using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -28,6 +29,11 @@ namespace GeoCidadao.Database.Configurations.GerenciamentoPostsAPI
             builder
                 .HasMany(p => p.Medias)
                 .WithOne(pm => pm.Post);
+
+            builder
+                .HasOne(p => p.Location)
+                .WithOne(l => l.Post)
+                .HasForeignKey<PostLocation>(l => l.Id);
 
             builder.HasIndex(p => p.UserId);
             builder.HasIndex(p => p.Category);

@@ -1,3 +1,4 @@
+using GeoCidadao.Database.Entities.GerenciamentoPostsAPI;
 using GeoCidadao.Models.Enums;
 
 namespace GeoCidadao.Models.Entities.GerenciamentoPostsAPI
@@ -10,6 +11,6 @@ namespace GeoCidadao.Models.Entities.GerenciamentoPostsAPI
         public PostCategory Category { get; set; }
 
         public List<PostMedia>? Medias { get; set; } = new();
-
+        public PostLocation? Location { get; set; }
     }
 }
