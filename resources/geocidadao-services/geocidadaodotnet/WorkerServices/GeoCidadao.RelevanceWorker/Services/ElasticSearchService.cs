@@ -19,7 +19,7 @@ namespace GeoCidadao.RelevanceWorker.Services
                 var response = await _client.IndexAsync(postDocument, i => i.Id(postId), cancellationToken);
                 if (!response.IsValidResponse)
                 {
-                    string errorMessage = $"Houve uma falha ao tentar atualizar a relevância do post '{postId}' no Elastic Search. " +
+                    string errorMessage = $"Houve uma falha ao tentar indexar o post '{postId}' no Elastic Search. " +
                         $"Response Debug Information: {response.DebugInformation}";
 
                     _logger.LogError(errorMessage);
@@ -28,7 +28,7 @@ namespace GeoCidadao.RelevanceWorker.Services
             }
             catch (Exception ex)
             {
-                string errorMessage = $"Houve uma falha ao tentar atualizar a relevância do post '{postId}' no Elastic Search.";
+                string errorMessage = $"Houve uma falha ao tentar indexar o post '{postId}' no Elastic Search.";
                 _logger.LogError(ex, errorMessage);
                 throw;
             }
@@ -82,18 +82,16 @@ namespace GeoCidadao.RelevanceWorker.Services
         {
             try
             {
-                var updateDoc = new
-                {
-                    relevanceScore = postDocument.RelevanceScore,
-                    likesCount = postDocument.LikesCount,
-                    commentsCount = postDocument.CommentsCount
-                };
-
-                var response = await _client.UpdateAsync<object, object>(
+                UpdateResponse<RelevanceDocument> response = await _client.UpdateAsync<RelevanceDocument, RelevanceDocument>(
                    _settings.DefaultIndex,
                    postId,
                    u => u
-                       .Doc(updateDoc)
+                       .Doc(new()
+                       {
+                           RelevanceScore = postDocument.RelevanceScore,
+                           LikesCount = postDocument.LikesCount,
+                           CommentsCount = postDocument.CommentsCount
+                       })
                        .DocAsUpsert(true),
                    cancellationToken
                    );
