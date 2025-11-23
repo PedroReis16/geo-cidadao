@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useMap } from "../../data/hooks/useMap";
-import PostCard from "../components/PostCard/PostCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import "../styles/pages/PostDetailPage.css";
 import type { Post } from "../../data/@types/Post";
+import PostDetailsCard from "../components/PostDetailsCard/PostDetailsCard";
 
-const PostDetailPage: React.FC = () => {
+const PostDetailsPage: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
   const { posts, setIsMapExpanded } = useMap();
@@ -69,7 +69,7 @@ const PostDetailPage: React.FC = () => {
 
   return (
     <div className="post-detail-page">
-      <header className="post-detail-header">
+      {/* <header className="post-detail-header">
         <button onClick={handleBackToFeed} className="back-button">
           <svg
             width="20"
@@ -84,23 +84,15 @@ const PostDetailPage: React.FC = () => {
           Voltar
         </button>
         <h1>Detalhes da Publicação</h1>
-      </header>
+      </header> */}
 
       <main className="post-detail-main">
-        <div className="post-detail-wrapper">
-          <PostCard post={post} onMap={handleMapClick} />
-
-          {/* Seção de comentários futura */}
-          <div className="post-comments-section">
-            <h3>Comentários ({post.comments})</h3>
-            <div className="comments-placeholder">
-              <p>Seção de comentários em desenvolvimento...</p>
-            </div>
-          </div>
-        </div>
+        {/* <div className="post-detail-wrapper"> */}
+          <PostDetailsCard />
+        {/* </div> */}
       </main>
     </div>
   );
 };
 
-export default PostDetailPage;
+export default PostDetailsPage;

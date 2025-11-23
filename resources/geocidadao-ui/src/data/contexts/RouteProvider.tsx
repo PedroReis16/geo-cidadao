@@ -1,7 +1,7 @@
 // src/data/contexts/RouteProvider.tsx
 import { createBrowserRouter, Outlet, Navigate } from "react-router-dom";
 import FeedPage from "../../ui/pages/FeedPage";
-import PostDetailPage from "../../ui/pages/PostDetailPage";
+import PostDetailsPage from "../../ui/pages/PostDetailsPage";
 import KeycloakCallback from "../../ui/pages/KeycloakCallback";
 import NotFoundPage from "../../ui/pages/NotFound";
 import ProtectedRouter from "../../ui/components/ProtectedRouter";
@@ -33,7 +33,7 @@ const Router = createBrowserRouter([
       },
       {
         path: "post/:postId",
-        element: <PostDetailPage />,
+        element: <PostDetailsPage />,
       },
       {
         path: "*",
