@@ -1,29 +1,26 @@
-# Build stage
 FROM node:18-alpine AS build
 
 WORKDIR /app
 
-# Copy package files
-COPY resources/geocidadao-ui/package*.json ./
-COPY resources/geocidadao-ui/yarn.lock* ./
+# Copia os manifests
+COPY resources/geocidadao-ui/package.json ./
+COPY resources/geocidadao-ui/yarn.lock ./
 
-# Install dependencies (including dev dependencies for build)
-RUN npm ci
+# Habilita o corepack (Node 18 já vem com isso)
+RUN corepack enable && yarn install --frozen-lockfile
 
-# Copy source code
+# Copia o restante do código
 COPY resources/geocidadao-ui/ ./
 
-# Build the application (using vite build directly to bypass TypeScript errors)
-RUN npx vite build
+# Build (ajuste se o script tiver outro nome)
+RUN yarn build   # ou: RUN yarn run build / RUN npx vite build
 
-# Production stage
 FROM nginx:alpine AS production
 
-# Remove default nginx config
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy built application
 COPY --from=build /app/dist /usr/share/nginx/html
+
 
 # Create custom nginx configuration that works with default nginx setup
 RUN echo 'server {' > /etc/nginx/conf.d/default.conf && \
