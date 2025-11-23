@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-GeoCidadao.RelevanceWorker-329fa821-16cb-42a3-94dc-18036a74bf37</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Elastic.Clients.Elasticsearch" Version="9.2.1" />
+    <PackageReference Include="Elastic.Transport" Version="0.10.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\GeoCidadao.Models\GeoCidadao.Models.csproj" />
+    <ProjectReference Include="..\..\Libraries\GeoCidadao.AMQP\GeoCidadao.AMQP.csproj" />
+  </ItemGroup>
+</Project>

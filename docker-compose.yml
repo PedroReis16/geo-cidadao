@@ -71,6 +71,42 @@ services:
       - RABBITMQ_DEFAULT_PASS=admin
     networks:
       - geo-network
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.0 # Use a versão desejada
+    container_name: elasticsearch
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m # Desabilita segurança/autenticação para simplificar o desenvolvimento local
+    networks:
+      - geo-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.0.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200 # Usa o nome do serviço do ES como hostname
+    networks:
+      - geo-network
+    depends_on:
+      - elasticsearch
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog
@@ -149,8 +185,6 @@ services:
     ports:
       - "8090:8080"
     depends_on:
-      keycloak:
-        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     env_file:
@@ -193,29 +227,133 @@ services:
     networks:
       - geo-network
     restart: always
-
-  geo-cidadao-ui:
-    container_name: geo-cidadao-ui
+  post-indexer-worker:
+    container_name: post-indexer-worker
     build:
       context: .
-      dockerfile: docker-compose/dockerfiles/geo-cidadao-ui.dockerfile
+      dockerfile: docker-compose/dockerfiles/post-indexer-worker.dockerfile
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/post-indexer-worker.env
+    networks:
+      - geo-network
+    restart: always
+  engagement-service:
+    container_name: engagement-service
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/engagement-service-api.dockerfile
+    ports:
+      - "8092:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/engagement-service.env
+    labels:
+      - traefik.http.routers.engagement-service.rule=PathPrefix(`/engagement-service`)
+      - traefik.http.services.engagement-service.loadbalancer.server.port=8092
+      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.cors.headers.addvaryheader=true
+      - traefik.http.routers.engagement-service.middlewares=cors
+    networks:
+      - geo-network
+    restart: always
+  relevance-worker:
+    container_name: relevance-worker
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/relevance-worker.dockerfile
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/post-indexer-worker.env
+    networks:
+      - geo-network
+    restart: always
+  feed-service:
+    container_name: feed-service
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/feed-service-api.dockerfile
+    ports:
+      - "8093:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/feed-service.env
+    labels:
+      - traefik.http.routers.feed-service.rule=PathPrefix(`/feed-service`)
+      - traefik.http.services.feed-service.loadbalancer.server.port=8093
+      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.cors.headers.addvaryheader=true
+      - traefik.http.routers.feed-service.middlewares=cors
+    networks:
+      - geo-network
+    restart: always
+  feed-map:
+    container_name: feed-map
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/feed-map-api.dockerfile
+    ports:
+      - "8094:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./docker-compose/local/default.env
+      - ./docker-compose/local/feed-map.env
+    labels:
+      - traefik.http.routers.feed-map.rule=PathPrefix(`/feed-map`)
+      - traefik.http.services.feed-map.loadbalancer.server.port=8094
+      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.cors.headers.addvaryheader=true
+      - traefik.http.routers.feed-map.middlewares=cors
+    networks:
+      - geo-network
+    restart: always
+  geocidadao-ui:
+    container_name: geocidadao-ui
+    build:
+      context: .
+      dockerfile: docker-compose/dockerfiles/geocidadao-ui.dockerfile
     ports:
       - "5173:80"
     env_file:
       - ./docker-compose/local/default.env
-      - ./docker-compose/local/geo-cidadao-ui.env
+      - ./docker-compose/local/geocidadao-ui.env
     labels:
       - traefik.enable=true
-      - traefik.http.routers.geo-cidadao-ui.rule=PathPrefix(`/`)
-      - traefik.http.routers.geo-cidadao-ui.entrypoints=web
-      - traefik.http.routers.geo-cidadao-ui.priority=1
-      - traefik.http.services.geo-cidadao-ui.loadbalancer.server.port=80
+      - traefik.http.routers.geocidadao-ui.rule=PathPrefix(`/`)
+      - traefik.http.routers.geocidadao-ui.entrypoints=web
+      - traefik.http.routers.geocidadao-ui.priority=1
+      - traefik.http.services.geocidadao-ui.loadbalancer.server.port=80
       - traefik.http.middlewares.ui-cors.headers.accesscontrolallowmethods=*
       - traefik.http.middlewares.ui-cors.headers.accessControlAllowHeaders=*
       - traefik.http.middlewares.ui-cors.headers.accesscontrolalloworiginlist=*
       - traefik.http.middlewares.ui-cors.headers.accesscontrolmaxage=100
       - traefik.http.middlewares.ui-cors.headers.addvaryheader=true
-      - traefik.http.routers.geo-cidadao-ui.middlewares=ui-cors
+      - traefik.http.routers.geocidadao-ui.middlewares=ui-cors
     networks:
       - geo-network
     restart: always
@@ -242,3 +380,5 @@ volumes:
   localstack_data:
   mongo_data:
   keycloak_data:
+  elasticsearch_data:
+  redis_data:

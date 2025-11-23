@@ -1,0 +1,116 @@
+{
+  "version": "2.0.0",
+  "configurations": [
+    {
+      "name": "GerenciamentoUsuariosAPI",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: GerenciamentoUsuariosAPI",
+      "program": "${workspaceFolder}/GeoCidadao.GerenciamentoUsuariosAPI/bin/Debug/net8.0/GeoCidadao.GerenciamentoUsuariosAPI.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/GeoCidadao.GerenciamentoUsuariosAPI",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/gerenciamento-usuarios/swagger"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:8090;"
+      }
+    },
+    {
+      "name": "GerenciamentoPostsAPI",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: GerenciamentoPostsAPI",
+      "program": "${workspaceFolder}/GeoCidadao.GerenciamentoPostsAPI/bin/Debug/net8.0/GeoCidadao.GerenciamentoPostsAPI.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/GeoCidadao.GerenciamentoPostsAPI",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/gerenciamento-posts/swagger"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:8091;"
+      }
+    },
+    {
+      "name": "EngagementServiceAPI",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: EngagementServiceAPI",
+      "program": "${workspaceFolder}/GeoCidadao.EngagementServiceAPI/bin/Debug/net8.0/GeoCidadao.EngagementServiceAPI.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/GeoCidadao.EngagementServiceAPI",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/engagement-service/swagger"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:8092;"
+      }
+    },
+    {
+      "name": "PostIndexerWorker",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: PostIndexerWorker",
+      "program": "${workspaceFolder}/WorkerServices/GeoCidadao.PostIndexerWorker/bin/Debug/net8.0/GeoCidadao.PostIndexerWorker.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/WorkerServices/GeoCidadao.PostIndexerWorker",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "RelevanceWorker",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: RelevanceWorker",
+      "program": "${workspaceFolder}/WorkerServices/GeoCidadao.RelevanceWorker/bin/Debug/net8.0/GeoCidadao.RelevanceWorker.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/WorkerServices/GeoCidadao.RelevanceWorker",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug all",
+      "configurations": [
+        "GerenciamentoUsuariosAPI",
+        "GerenciamentoPostsAPI",
+        "FeedServiceAPI",
+        "AnalyticsServiceAPI",
+        "FeedMapAPI",
+        "EngagementServiceAPI",
+        "PostIndexerWorker",
+        "RelevanceWorker"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "PostManagement",
+      "configurations": [
+        "GerenciamentoPostsAPI",
+        "EngagementServiceAPI",
+        "PostIndexerWorker",
+        "RelevanceWorker"
+      ],
+      "stopAll": true
+    }
+  ]
+}

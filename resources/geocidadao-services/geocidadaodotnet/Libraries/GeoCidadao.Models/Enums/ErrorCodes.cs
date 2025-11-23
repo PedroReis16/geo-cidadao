@@ -1,0 +1,37 @@
+namespace GeoCidadao.Models.Enums
+{
+    public enum ErrorCodes
+    {
+        UNKNOWN_ERROR = 1,
+        VALIDATION_ERROR = 2,
+        ENTITY_NOT_FOUND = 3,
+        USERNAME_REQUIRED = 4,
+        EMAIL_REQUIRED = 5,
+        NAME_REQUIRED = 6,
+        USER_NOT_FOUND = 7,
+        INVALID_MEDIA = 8,
+        FILE_HASH_REQUIRED = 9,
+        FILE_EXTENSION_REQUIRED = 10,
+        USER_ID_REQUIRED = 11,
+        CONTENT_REQUIRED = 12,
+        POST_MEDIA_LIMIT_EXCEEDED = 13,
+        POST_NOT_FOUND = 14,
+        POST_MEDIA_TYPE_REQUIRED = 15,
+        POST_MEDIA_NOT_FOUND = 16,
+        INVALID_POSITION = 17,
+        DUPLICATE_LIKE = 18,
+        LIKE_NOT_FOUND = 19,
+        COMMENT_NOT_FOUND = 20,
+        COMMENT_CONTENT_REQUIRED = 21,
+        COMMENT_CONTENT_TOO_LONG = 22,
+        UNAUTHORIZED_COMMENT_EDIT = 23,
+        UNAUTHORIZED_COMMENT_DELETE = 24,
+        INVALID_USER_INTERESTS = 25,
+        INVALID_POST_COMMENT = 26,
+        INVALID_POST_COMMENT_LENGTH = 27,
+        INVALID_USER_ID = 28,
+        INVALID_POST_ID = 29,
+        POST_COMMENT_NOT_FOUND = 30,
+
+    }
+}

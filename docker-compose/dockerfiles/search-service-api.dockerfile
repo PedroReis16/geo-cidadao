@@ -1,0 +1,26 @@
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 8080
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY resources/geocidadao-services/geocidadaodotnet/GeoCidadao.SearchServiceAPI/GeoCidadao.SearchServiceAPI.csproj GeoCidadao.SearchServiceAPI/
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.AMQP/GeoCidadao.AMQP.csproj GeoCidadao.AMQP/
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Database/GeoCidadao.Database.csproj GeoCidadao.Database/
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Caching/GeoCidadao.Caching.csproj GeoCidadao.Caching/
+COPY resources/geocidadao-services/geocidadaodotnet/Libraries/GeoCidadao.Models/GeoCidadao.Models.csproj GeoCidadao.Models/
+
+RUN dotnet restore GeoCidadao.SearchServiceAPI/GeoCidadao.SearchServiceAPI.csproj
+
+COPY resources/geocidadao-services/geocidadaodotnet/ ./
+
+WORKDIR "/src/GeoCidadao.SearchServiceAPI"
+RUN dotnet build "GeoCidadao.SearchServiceAPI.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "GeoCidadao.SearchServiceAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "GeoCidadao.SearchServiceAPI.dll"]
