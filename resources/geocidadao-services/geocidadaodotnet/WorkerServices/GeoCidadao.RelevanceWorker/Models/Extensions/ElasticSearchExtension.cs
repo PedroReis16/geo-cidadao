@@ -29,8 +29,8 @@ namespace GeoCidadao.RelevanceWorker.Models.Extensions
 
         public static async Task InitializeElasticSearchAsync(this IServiceProvider serviceProvider)
         {
-            var postIndex = serviceProvider.GetRequiredService<RelevanceIndex>();
-            await postIndex.CreateIndexAsync();
+            // var postIndex = serviceProvider.GetRequiredService<RelevanceIndex>();
+            // await postIndex.CreateIndexAsync();
         }
     }
 }

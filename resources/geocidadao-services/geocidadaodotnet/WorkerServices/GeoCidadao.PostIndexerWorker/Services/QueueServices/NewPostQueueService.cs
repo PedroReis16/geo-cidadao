@@ -46,7 +46,11 @@ namespace GeoCidadao.PostIndexerWorker.Services.QueueServices
                         City = message.City,
                         Latitude = message.Latitude,
                         Longitude = message.Longitude,
-                        Tags = message.Tags
+                        Tags = message.Tags,
+                        AuthorName = message.AuthorName,
+                        AuthorUsername = message.AuthorUsername,
+                        AuthorProfilePicture = message.AuthorProfilePicture,
+                        MediaUrls = message.MediaUrls
                     };
 
                     _ = service.IndexPostAsync(message.Id, newPost);

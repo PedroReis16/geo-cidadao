@@ -10,6 +10,8 @@ using GeoCidadao.Models.Exceptions;
 using GeoCidadao.Models.Extensions;
 using GeoCidadao.Database.Entities.GerenciamentoPostsAPI;
 using NetTopologySuite.Geometries;
+using GeoCidadao.GerenciamentoPostsAPI.Contracts.ConnectionServices;
+using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.UserManagement;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Services
 {
@@ -184,52 +186,6 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
 
                 await _postDao.AddAsync(newPostEntity);
 
-                // // Save location if provided
-                // if (newPost.Position != null &&
-                //     !string.IsNullOrEmpty(newPost.Position.Latitude) &&
-                //     !string.IsNullOrEmpty(newPost.Position.Longitude))
-                // {
-                //     try
-                //     {
-                //         if (double.TryParse(newPost.Position.Latitude, out double lat) &&
-                //             double.TryParse(newPost.Position.Longitude, out double lon))
-                //         {
-                //             var geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
-                //             Point position = geometryFactory.CreatePoint(new Coordinate(lon, lat));
-
-                //             PostLocation postLocation = new()
-                //             {
-                //                 Id = Guid.NewGuid(),
-                //                 PostId = postId,
-                //                 Position = position,
-                //                 Category = newPostEntity.Category
-                //             };
-
-                //             await _postLocationDao.AddAsync(postLocation);
-
-                //             // Notify analytics service asynchronously
-                //             _ = Task.Run(async () =>
-                //             {
-                //                 try
-                //                 {
-                //                     using var scope = _scopeFactory.CreateScope();
-                //                     var analyticsService = scope.ServiceProvider.GetRequiredService<INotifyPostAnalyticsService>();
-                //                     await analyticsService.NotifyPostAnalyticsAsync(postId);
-                //                 }
-                //                 catch (Exception analyticsEx)
-                //                 {
-                //                     _logger.LogWarning(analyticsEx, $"Falha ao notificar analytics para o post '{postId}'");
-                //                 }
-                //             });
-                //         }
-                //     }
-                //     catch (Exception ex)
-                //     {
-                //         _logger.LogWarning(ex, $"Não foi possível salvar a localização do post '{postId}'", _context);
-                //         // Continue without location - it's optional
-                //     }
-                // }
-
                 _ = Task.Run(() =>
                 {
                     using var scope = _scopeFactory.CreateScope();
@@ -242,7 +198,9 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                         City = newPost.Position?.City,
                         Latitude = double.TryParse(newPost.Position?.Latitude, out double lat) ? lat : null,
                         Longitude = double.TryParse(newPost.Position?.Longitude, out double lon) ? lon : null,
-                        // Tags = newPost.Tags ?? Array.Empty<string>()
+                        AuthorName = "Pedro",
+                        AuthorUsername = "coldpera",
+                        AuthorProfilePicture = "https://example.com/profile.jpg",
                     });
                 });
 

@@ -26,6 +26,9 @@ using GeoCidadao.Jobs.Listeners;
 using GeoCidadao.GerenciamentoPostsAPI.Jobs.QueueJobs;
 
 
+using GeoCidadao.GerenciamentoPostsAPI.Contracts.ConnectionServices;
+using GeoCidadao.GerenciamentoPostsAPI.Services.ConnectionServices;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 string basePath = builder.Configuration.GetValue<string>("BasePath") ?? "";
@@ -55,6 +58,7 @@ builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<IPostMediaService, PostMediaService>();
 builder.Services.AddTransient<IMediaBucketService, MediaBucketService>();
 builder.Services.AddTransient<ILocationsService, LocationsService>();
+builder.Services.AddTransient<IUserManagementService, UserManagementService>();
 
 // DAOs
 builder.Services.AddTransient<IPostDao, PostDao>();
@@ -70,6 +74,13 @@ builder.Services.AddScoped<IResourceFetcher<Post>, PostFetcher>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();
+
+builder.Services.AddHttpClient<IUserManagementService, UserManagementService>(AppSettingsProperties.UserManagementClient, (sp, httpClient) =>
+{
+    IConfigurationSection apiUrlSection = builder.Configuration.GetRequiredSection(AppSettingsProperties.ApiUrls);
+    httpClient.BaseAddress = new Uri(apiUrlSection.GetValue<string>(AppSettingsProperties.GerenciamentoUsuariosAPI)!);
+})
+.AddHttpMessageHandler<ForwardingHandler>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

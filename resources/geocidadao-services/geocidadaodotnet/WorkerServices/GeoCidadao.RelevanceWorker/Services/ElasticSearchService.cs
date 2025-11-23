@@ -19,7 +19,7 @@ namespace GeoCidadao.RelevanceWorker.Services
                 var response = await _client.IndexAsync(postDocument, i => i.Id(postId), cancellationToken);
                 if (!response.IsValidResponse)
                 {
-                    string errorMessage = $"Houve uma falha ao tentar indexar o post '{postId}' no Elastic Search. " +
+                    string errorMessage = $"Houve uma falha ao tentar atualizar a relevância do post '{postId}' no Elastic Search. " +
                         $"Response Debug Information: {response.DebugInformation}";
 
                     _logger.LogError(errorMessage);
@@ -28,7 +28,7 @@ namespace GeoCidadao.RelevanceWorker.Services
             }
             catch (Exception ex)
             {
-                string errorMessage = $"Houve uma falha ao tentar indexar o post '{postId}' no Elastic Search.";
+                string errorMessage = $"Houve uma falha ao tentar atualizar a relevância do post '{postId}' no Elastic Search.";
                 _logger.LogError(ex, errorMessage);
                 throw;
             }
@@ -78,20 +78,22 @@ namespace GeoCidadao.RelevanceWorker.Services
             }
         }
 
-        public async Task UpdatePostAsync(Guid postId,  RelevanceDocument postDocument, CancellationToken cancellationToken = default)
+        public async Task UpdatePostAsync(Guid postId, RelevanceDocument postDocument, CancellationToken cancellationToken = default)
         {
             try
             {
-                UpdateResponse<RelevanceDocument> response = await _client.UpdateAsync<RelevanceDocument, RelevanceDocument>(
+                var updateDoc = new
+                {
+                    relevanceScore = postDocument.RelevanceScore,
+                    likesCount = postDocument.LikesCount,
+                    commentsCount = postDocument.CommentsCount
+                };
+
+                var response = await _client.UpdateAsync<object, object>(
                    _settings.DefaultIndex,
                    postId,
                    u => u
-                       .Doc(new()
-                       {
-                           RelevanceScore = postDocument.RelevanceScore,
-                           LikesCount = postDocument.LikesCount,
-                           CommentsCount = postDocument.CommentsCount
-                       })
+                       .Doc(updateDoc)
                        .DocAsUpsert(true),
                    cancellationToken
                    );
