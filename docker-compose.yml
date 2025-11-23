@@ -82,6 +82,11 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:9.0.0 # Use a versão desejada
     container_name: elasticsearch
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     ports:
       - "9200:9200"
     environment:
@@ -283,7 +288,7 @@ services:
       context: .
       dockerfile: docker-compose/dockerfiles/feed-service-api.dockerfile
     ports:
-      - "8095:8080"
+      - "8093:8080"
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -292,7 +297,7 @@ services:
       - ./docker-compose/local/feed-service.env
     labels:
       - traefik.http.routers.feed-service.rule=PathPrefix(`/feed-service`)
-      - traefik.http.services.feed-service.loadbalancer.server.port=8094
+      - traefik.http.services.feed-service.loadbalancer.server.port=8093
       - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
       - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
       - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
@@ -308,7 +313,7 @@ services:
       context: .
       dockerfile: docker-compose/dockerfiles/feed-map-api.dockerfile
     ports:
-      - "8095:8080"
+      - "8094:8080"
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -317,7 +322,7 @@ services:
       - ./docker-compose/local/feed-map.env
     labels:
       - traefik.http.routers.feed-map.rule=PathPrefix(`/feed-map`)
-      - traefik.http.services.feed-map.loadbalancer.server.port=8092
+      - traefik.http.services.feed-map.loadbalancer.server.port=8094
       - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
       - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
       - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*

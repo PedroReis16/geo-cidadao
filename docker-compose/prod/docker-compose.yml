@@ -95,29 +95,6 @@ services:
     networks:
       - geo-network
     restart: always
-  feed-service:
-    container_name: feed-service
-    image: pedroreis16/feed-service-api:latest
-    ports:
-      - "8092:8080"
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    env_file:
-      - ./default.env
-      - ./feed-service.env
-    labels:
-      - traefik.http.routers.feed-service.rule=PathPrefix(`/feed-service`)
-      - traefik.http.services.feed-service.loadbalancer.server.port=8091
-      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
-      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
-      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
-      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
-      - traefik.http.middlewares.cors.headers.addvaryheader=true
-      - traefik.http.routers.feed-service.middlewares=cors
-    networks:
-      - geo-network
-    restart: always
   geocidadao-ui:
     container_name: geocidadao-ui
     image: pedroreis16/geocidadao-ui:latest
