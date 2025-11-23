@@ -1,4 +1,5 @@
 using GeoCidadao.GerenciamentoPostsAPI.Contracts;
+using GeoCidadao.GerenciamentoPostsAPI.Contracts.CacheServices;
 using GeoCidadao.GerenciamentoPostsAPI.Contracts.QueueServices;
 using GeoCidadao.GerenciamentoPostsAPI.Database.Contracts;
 using GeoCidadao.Models.Constants;
@@ -18,77 +19,114 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
         private readonly HttpContext? _context = contextAccessor?.HttpContext;
         private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
 
-        public async Task UploadPostMediaAsync(Guid postId, int order, IFormFile mediaFile)
+        public async Task<string> GetPostMediaUrlAsync(Guid postId, Guid mediaId)
         {
-            Guid mediaId = Guid.NewGuid();
-            string fileExtension = string.Empty;
-
             try
             {
                 using IServiceScope scope = _scopeFactory.CreateScope();
+                IPostMediasCacheService mediaCacheService = scope.ServiceProvider.GetRequiredService<IPostMediasCacheService>();
+
+                string? cachedUrl = mediaCacheService.GetPostMediaUrl(postId, mediaId);
+                if (!string.IsNullOrEmpty(cachedUrl))
+                    return cachedUrl;
+
                 IPostMediaDao postMediaDao = scope.ServiceProvider.GetRequiredService<IPostMediaDao>();
+                PostMedia? postMedia = await postMediaDao.FindAsync(mediaId);
+
+                if (postMedia == null || postMedia.Post.Id != postId)
+                    throw new EntityValidationException(nameof(PostMedia), $"Mídia '{mediaId}' não encontrada para o post '{postId}'.", ErrorCodes.POST_MEDIA_NOT_FOUND);
+
                 IMediaBucketService mediaBucketService = scope.ServiceProvider.GetRequiredService<IMediaBucketService>();
+                string mediaUrl = await mediaBucketService.GetPostMediaUrlAsync(postId, mediaId, postMedia.MediaType);
 
-                List<PostMedia> postMedias = await postMediaDao.GetPostMediasAsync(postId);
+                mediaCacheService.AddPostMedia(postId, mediaId, mediaUrl);
 
-                if (postMedias.Count >= 10)
-                    throw new EntityValidationException(nameof(PostMedia), $"O post '{postId}' já possui o número máximo de mídias permitidas (10).", ErrorCodes.POST_MEDIA_LIMIT_EXCEEDED);
-
-
-                await mediaBucketService.UploadMediaAsync(postId, mediaId, mediaFile.OpenReadStream(), out fileExtension);
-
-                _logger.LogInformation($"Mídia '{mediaId}' do post '{postId}' enviada com sucesso.");
-
-                PostMedia postMedia = new PostMedia
-                {
-                    Id = mediaId,
-                    Post = new Post { Id = postId },
-                    MediaType = fileExtension,
-                    FileSize = mediaFile.Length,
-                };
-
-                if (order == 0)
-                {
-                    postMedia.Order = postMedias.Count + 1;
-                    await postMediaDao.AddAsync(postMedia);
-                }
-                else
-                {
-                    postMedia.Order = order;
-                    await postMediaDao.AddAsync(postMedia);
-
-                    // Reordenar as outras mídias conforme necessário
-                    List<Task> updateTasks = new List<Task>();
-
-                    var mediasToReorder = postMedias.Where(pm => pm.Order >= order).OrderBy(pm => pm.Order).ToList();
-                    foreach (var media in mediasToReorder)
-                    {
-                        media.Order += 1;
-                        updateTasks.Add(postMediaDao.UpdateMediaOrderAsync(media.Id, media.Order));
-                    }
-                    await Task.WhenAll(updateTasks);
-                }
-
-                NotifyPostChanged(postId);
+                return mediaUrl;
             }
             catch (EntityValidationException) { throw; }
             catch (Exception ex)
             {
-                string errorMsg = $"Ocorreu um erro ao tentar adicionar mídia ao post '{postId}': {ex.GetFullMessage()}";
+                string errorMsg = $"Ocorreu um erro ao tentar obter a URL da mídia '{mediaId}' do post '{postId}': {ex.GetFullMessage()}";
+                _logger.LogError(ex, errorMsg, _context, new()
+                {
+                    { LogConstants.EntityId, postId },
+                    { "PostMediaId", mediaId },
+                });
+                throw new Exception(errorMsg, ex);
+            }
+        }
+
+        public async Task<List<PostMedia>> UploadPostMediasAsync(Guid postId, List<IFormFile> mediaFiles)
+        {
+            List<PostMedia> result = new();
+
+            try
+            {
+
+                List<Task> uploadTasks = new();
+
+                if (mediaFiles.Count > 10)
+                    throw new EntityValidationException(nameof(PostMedia), $"O post '{postId}' excedeu o número máximo de mídias permitidas (10).", ErrorCodes.POST_MEDIA_LIMIT_EXCEEDED);
+
+                for (int i = 0; i < mediaFiles.Count; i++)
+                {
+                    IFormFile file = mediaFiles[i];
+                    int order = i + 1;
+
+                    uploadTasks.Add(Task.Run(async () =>
+                    {
+                        Guid mediaId = Guid.NewGuid();
+                        string fileExtension = string.Empty;
+
+                        try
+                        {
+                            using IServiceScope scope = _scopeFactory.CreateScope();
+                            IMediaBucketService mediaBucketService = scope.ServiceProvider.GetRequiredService<IMediaBucketService>();
+
+                            await mediaBucketService.UploadMediaAsync(postId, mediaId, file.OpenReadStream(), out fileExtension);
+
+                            _logger.LogInformation($"Mídia '{mediaId}' do post '{postId}' enviada com sucesso.");
+
+                            PostMedia postMedia = new PostMedia
+                            {
+                                Id = mediaId,
+                                MediaType = fileExtension,
+                                FileSize = file.Length,
+                                Order = order
+                            };
+                            result.Add(postMedia);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            string errorMsg = $"Ocorreu um erro ao tentar adicionar mídia ao post '{postId}': {ex.GetFullMessage()}";
+                            _logger.LogError(ex, errorMsg, _context, new()
+                            {
+                                { LogConstants.EntityId, postId },
+                            });
+                            _ = DeleteMediaWithErrorAsync(postId, mediaId, fileExtension);
+                            throw new Exception(errorMsg, ex);
+                        }
+                    }));
+                }
+                await Task.WhenAll(uploadTasks);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                string errorMsg = $"Ocorreu um erro ao tentar adicionar mídias ao post '{postId}': {ex.GetFullMessage()}";
                 _logger.LogError(ex, errorMsg, _context, new()
                 {
                     { LogConstants.EntityId, postId },
                 });
-
-                _ = DeleteMediaWithErrorAsync(postId, mediaId, fileExtension);
-
                 throw new Exception(errorMsg, ex);
             }
         }
 
         private Task DeleteMediaWithErrorAsync(Guid postId, Guid mediaId, string mediaType)
         {
-            if(string.IsNullOrEmpty(mediaType))
+            if (string.IsNullOrEmpty(mediaType))
                 return Task.CompletedTask;
 
             using IServiceScope scope = _scopeFactory.CreateScope();

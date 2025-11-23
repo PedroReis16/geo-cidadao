@@ -24,12 +24,12 @@ using Quartz;
 using GeoCidadao.Jobs.Config;
 using GeoCidadao.Jobs.Listeners;
 using GeoCidadao.GerenciamentoPostsAPI.Jobs.QueueJobs;
-
-
 using GeoCidadao.GerenciamentoPostsAPI.Contracts.ConnectionServices;
 using GeoCidadao.GerenciamentoPostsAPI.Services.ConnectionServices;
 using Polly;
 using Polly.Extensions.Http;
+using GeoCidadao.GerenciamentoPostsAPI.Services.CacheServices;
+using GeoCidadao.GerenciamentoPostsAPI.Contracts.CacheServices;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +64,9 @@ builder.Services.AddTransient<IMediaBucketService, MediaBucketService>();
 builder.Services.AddTransient<IPostDao, PostDao>();
 builder.Services.AddTransient<IPostMediaDao, PostMediaDao>();
 builder.Services.AddTransient<IPostLocationDao, PostLocationDao>();
+
+// Cache Services
+builder.Services.AddTransient<IPostMediasCacheService, PostMediasCacheService>();
 
 // Queue Services
 builder.Services.AddSingleton<INotifyPostChangedService, NotifyPostChangedService>();
