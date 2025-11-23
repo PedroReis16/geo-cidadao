@@ -29,6 +29,13 @@ namespace GeoCidadao.PostIndexerWorker.Elasticsearch
                               .Keyword("city")
                               .GeoPoint("location")
                               .Keyword("tags")
+                              .Text("authorName")
+                              .Keyword("authorUsername")
+                              .Keyword("authorProfilePicture")
+                              .Keyword("mediaUrls")
+                              .FloatNumber("relevanceScore")
+                              .IntegerNumber("likesCount")
+                              .IntegerNumber("commentsCount")
                           )
                       )
                   );

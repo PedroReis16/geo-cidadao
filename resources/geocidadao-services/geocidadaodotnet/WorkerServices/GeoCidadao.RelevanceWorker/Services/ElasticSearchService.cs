@@ -78,7 +78,7 @@ namespace GeoCidadao.RelevanceWorker.Services
             }
         }
 
-        public async Task UpdatePostAsync(Guid postId,  RelevanceDocument postDocument, CancellationToken cancellationToken = default)
+        public async Task UpdatePostAsync(Guid postId, RelevanceDocument postDocument, CancellationToken cancellationToken = default)
         {
             try
             {

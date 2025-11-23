@@ -29,13 +29,26 @@ namespace GeoCidadao.Database.Migrations
             modelBuilder.Entity("GeoCidadao.Database.Entities.GerenciamentoPostsAPI.PostLocation", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<int>("Category")
-                        .HasColumnType("integer")
-                        .HasColumnName("category");
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("address");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("city");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("country");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -43,14 +56,22 @@ namespace GeoCidadao.Database.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<Point>("Position")
+                    b.Property<Point>("Location")
                         .IsRequired()
-                        .HasColumnType("geometry")
+                        .HasColumnType("geometry (Point)")
                         .HasColumnName("position");
 
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("post_id");
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("state");
+
+                    b.Property<string>("Suburb")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("suburb");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp without time zone")
@@ -58,17 +79,21 @@ namespace GeoCidadao.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Category");
+                    b.HasIndex("City");
+
+                    b.HasIndex("Country");
 
                     b.HasIndex("CreatedAt");
 
-                    b.HasIndex("Position");
+                    b.HasIndex("Location");
 
-                    b.HasIndex("PostId");
+                    b.HasIndex("State");
+
+                    b.HasIndex("Suburb");
 
                     b.HasIndex("UpdatedAt");
 
-                    b.ToTable("post_location", (string)null);
+                    b.ToTable("post_locations", (string)null);
                 });
 
             modelBuilder.Entity("GeoCidadao.Models.Entities.EngagementServiceAPI.CommentLike", b =>
@@ -421,6 +446,17 @@ namespace GeoCidadao.Database.Migrations
                     b.ToTable("user_profiles", (string)null);
                 });
 
+            modelBuilder.Entity("GeoCidadao.Database.Entities.GerenciamentoPostsAPI.PostLocation", b =>
+                {
+                    b.HasOne("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.Post", "Post")
+                        .WithOne("Location")
+                        .HasForeignKey("GeoCidadao.Database.Entities.GerenciamentoPostsAPI.PostLocation", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("GeoCidadao.Models.Entities.EngagementServiceAPI.CommentLike", b =>
                 {
                     b.HasOne("GeoCidadao.Models.Entities.EngagementServiceAPI.PostComment", "Comment")
@@ -472,6 +508,8 @@ namespace GeoCidadao.Database.Migrations
 
             modelBuilder.Entity("GeoCidadao.Models.Entities.GerenciamentoPostsAPI.Post", b =>
                 {
+                    b.Navigation("Location");
+
                     b.Navigation("Medias");
                 });
 

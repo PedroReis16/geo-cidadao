@@ -8,12 +8,13 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
     {
         private readonly ICloudBucketService _bucketService = bucketService;
 
-
-        public Task<List<string>> GetPostMediaKeysAsync(Guid postId)
+        public Task<string> GetPostMediaUrlAsync(Guid postId, Guid mediaId, string fileExtension)
         {
-            return _bucketService.ListObjectsAsync(new()
-            {
+            string objectKey = $"{postId}/{mediaId}{fileExtension}";
 
+            return _bucketService.GetPreSignedUrlAsync(new()
+            {
+                ObjectKey = objectKey
             });
         }
 

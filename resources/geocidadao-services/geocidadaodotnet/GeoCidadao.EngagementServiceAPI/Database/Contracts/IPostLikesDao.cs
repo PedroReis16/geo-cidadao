@@ -7,5 +7,6 @@ namespace GeoCidadao.EngagementServiceAPI.Database.Contracts
     {
         Task RemovePostLikeAsync(Guid postId, Guid userId);
         Task DeletePostLikesAsync(Guid postId);
+        Task<List<Guid>> GetLikedPostIdsAsync(Guid userId, List<Guid> postIds);
     }
 }
