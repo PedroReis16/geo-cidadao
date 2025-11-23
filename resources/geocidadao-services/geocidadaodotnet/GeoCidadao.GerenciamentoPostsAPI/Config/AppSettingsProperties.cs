@@ -7,6 +7,8 @@ public class AppSettingsProperties
     public const string MaxConcurrency = "MaxConcurrency";
     public const string RabbitMQ = "RabbitMQ";
     public const string ApiUrls = "ApiUrls";
+    public const string NominatimClient = "NominatimClient";
+    public const string NominatimAPI = "NominatimAPI";
     public const string UserManagementClient = "UserManagementClient";
     public const string GerenciamentoUsuariosAPI = "GerenciamentoUsuariosAPI";
 }

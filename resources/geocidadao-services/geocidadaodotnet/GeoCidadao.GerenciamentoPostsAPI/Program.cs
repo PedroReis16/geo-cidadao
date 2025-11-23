@@ -28,6 +28,8 @@ using GeoCidadao.GerenciamentoPostsAPI.Jobs.QueueJobs;
 
 using GeoCidadao.GerenciamentoPostsAPI.Contracts.ConnectionServices;
 using GeoCidadao.GerenciamentoPostsAPI.Services.ConnectionServices;
+using Polly;
+using Polly.Extensions.Http;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -57,8 +59,6 @@ builder.Services.AddBucketServices();
 builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<IPostMediaService, PostMediaService>();
 builder.Services.AddTransient<IMediaBucketService, MediaBucketService>();
-builder.Services.AddTransient<ILocationsService, LocationsService>();
-builder.Services.AddTransient<IUserManagementService, UserManagementService>();
 
 // DAOs
 builder.Services.AddTransient<IPostDao, PostDao>();
@@ -69,11 +69,24 @@ builder.Services.AddTransient<IPostLocationDao, PostLocationDao>();
 builder.Services.AddSingleton<INotifyPostChangedService, NotifyPostChangedService>();
 builder.Services.AddSingleton<IUserDeletedQueueService, UserDeletedQueueService>();
 
+// Connection Services
+builder.Services.AddHttpClient<INominatimService, NominatimService>();
+builder.Services.AddTransient<IUserManagementService, UserManagementService>();
+
 // Fetchers (OAuth - Resource Fetchers)
 builder.Services.AddScoped<IResourceFetcher<Post>, PostFetcher>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();
+
+// Http Clients
+builder.Services.AddHttpClient<INominatimService, NominatimService>(AppSettingsProperties.NominatimClient, (sp, httpClient) =>
+{
+    IConfigurationSection apiUrlSection = builder.Configuration.GetSection(AppSettingsProperties.ApiUrls);
+    httpClient.BaseAddress = new Uri(apiUrlSection.GetValue<string>(AppSettingsProperties.NominatimAPI)!);
+})
+   .AddPolicyHandler(GetRetryPolicy())
+   .AddHttpMessageHandler<ForwardingHandler>(); 
 
 builder.Services.AddHttpClient<IUserManagementService, UserManagementService>(AppSettingsProperties.UserManagementClient, (sp, httpClient) =>
 {
@@ -190,3 +203,12 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+        .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+}
