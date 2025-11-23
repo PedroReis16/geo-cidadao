@@ -88,7 +88,7 @@ builder.Services.AddHttpClient<INominatimService, NominatimService>(AppSettingsP
     httpClient.BaseAddress = new Uri(apiUrlSection.GetValue<string>(AppSettingsProperties.NominatimAPI)!);
 })
    .AddPolicyHandler(GetRetryPolicy())
-   .AddHttpMessageHandler<ForwardingHandler>(); 
+   .AddHttpMessageHandler<ForwardingHandler>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
