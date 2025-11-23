@@ -10,7 +10,11 @@ using GeoCidadao.Models.Config;
 using GeoCidadao.Database.Extensions;
 using GeoCidadao.OAuth.Extensions;
 using GeoCidadao.OAuth.Models;
-
+using GeoCidadao.FeedServiceAPI.Services;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Transport;
+using GeoCidadao.FeedServiceAPI.Contracts;
+using StackExchange.Redis;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -26,9 +30,6 @@ builder.Services.AddControllers(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-
-builder.Services.UsePostgreSql(builder.Configuration);
-
 // Middlewares
 builder.Services.AddTransient<GlobalExceptionHandler>();
 builder.Services.AddInMemoryCache(builder.Configuration);
@@ -36,13 +37,52 @@ builder.Services.AddResponseCaching();
 builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
+builder.Services.AddTransient<FeedService>();
+builder.Services.AddTransient<IUserInterestsService, UserInterestsService>();
+builder.Services.AddTransient<IEngagementService, EngagementService>();
+builder.Services.AddSingleton<ISeenPostsService, SeenPostsService>();
 
-// DAOs
+// Redis
+// builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+// {
+//     var configuration = sp.GetRequiredService<IConfiguration>();
+//     var redisConnectionString = configuration.GetConnectionString("Redis")!;
+//     return ConnectionMultiplexer.Connect(redisConnectionString);
+// });
+
+// HTTP Clients
+builder.Services.AddHttpClient<IUserInterestsService, UserInterestsService>("UserInterestsClient", (sp, httpClient) =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var url = configuration.GetValue<string>("Services:GerenciamentoUsuariosAPI") ?? "http://gerenciamento-usuarios-api:8080";
+    httpClient.BaseAddress = new Uri(url); 
+});
+
+builder.Services.AddHttpClient<IEngagementService, EngagementService>("EngagementClient", (sp, httpClient) =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var url = configuration.GetValue<string>("Services:EngagementServiceAPI") ?? "http://engagement-service-api:8080";
+    httpClient.BaseAddress = new Uri(url);
+});
+
+// Elastic Search
+builder.Services.AddSingleton(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var settings = configuration.GetSection("ElasticSearch").Get<ElasticSearchSettings>();
+    
+    if (settings == null) throw new Exception("ElasticSearch settings not found");
+
+    var clientSettings = new ElasticsearchClientSettings(new Uri(settings.Uri))
+        .DefaultIndex(settings.DefaultIndex)
+        .Authentication(new BasicAuthentication(settings.UserName, settings.Password));
+    return new ElasticsearchClient(clientSettings);
+});
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
@@ -102,6 +142,7 @@ app.UseMiddleware<HttpResponseCacheHandler>();
 
 app.UsePathBase($"/{basePath}");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

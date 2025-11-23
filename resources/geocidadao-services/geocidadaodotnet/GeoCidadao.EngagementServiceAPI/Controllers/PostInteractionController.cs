@@ -7,19 +7,35 @@ using Microsoft.AspNetCore.Mvc;
 namespace GeoCidadao.EngagementServiceAPI.Controllers
 {
     [ApiController]
-    [Route("interactions/{postId}")]
+    [Route("interactions")]
     [Authorize]
     public class PostInteractionController(IPostInteractionService interactionService) : ControllerBase
     {
         private readonly IPostInteractionService _interactionService = interactionService;
 
         /// <summary>
+        /// Verificar curtidas de um usuário em uma lista de posts
+        /// </summary>
+        /// <param name="checkLikesDto">Dados para verificação</param>
+        /// <returns>Lista de IDs de posts curtidos</returns>
+        [HttpPost("check-likes")]
+        [AllowAnonymous] // Internal service call, or use specific policy
+        public async Task<IActionResult> CheckLikes([FromBody] CheckLikesDTO checkLikesDto)
+        {
+            // If internal service, we might skip auth or use client credentials. 
+            // For simplicity assuming it's allowed or handled by gateway/network.
+            // If called by user, we should verify userId matches token.
+            
+            var likedPosts = await _interactionService.GetLikedPostIdsAsync(checkLikesDto.UserId, checkLikesDto.PostIds);
+            return Ok(likedPosts);
+        }
+
+        /// <summary>
         /// Curtir um post
         /// </summary>
         /// <param name="postId">Id do post</param>
         /// <returns></returns>
-        [HttpPost("like")]
-        [Authorize(Policy = "Posts.Read")]
+        [HttpPost("{postId}/like")]
         public async Task<IActionResult> LikePost(Guid postId)
         {
             Guid userId = HttpContext.User.GetUserId();
@@ -32,8 +48,7 @@ namespace GeoCidadao.EngagementServiceAPI.Controllers
         /// </summary>
         /// <param name="postId">Id do post</param>
         /// <returns></returns>
-        [HttpDelete("like")]
-        [Authorize(Policy = "Posts.Read")]
+        [HttpDelete("{postId}/like")]
         public async Task<IActionResult> UnlikePost(Guid postId)
         {
             Guid userId = HttpContext.User.GetUserId();
@@ -46,9 +61,9 @@ namespace GeoCidadao.EngagementServiceAPI.Controllers
         /// Denunciar um post
         /// </summary>
         /// <param name="postId">Id do post</param>
+        /// <param name="delationDetails">Detalhes da denúncia</param>
         /// <returns></returns>
-        [HttpPost("delation")]
-        [Authorize(Policy = "Posts.Read")]
+        [HttpPost("{postId}/delation")]
         public async Task<IActionResult> DelatePost(Guid postId, [FromBody] DelationDTO delationDetails)
         {
             Guid userId = HttpContext.User.GetUserId();

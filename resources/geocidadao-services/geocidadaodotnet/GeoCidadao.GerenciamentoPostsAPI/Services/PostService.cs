@@ -10,6 +10,11 @@ using GeoCidadao.Models.Exceptions;
 using GeoCidadao.Models.Extensions;
 using GeoCidadao.Database.Entities.GerenciamentoPostsAPI;
 using NetTopologySuite.Geometries;
+using GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Nominatim;
+using GeoCidadao.GerenciamentoPostsAPI.Contracts.ConnectionServices;
+using GeoCidadao.Models.OAuth;
+using GeoCidadao.OAuth.Models;
+using GeoCidadao.GerenciamentoPostsAPI.Config;
 
 namespace GeoCidadao.GerenciamentoPostsAPI.Services
 {
@@ -49,41 +54,6 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                 throw new Exception(errorMsg, ex);
             }
         }
-
-        public async Task<PostWithLocationDTO?> GetPostWithLocationAsync(Guid postId)
-        {
-            try
-            {
-                Post? post = await _postDao.FindAsync(postId);
-
-                if (post == null)
-                    return null;
-
-                PostLocation? location = await _postLocationDao.GetPostLocationByPostIdAsync(postId);
-                PostLocationDTO? locationDto = null;
-
-                if (location != null)
-                {
-                    locationDto = new PostLocationDTO
-                    {
-                        Latitude = location.Position.Y,
-                        Longitude = location.Position.X
-                    };
-                }
-
-                return new PostWithLocationDTO(post, locationDto);
-            }
-            catch (Exception ex)
-            {
-                string errorMsg = $"Ocorreu um erro ao tentar obter o post com localização '{postId}': {ex.GetFullMessage()}";
-                _logger.LogError(ex, errorMsg, _context, new()
-                {
-                    { LogConstants.EntityId, postId },
-                });
-                throw new Exception(errorMsg, ex);
-            }
-        }
-
         public async Task<List<PostDTO>> GetUserPostsAsync(Guid userId, int? itemsCount = null, int? pageNumber = null)
         {
             try
@@ -102,133 +72,55 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                 throw new Exception(errorMsg, ex);
             }
         }
-
-        public async Task<List<PostWithLocationDTO>> GetPostsByLocationAsync(LocationQueryDTO locationQuery)
+        public async Task<PostDTO> CreatePostAsync(NewPostDTO newPost)
         {
-            try
-            {
-                List<PostLocation> postLocations;
+            using IServiceScope scope = _scopeFactory.CreateScope();
+            INotifyPostChangedService notifyService = scope.ServiceProvider.GetRequiredService<INotifyPostChangedService>();
 
-                // Query by coordinates and radius
-                if (locationQuery.Latitude.HasValue && locationQuery.Longitude.HasValue && locationQuery.RadiusKm.HasValue)
-                {
-                    var geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
-                    Point center = geometryFactory.CreatePoint(new Coordinate(locationQuery.Longitude.Value, locationQuery.Latitude.Value));
-
-                    postLocations = await _postLocationDao.GetPostsWithinRadiusAsync(
-                        center,
-                        locationQuery.RadiusKm.Value,
-                        locationQuery.ItemsCount,
-                        locationQuery.PageNumber
-                    );
-                }
-                // Query by city/state
-                else if (!string.IsNullOrEmpty(locationQuery.City) || !string.IsNullOrEmpty(locationQuery.State))
-                {
-                    postLocations = await _postLocationDao.GetPostsByLocationAsync(
-                        locationQuery.City,
-                        locationQuery.State,
-                        locationQuery.Country,
-                        locationQuery.ItemsCount,
-                        locationQuery.PageNumber
-                    );
-                }
-                else
-                {
-                    // No location parameters provided - return empty list
-                    return new List<PostWithLocationDTO>();
-                }
-
-                // Fetch the actual posts and order by relevance
-                var postIds = postLocations.Select(pl => pl.PostId).ToList();
-                var posts = new List<PostWithLocationDTO>();
-
-                foreach (var postLocation in postLocations)
-                {
-                    var post = await _postDao.FindAsync(postLocation.PostId);
-                    if (post != null)
-                    {
-                        var locationDto = new PostLocationDTO
-                        {
-                            Latitude = postLocation.Position.Y,
-                            Longitude = postLocation.Position.X
-                        };
-                        posts.Add(new PostWithLocationDTO(post, locationDto));
-                    }
-                }
-
-                // Sort by relevance score (higher engagement) while maintaining proximity as secondary factor
-                return posts.OrderByDescending(p => p.RelevanceScore).ThenBy(p => p.CreatedAt).ToList();
-            }
-            catch (Exception ex)
-            {
-                string errorMsg = $"Ocorreu um erro ao tentar obter posts por localização: {ex.GetFullMessage()}";
-                _logger.LogError(ex, errorMsg, _context);
-                throw new Exception(errorMsg, ex);
-            }
-        }
-
-        public async Task<PostDTO> CreatePostAsync(Guid userId, NewPostDTO newPost)
-        {
-            Guid postId = Guid.NewGuid();
+            RequestUser requestUser = _context!.User.GetUserDetails();
+            List<string> mediaUrls = new();
 
             try
             {
                 Post newPostEntity = new()
                 {
-                    Id = postId,
                     Content = newPost.Content,
-                    UserId = userId
+                    UserId = requestUser.Id,
                 };
 
+                if (newPost.HasPosition)
+                {
+                    INominatimService nominatimService = scope.ServiceProvider.GetRequiredService<INominatimService>();
+
+                    AddressDTO? addressInfo = await nominatimService.GetCoordinatesDetailsAsync(newPost.Latitude!.Value, newPost.Longitude!.Value);
+
+                    PostLocation newLocation = new()
+                    {
+                        Post = newPostEntity,
+                        Location = new Point(newPost.Longitude!.Value, newPost.Latitude!.Value) { SRID = 4326 },
+                        Address = addressInfo.Road,
+                        City = addressInfo.City,
+                        State = addressInfo.State,
+                        Country = addressInfo.Country,
+                        Suburb = addressInfo.Suburb,
+                    };
+                    newPostEntity.Location = newLocation;
+                }
+
+                if (newPost.MediaFiles.Any())
+                {
+                    string baseUrl = scope.ServiceProvider.GetRequiredService<IConfiguration>().GetValue<string>(AppSettingsProperties.ServicePath)!;
+
+                    IPostMediaService postMediaService = scope.ServiceProvider.GetRequiredService<IPostMediaService>();
+
+                    List<PostMedia> postMedias = await postMediaService.UploadPostMediasAsync(newPostEntity.Id, newPost.MediaFiles);
+
+                    newPostEntity.Medias = postMedias.Select(x => { x.Post = newPostEntity; return x; }).ToList();
+
+                    mediaUrls = newPostEntity.Medias.Select(m => $"{baseUrl}/posts/{newPostEntity.Id}/media/{m.Id}").ToList();
+                }
 
                 await _postDao.AddAsync(newPostEntity);
-
-                // // Save location if provided
-                // if (newPost.Position != null &&
-                //     !string.IsNullOrEmpty(newPost.Position.Latitude) &&
-                //     !string.IsNullOrEmpty(newPost.Position.Longitude))
-                // {
-                //     try
-                //     {
-                //         if (double.TryParse(newPost.Position.Latitude, out double lat) &&
-                //             double.TryParse(newPost.Position.Longitude, out double lon))
-                //         {
-                //             var geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
-                //             Point position = geometryFactory.CreatePoint(new Coordinate(lon, lat));
-
-                //             PostLocation postLocation = new()
-                //             {
-                //                 Id = Guid.NewGuid(),
-                //                 PostId = postId,
-                //                 Position = position,
-                //                 Category = newPostEntity.Category
-                //             };
-
-                //             await _postLocationDao.AddAsync(postLocation);
-
-                //             // Notify analytics service asynchronously
-                //             _ = Task.Run(async () =>
-                //             {
-                //                 try
-                //                 {
-                //                     using var scope = _scopeFactory.CreateScope();
-                //                     var analyticsService = scope.ServiceProvider.GetRequiredService<INotifyPostAnalyticsService>();
-                //                     await analyticsService.NotifyPostAnalyticsAsync(postId);
-                //                 }
-                //                 catch (Exception analyticsEx)
-                //                 {
-                //                     _logger.LogWarning(analyticsEx, $"Falha ao notificar analytics para o post '{postId}'");
-                //                 }
-                //             });
-                //         }
-                //     }
-                //     catch (Exception ex)
-                //     {
-                //         _logger.LogWarning(ex, $"Não foi possível salvar a localização do post '{postId}'", _context);
-                //         // Continue without location - it's optional
-                //     }
-                // }
 
                 _ = Task.Run(() =>
                 {
@@ -239,10 +131,13 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                         Id = newPostEntity.Id,
                         PostOwnerId = newPostEntity.UserId,
                         Content = newPostEntity.Content,
-                        City = newPost.Position?.City,
-                        Latitude = double.TryParse(newPost.Position?.Latitude, out double lat) ? lat : null,
-                        Longitude = double.TryParse(newPost.Position?.Longitude, out double lon) ? lon : null,
-                        // Tags = newPost.Tags ?? Array.Empty<string>()
+                        City = newPostEntity.Location?.City,
+                        Latitude = newPostEntity.Location?.Location.Y,
+                        Longitude = newPostEntity.Location?.Location.X,
+                        AuthorName = $"{requestUser.FirstName} {requestUser.LastName}".Trim(),
+                        AuthorUsername = requestUser.Email,
+                        AuthorProfilePicture = requestUser.Picture,
+                        MediaUrls = mediaUrls
                     });
                 });
 
@@ -254,11 +149,10 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
             }
             catch (Exception ex)
             {
-                string errorMsg = $"Um erro ocorreu ao tentar criar o post para o usuário '{userId}': {ex.GetFullMessage()}";
+                string errorMsg = $"Um erro ocorreu ao tentar criar o post para o usuário '{requestUser.Id}': {ex.GetFullMessage()}";
                 _logger.LogError(ex, errorMsg, _context, new()
                 {
-                    { LogConstants.UserId, userId },
-                    { LogConstants.EntityId, postId },
+                    { LogConstants.UserId, requestUser.Id    },
                 });
 
 
@@ -326,19 +220,6 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Services
                             await postMediaService.DeletePostMediasAsync(postId);
                         }
                         catch (Exception) { /* Ignorar erros de deleção de mídia */ }
-                    }),
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            IPostLocationDao locationDao = scope.ServiceProvider.GetRequiredService<IPostLocationDao>();
-                            PostLocation? location = await locationDao.GetPostLocationByPostIdAsync(postId);
-                            if (location != null)
-                            {
-                                await locationDao.DeleteAsync(location);
-                            }
-                        }
-                        catch (Exception) { /* Ignorar erros de deleção de localização */ }
                     })
                 );
 

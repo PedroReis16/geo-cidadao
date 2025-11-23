@@ -24,33 +24,24 @@ namespace GeoCidadao.RelevanceWorker.Services
             RelevanceDocument? postDetails = await _elasticSearchService.FindPostDetailsAsync(postId);
 
             if (postDetails == null)
-            {
-                postDetails = new RelevanceDocument
-                {
-                    RelevanceScore = Math.Max(0.0, relevanceChange),
-                    LikesCount = interactionType == InteractionType.PostLike ? 1 : 0,
-                    CommentsCount = interactionType == InteractionType.PostComment ? 1 : 0,
-                };
-            }
-            else
-            {
-                postDetails.RelevanceScore = Math.Max(0.0, postDetails.RelevanceScore + relevanceChange);
+                return;
+                
+            postDetails.RelevanceScore = Math.Max(0.0, postDetails.RelevanceScore + relevanceChange);
 
-                switch (interactionType)
-                {
-                    case InteractionType.PostLike:
-                        postDetails.LikesCount += 1;
-                        break;
-                    case InteractionType.PostUnlike:
-                        postDetails.LikesCount = Math.Max(0, postDetails.LikesCount - 1);
-                        break;
-                    case InteractionType.PostComment:
-                        postDetails.CommentsCount += 1;
-                        break;
-                    case InteractionType.PostCommentDeleted:
-                        postDetails.CommentsCount = Math.Max(0, postDetails.CommentsCount - 1);
-                        break;
-                }
+            switch (interactionType)
+            {
+                case InteractionType.PostLike:
+                    postDetails.LikesCount += 1;
+                    break;
+                case InteractionType.PostUnlike:
+                    postDetails.LikesCount = Math.Max(0, postDetails.LikesCount - 1);
+                    break;
+                case InteractionType.PostComment:
+                    postDetails.CommentsCount += 1;
+                    break;
+                case InteractionType.PostCommentDeleted:
+                    postDetails.CommentsCount = Math.Max(0, postDetails.CommentsCount - 1);
+                    break;
             }
 
             await _elasticSearchService.UpdatePostAsync(postId, postDetails);

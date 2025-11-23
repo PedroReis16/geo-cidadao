@@ -17,11 +17,9 @@ public class RelevanceWorker(ILogger<RelevanceWorker> logger, IServiceScopeFacto
 
                 using IServiceScope scope = _scopeFactory.CreateScope();
 
-                INewPostQueueService newPostQueueService = scope.ServiceProvider.GetRequiredService<INewPostQueueService>();
                 IPostDeletedQueueService postDeletedQueueService = scope.ServiceProvider.GetRequiredService<IPostDeletedQueueService>();
                 IPostInteractQueueService postInteractQueueService = scope.ServiceProvider.GetRequiredService<IPostInteractQueueService>();
 
-                newPostQueueService.ConsumeQueue();
                 postDeletedQueueService.ConsumeQueue();
                 postInteractQueueService.ConsumeQueue();
 

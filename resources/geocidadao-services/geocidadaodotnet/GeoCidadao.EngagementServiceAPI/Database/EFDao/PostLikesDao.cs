@@ -39,5 +39,13 @@ namespace GeoCidadao.EngagementServiceAPI.Database.EFDao
                 .Where(pl => pl.PostId == postId)
                 .ExecuteDeleteAsync();
         }
+
+        public Task<List<Guid>> GetLikedPostIdsAsync(Guid userId, List<Guid> postIds)
+        {
+            return _context.Set<PostLike>()
+                .Where(pl => pl.UserId == userId && postIds.Contains(pl.PostId))
+                .Select(pl => pl.PostId)
+                .ToListAsync();
+        }
     }
 }

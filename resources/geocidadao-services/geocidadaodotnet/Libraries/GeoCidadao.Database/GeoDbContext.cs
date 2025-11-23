@@ -52,7 +52,7 @@ namespace GeoCidadao.Database
 
             _ = modelBuilder.ApplyConfiguration(new PostsConfiguration());
             _ = modelBuilder.ApplyConfiguration(new PostMediasConfiguration());
-            _ = modelBuilder.ApplyConfiguration(new PostLocationConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new PostLocationsConfiguration());
 
             // Engagement Service API
             _ = modelBuilder.ApplyConfiguration(new PostCommentsConfiguration());

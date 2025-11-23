@@ -1,13 +1,18 @@
-using NetTopologySuite.Geometries;
 using GeoCidadao.Models.Entities;
-using GeoCidadao.Models.Enums;
+using GeoCidadao.Models.Entities.GerenciamentoPostsAPI;
+using NetTopologySuite.Geometries;
 
 namespace GeoCidadao.Database.Entities.GerenciamentoPostsAPI
 {
     public class PostLocation : BaseEntity
     {
-        public Guid PostId { get; set; }
-        public Point Position { get; set; } = null!;
-        public PostCategory Category { get; set; }
+        public Point Location { get; set; } = null!;
+        public string Address { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string State { get; set; } = string.Empty;
+        public string Country { get; set; } = string.Empty;
+        public string Suburb { get; set; } = string.Empty;
+
+        public Post Post { get; set; } = null!;
     }
 }

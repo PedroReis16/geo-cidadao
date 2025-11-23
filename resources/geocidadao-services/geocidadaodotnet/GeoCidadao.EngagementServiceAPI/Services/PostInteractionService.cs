@@ -81,6 +81,23 @@ namespace GeoCidadao.EngagementServiceAPI.Services
             }
         }
 
+        public async Task<List<Guid>> GetLikedPostIdsAsync(Guid userId, List<Guid> postIds)
+        {
+            try
+            {
+                using IServiceScope scope = _serviceScopeFactory.CreateScope();
+                IPostLikesDao postLikesDao = scope.ServiceProvider.GetRequiredService<IPostLikesDao>();
+
+                return await postLikesDao.GetLikedPostIdsAsync(userId, postIds);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = $"Ocorreu um erro ao verificar curtidas do usuário '{userId}': {ex.Message}";
+                _logger.LogError(ex, errorMessage);
+                throw new Exception(errorMessage, ex);
+            }
+        }
+
         private void NotifyPostInteraction(Guid postId, InteractionType interactionType)
         {
             using var scope = _serviceScopeFactory.CreateScope();

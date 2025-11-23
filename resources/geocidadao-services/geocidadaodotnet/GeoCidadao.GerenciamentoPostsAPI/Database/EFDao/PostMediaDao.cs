@@ -32,6 +32,30 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Database.EFDao
             return Task.CompletedTask;
         }
 
+        public override async Task<PostMedia?> FindAsync(object key, bool track = false)
+        {
+            PostMedia? result = null;
+
+            if (_cache != null && !track)
+            {
+                result = _cache.GetEntity(key.ToString()!);
+                if (result != null)
+                    return result;
+            }
+
+            IQueryable<PostMedia> query = _context.Set<PostMedia>().Where(pm => pm.Id == (Guid)key).Include(pm => pm.Post);
+
+            if (!track)
+                query = query.AsNoTracking();
+
+            result = await query.FirstOrDefaultAsync();
+
+            if (result != null && !track)
+                _cache?.AddEntity(result);
+
+            return result;
+        }
+
         public override async Task<int> AddAsync(params PostMedia[] obj)
         {
             await ValidateEntityForInsert(obj);
