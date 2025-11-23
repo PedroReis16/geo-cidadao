@@ -71,7 +71,6 @@ builder.Services.AddSingleton<IUserDeletedQueueService, UserDeletedQueueService>
 
 // Connection Services
 builder.Services.AddHttpClient<INominatimService, NominatimService>();
-builder.Services.AddTransient<IUserManagementService, UserManagementService>();
 
 // Fetchers (OAuth - Resource Fetchers)
 builder.Services.AddScoped<IResourceFetcher<Post>, PostFetcher>();
@@ -88,12 +87,6 @@ builder.Services.AddHttpClient<INominatimService, NominatimService>(AppSettingsP
    .AddPolicyHandler(GetRetryPolicy())
    .AddHttpMessageHandler<ForwardingHandler>(); 
 
-builder.Services.AddHttpClient<IUserManagementService, UserManagementService>(AppSettingsProperties.UserManagementClient, (sp, httpClient) =>
-{
-    IConfigurationSection apiUrlSection = builder.Configuration.GetRequiredSection(AppSettingsProperties.ApiUrls);
-    httpClient.BaseAddress = new Uri(apiUrlSection.GetValue<string>(AppSettingsProperties.GerenciamentoUsuariosAPI)!);
-})
-.AddHttpMessageHandler<ForwardingHandler>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
