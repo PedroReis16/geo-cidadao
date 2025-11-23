@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "../styles/components/FeedList.css";
 import PostCard from "./PostCard/PostCard";
 import type { Post } from "../../data/@types/Post";
+import PostCreator from "./PostCreator";
 
 interface FeedListProps {
   isMapExpanded: boolean;
@@ -32,6 +33,8 @@ const FeedList: React.FC<FeedListProps> = ({
         isMapExpanded && isMobile ? "fade-out" : "fade-in"
       } `}
     >
+      <PostCreator />
+      
       {items && items.length > 0 ? (
         items.map((item: Post) => (
           <PostCard

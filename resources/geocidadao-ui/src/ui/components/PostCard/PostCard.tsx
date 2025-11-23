@@ -3,7 +3,6 @@ import { Heart, MessageCircle, MapPin } from "lucide-react";
 import "../../styles/components/PostCard/PostCard.css";
 import PostHeader from "./PostHeader";
 import MediaCarousel from "./MediaCarousel";
-import MediaModal from "./MediaModal";
 import type { Post } from "../../../data/@types/Post";
 
 interface PostCardProps {
@@ -20,7 +19,6 @@ const PostCard: React.FC<PostCardProps> = ({
   onMap,
 }) => {
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
-  const [isMediaExpanded, setIsMediaExpanded] = useState(false);
 
   const hasMedia = post.media && post.media.length > 0;
 
@@ -38,7 +36,7 @@ const PostCard: React.FC<PostCardProps> = ({
             hasMedia ? "post-text--compact" : "post-text--expanded"
           }`}
         >
-          {post.text}
+          {post.content}
         </div>
 
         {hasMedia && (
@@ -46,7 +44,6 @@ const PostCard: React.FC<PostCardProps> = ({
             media={post.media!}
             currentIndex={currentMediaIndex}
             onIndexChange={setCurrentMediaIndex}
-            onMediaClick={() => setIsMediaExpanded(true)}
           />
         )}
 
@@ -77,15 +74,6 @@ const PostCard: React.FC<PostCardProps> = ({
           )}
         </div>
       </article>
-
-      {isMediaExpanded && hasMedia && post.media && post.media.length > 0 && (
-        <MediaModal
-          mediaItems={post.media}
-          currentIndex={currentMediaIndex}
-          onClose={() => setIsMediaExpanded(false)}
-          onIndexChange={setCurrentMediaIndex}
-        />
-      )}
     </>
   );
 };

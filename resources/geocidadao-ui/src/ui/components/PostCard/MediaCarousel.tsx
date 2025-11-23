@@ -7,14 +7,14 @@ interface MediaCarouselProps {
   media: MediaItem[];
   currentIndex: number;
   onIndexChange: (index: number) => void;
-  onMediaClick: () => void;
+  variant?: "default" | "details"; // Nova prop
 }
 
 const MediaCarousel: React.FC<MediaCarouselProps> = ({
   media,
   currentIndex,
   onIndexChange,
-  onMediaClick,
+  variant = "default",
 }) => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
@@ -42,7 +42,7 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
 
   return (
     <div
-      className="media-carousel"
+      className={`media-carousel media-carousel--${variant}`}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -53,7 +53,6 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
           className={`media-carousel__item ${
             index === currentIndex ? "media-carousel__item--active" : ""
           }`}
-          onClick={onMediaClick}
         >
           {item.type === "image" ? (
             <img
