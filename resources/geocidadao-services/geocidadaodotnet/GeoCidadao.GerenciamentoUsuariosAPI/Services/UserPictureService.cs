@@ -3,6 +3,7 @@ using GeoCidadao.Cloud.Models.BucketRequests;
 using GeoCidadao.GerenciamentoUsuariosAPI.Config;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.CacheServices;
+using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.ConnectionServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Contracts.QueueServices;
 using GeoCidadao.GerenciamentoUsuariosAPI.Database.Contracts;
 using GeoCidadao.Models.Constants;
@@ -140,7 +141,32 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Services
 
         private async Task UpdatePhotoAsync(Guid userId, string pictureExtension, string fileHash)
         {
+            using IServiceScope scope = _serviceFactory.CreateScope();
+            IKeycloakService _keycloakService = scope.ServiceProvider.GetRequiredService<IKeycloakService>();
+            IUserCacheService _cacheService = scope.ServiceProvider.GetRequiredService<IUserCacheService>();
+            IUserProfileDao userProfileDao = scope.ServiceProvider.GetRequiredService<IUserProfileDao>();
+            IConfiguration configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+            UserProfile? userProfile = await userProfileDao.FindAsync(userId);
+
+            string photoUrl = $"{configuration.GetValue<string>(AppSettingsProperties.ServicePath)}/profile-picture/{userId}";
+
+            if (userProfile == null)
+                throw new UserException(404, "Perfil de usuário não encontrado", ErrorCodes.USER_NOT_FOUND);
+
+            await _keycloakService.UpdateUserAsync(userId, new()
+            {
+                FirstName = userProfile.FirstName,
+                LastName = userProfile.LastName,
+                Attributes = new Dictionary<string, object>
+                {
+                    { "picture", photoUrl }
+                }
+            });
+
             await _pictureDao.AddOrUpdatePictureAsync(userId, pictureExtension, fileHash);
+
+            _cacheService.RemoveUser(userId);
             NotifyUserPhotoChanged(userId);
         }
 
