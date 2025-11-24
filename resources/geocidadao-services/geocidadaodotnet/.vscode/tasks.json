@@ -78,12 +78,12 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "build: FeedServiceAPI",
+      "label": "build: FeedMapAPI",
       "command": "dotnet",
       "type": "shell",
       "args": [
         "build",
-        "${workspaceFolder}/GeoCidadao.FeedServiceAPI/GeoCidadao.FeedServiceAPI.csproj",
+        "${workspaceFolder}/GeoCidadao.FeedMapAPI/GeoCidadao.FeedMapAPI.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],
