@@ -150,6 +150,19 @@
         "FeedMapAPI"
       ],
       "stopAll": true
+    },
+    {
+      "name": "FeedService",
+      "configurations": [
+        "GerenciamentoUsuariosAPI",
+        "GerenciamentoPostsAPI",
+        "EngagementServiceAPI",
+        "PostIndexerWorker",
+        "RelevanceWorker",
+        "FeedServiceAPI",
+        "FeedMapAPI"
+      ],
+      "stopAll": true
     }
   ]
 }
