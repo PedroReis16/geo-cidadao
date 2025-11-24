@@ -7,14 +7,18 @@ using GeoCidadao.FeedServiceAPI.Config;
 using System.Text.Json.Serialization;
 using System.Reflection;
 using GeoCidadao.Models.Config;
-using GeoCidadao.Database.Extensions;
 using GeoCidadao.OAuth.Extensions;
 using GeoCidadao.OAuth.Models;
 using GeoCidadao.FeedServiceAPI.Services;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
+using GeoCidadao.FeedServiceAPI.Services.ConnectionServices;
+using GeoCidadao.FeedServiceAPI.Contracts.ConnectionServices;
+using GeoCidadao.FeedServiceAPI.Services.CacheServices;
+using GeoCidadao.FeedServiceAPI.Contracts.CacheServices;
+using GeoCidadao.FeedServiceAPI.Middlewares;
+using Microsoft.Extensions.Options;
 using GeoCidadao.FeedServiceAPI.Contracts;
-using StackExchange.Redis;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +34,10 @@ builder.Services.AddControllers(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+
+builder.Services.Configure<KeycloakAdminOptions>(builder.Configuration.GetSection(AppSettingsProperties.Keycloak).GetSection(AppSettingsProperties.KeycloakAdmin)!);
+
+
 // Middlewares
 builder.Services.AddTransient<GlobalExceptionHandler>();
 builder.Services.AddInMemoryCache(builder.Configuration);
@@ -37,40 +45,48 @@ builder.Services.AddResponseCaching();
 builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
-builder.Services.AddTransient<FeedService>();
-builder.Services.AddTransient<IUserInterestsService, UserInterestsService>();
-builder.Services.AddTransient<IEngagementService, EngagementService>();
-builder.Services.AddSingleton<ISeenPostsService, SeenPostsService>();
+builder.Services.AddTransient<IFeedService, FeedService>();
 
-// Redis
-// builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-// {
-//     var configuration = sp.GetRequiredService<IConfiguration>();
-//     var redisConnectionString = configuration.GetConnectionString("Redis")!;
-//     return ConnectionMultiplexer.Connect(redisConnectionString);
-// });
+// Connection Services
+builder.Services.AddSingleton<IUserManagementService, UserManagementService>();
+builder.Services.AddSingleton<IPostEngagementService, PostEngagementService>();
+
+// Cache Services
+builder.Services.AddSingleton<IKeycloakAdminCacheService, KeycloakAdminCacheService>();
+builder.Services.AddSingleton<IUserInterestsCacheService, UserInterestsCacheService>();
+builder.Services.AddSingleton<IViewedPostsCacheService, ViewedPostsCacheService>();
+
+// Keycloak
+builder.Services.AddSingleton<IKeycloakTokenProvider, KeycloakTokenProvider>();
+builder.Services.AddTransient<KeycloakAdminHandler>();
 
 // HTTP Clients
-builder.Services.AddHttpClient<IUserInterestsService, UserInterestsService>("UserInterestsClient", (sp, httpClient) =>
+builder.Services.AddHttpClient<IKeycloakTokenProvider, KeycloakTokenProvider>(AppSettingsProperties.TokenClient, (sp, httpClient) =>
 {
-    var configuration = sp.GetRequiredService<IConfiguration>();
-    var url = configuration.GetValue<string>("Services:GerenciamentoUsuariosAPI") ?? "http://gerenciamento-usuarios-api:8080";
-    httpClient.BaseAddress = new Uri(url); 
+    var admin = sp.GetRequiredService<IOptions<KeycloakAdminOptions>>().Value;
+    httpClient.BaseAddress = new Uri($"{admin.BaseUrl}/realms/{admin.Realm}/protocol/openid-connect/token");
 });
 
-builder.Services.AddHttpClient<IEngagementService, EngagementService>("EngagementClient", (sp, httpClient) =>
+builder.Services.AddHttpClient<IUserManagementService, UserManagementService>(AppSettingsProperties.UserManagementClient, (sp, httpClient) =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
-    var url = configuration.GetValue<string>("Services:EngagementServiceAPI") ?? "http://engagement-service-api:8080";
-    httpClient.BaseAddress = new Uri(url);
-});
+    httpClient.BaseAddress = new Uri(configuration.GetSection(AppSettingsProperties.ApiUrls).GetValue<string>(AppSettingsProperties.GerenciamentoUsuariosAPI)!);
+})
+.AddHttpMessageHandler<KeycloakAdminHandler>();
+
+builder.Services.AddHttpClient<IPostEngagementService, PostEngagementService>(AppSettingsProperties.EngagementClient, (sp, httpClient) =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    httpClient.BaseAddress = new Uri(configuration.GetSection(AppSettingsProperties.ApiUrls).GetValue<string>(AppSettingsProperties.EngagementServiceAPI)!);
+})
+.AddHttpMessageHandler<KeycloakAdminHandler>();
 
 // Elastic Search
 builder.Services.AddSingleton(sp =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
     var settings = configuration.GetSection("ElasticSearch").Get<ElasticSearchSettings>();
-    
+
     if (settings == null) throw new Exception("ElasticSearch settings not found");
 
     var clientSettings = new ElasticsearchClientSettings(new Uri(settings.Uri))
