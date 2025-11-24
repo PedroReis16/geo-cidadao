@@ -19,6 +19,7 @@ using GeoCidadao.FeedServiceAPI.Contracts.CacheServices;
 using GeoCidadao.FeedServiceAPI.Middlewares;
 using Microsoft.Extensions.Options;
 using GeoCidadao.FeedServiceAPI.Contracts;
+using GeoCidadao.FeedServiceAPI.Models.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,9 @@ builder.Services.AddControllers(options =>
 
 builder.Services.Configure<KeycloakAdminOptions>(builder.Configuration.GetSection(AppSettingsProperties.Keycloak).GetSection(AppSettingsProperties.KeycloakAdmin)!);
 
+// Elastic Search
+builder.Services.AddElasticSearchService();
+
 
 // Middlewares
 builder.Services.AddTransient<GlobalExceptionHandler>();
@@ -46,6 +50,9 @@ builder.Services.AddTransient<HttpResponseCacheHandler>();
 
 // Services
 builder.Services.AddTransient<IFeedService, FeedService>();
+
+//Dao
+builder.Services.AddTransient<IPostsDaoService, PostsDaoService>();
 
 // Connection Services
 builder.Services.AddSingleton<IUserManagementService, UserManagementService>();
@@ -81,19 +88,6 @@ builder.Services.AddHttpClient<IPostEngagementService, PostEngagementService>(Ap
 })
 .AddHttpMessageHandler<KeycloakAdminHandler>();
 
-// Elastic Search
-builder.Services.AddSingleton(sp =>
-{
-    var configuration = sp.GetRequiredService<IConfiguration>();
-    var settings = configuration.GetSection("ElasticSearch").Get<ElasticSearchSettings>();
-
-    if (settings == null) throw new Exception("ElasticSearch settings not found");
-
-    var clientSettings = new ElasticsearchClientSettings(new Uri(settings.Uri))
-        .DefaultIndex(settings.DefaultIndex)
-        .Authentication(new BasicAuthentication(settings.UserName, settings.Password));
-    return new ElasticsearchClient(clientSettings);
-});
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ForwardingHandler>();

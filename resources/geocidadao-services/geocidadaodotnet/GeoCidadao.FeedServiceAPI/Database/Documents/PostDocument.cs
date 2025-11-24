@@ -1,6 +1,4 @@
-using System.Text.Json.Serialization;
-
-namespace GeoCidadao.FeedServiceAPI.Model
+namespace GeoCidadao.FeedServiceAPI.Database.Documents
 {
     public class PostDocument
     {

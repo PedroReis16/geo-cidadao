@@ -7,9 +7,9 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Models.DTOs
     {
         public Guid UserId { get; set; }
         public List<PostCategory> Categories { get; set; } = new();
-        public List<Guid>? Users { get; set; }
-        public List<string>? Cities { get; set; }
-        public List<string>? Districts { get; set; }
+        public List<Guid> Users { get; set; } = new();
+        public List<string> Cities { get; set; } = new();
+        public List<string> Districts { get; set; } = new();
 
         public UserInterestsDTO()
         {
@@ -18,11 +18,10 @@ namespace GeoCidadao.GerenciamentoUsuariosAPI.Models.DTOs
 
         public UserInterestsDTO(UserInterests interests)
         {
-            UserId = interests.User.Id;
             Categories = interests.FollowedCategories;
-            Users = interests.FollowedUsers?.ToList();
-            Cities = interests.FollowedCities?.ToList();
-            Districts = interests.FollowedDistricts?.ToList();
+            Users = interests.FollowedUsers.ToList();
+            Cities = interests.FollowedCities.ToList();
+            Districts = interests.FollowedDistricts.ToList();
         }
     }
 }

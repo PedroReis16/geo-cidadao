@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using GeoCidadao.FeedServiceAPI.Models.DTOs.UserManagement;
 
 namespace GeoCidadao.FeedServiceAPI.Contracts.ConnectionServices
 {
     public interface IUserManagementService
     {
-
+        Task<UserInterestsDTO?> GetUserInterestsAsync(Guid userId);
     }
 }

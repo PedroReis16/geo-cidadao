@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using GeoCidadao.FeedServiceAPI.Models.DTOs;
 
 namespace GeoCidadao.FeedServiceAPI.Contracts
 {
     public interface IFeedService
     {
-        
+        Task<List<PostDTO>> GetFeedAsync(Guid userId, int page, int pageSize);
     }
 }
