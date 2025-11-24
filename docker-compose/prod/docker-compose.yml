@@ -39,7 +39,8 @@ services:
       - ./gerenciamento-usuarios.env
     labels:
       - traefik.http.routers.gerenciamento-usuarios.rule=PathPrefix(`/gerenciamento-usuarios`)
-      - traefik.http.services.gerenciamento-usuarios.loadbalancer.server.port=8090
+      - traefik.http.services.gerenciamento-usuarios.loadbalancer.server.port=8080
+      - traefik.http.routers.gerenciamento-usuarios.entrypoints=web
       - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
       - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
       - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
@@ -62,7 +63,8 @@ services:
       - ./gerenciamento-posts.env
     labels:
       - traefik.http.routers.gerenciamento-posts.rule=PathPrefix(`/gerenciamento-posts`)
-      - traefik.http.services.gerenciamento-posts.loadbalancer.server.port=8091
+      - traefik.http.services.gerenciamento-posts.loadbalancer.server.port=8080
+      - traefik.http.routers.gerenciamento-posts.entrypoints=web
       - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
       - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
       - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
@@ -85,7 +87,8 @@ services:
       - ./engagement-service.env
     labels:
       - traefik.http.routers.engagement-service.rule=PathPrefix(`/engagement-service`)
-      - traefik.http.services.engagement-service.loadbalancer.server.port=8092
+      - traefik.http.services.engagement-service.loadbalancer.server.port=8080
+      - traefik.http.routers.engagement-service.entrypoints=web
       - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
       - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
       - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
