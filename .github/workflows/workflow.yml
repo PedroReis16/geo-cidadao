@@ -29,7 +29,7 @@ jobs:
             dockerfile: docker-compose/dockerfiles/engagement-service-api.dockerfile
             context: .
           - service: post-indexing-worker
-            dockerfile: docker-compose/dockerfiles/post-indexing-worker.dockerfile
+            dockerfile: docker-compose/dockerfiles/post-indexer-worker.dockerfile
             context: .
           - service: relevance-worker
             dockerfile: docker-compose/dockerfiles/relevance-worker.dockerfile
