@@ -594,6 +594,16 @@
           "containerId": "3c12251e-e4cf-45cb-bde9-2efb2586f1fa",
           "attributes": {}
         }
+      ],
+      "geocidadao-feed-service": [
+        {
+          "id": "38c17ffc-be45-4781-a3c9-bf450720703a",
+          "name": "uma_protection",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "95c5e295-477c-4c0c-9edc-84b9fd6141f0",
+          "attributes": {}
+        }
       ]
     }
   },
@@ -796,6 +806,29 @@
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "webAuthnPolicyPasswordlessExtraOrigins": [],
   "users": [
+    {
+      "id": "58b8c13a-bd79-419c-947c-aa825ceb77ab",
+      "username": "service-account-geocidadao-feed-service",
+      "emailVerified": false,
+      "enabled": true,
+      "createdTimestamp": 1763958241148,
+      "totp": false,
+      "serviceAccountClientId": "geocidadao-feed-service",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-geo-cidadao"
+      ],
+      "clientRoles": {
+        "geocidadao-feed-service": [
+          "uma_protection"
+        ]
+      },
+      "notBefore": 0,
+      "groups": [
+        "/users"
+      ]
+    },
     {
       "id": "24c7facd-eeb8-4fc9-84e8-5b55bc050e11",
       "username": "service-account-geocidadao-interation-api",
@@ -1050,6 +1083,72 @@
         "offline_access",
         "organization",
         "microprofile-jwt"
+      ]
+    },
+    {
+      "id": "95c5e295-477c-4c0c-9edc-84b9fd6141f0",
+      "clientId": "geocidadao-feed-service",
+      "name": "FeedService",
+      "description": "",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "**********",
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "realm_client": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1763958265",
+        "backchannel.logout.session.required": "true",
+        "standard.token.exchange.enabled": "false",
+        "frontchannel.logout.session.required": "true",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "display.on.consent.screen": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "dpop.bound.access.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "aud-geocidadao-users-api",
+        "service_account",
+        "web-origins",
+        "acr",
+        "profile",
+        "aud-geocidadao-posts-api",
+        "roles",
+        "basic",
+        "group-scopes",
+        "email",
+        "aud-comments-service"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "organization",
+        "microprofile-jwt",
+        "manager-city"
       ]
     },
     {
