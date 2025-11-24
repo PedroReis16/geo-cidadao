@@ -1,7 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace GeoCidadao.FeedServiceAPI.Database.Documents
 {
     public class PostDocument
     {
+        [JsonPropertyName("_id")]
         public Guid Id { get; set; } // ES Id is usually separate, but we can map it
         public Guid PostOwnerId { get; set; }
         public string Content { get; set; } = string.Empty;
