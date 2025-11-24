@@ -103,5 +103,73 @@ namespace GeoCidadao.FeedMapAPI.Services
 
             return results;
         }
+
+        public async Task<List<PostDocument>> GetPostsInBoundsAsync(
+            double topLeftLat,
+            double topLeftLon,
+            double bottomRightLat,
+            double bottomRightLon,
+            double minRelevanceScore,
+            int limit)
+        {
+            var results = new List<PostDocument>();
+            var indexName = _settings.DefaultIndex;
+
+            // Query geoespacial com bounding box e filtro de relevância
+            var response = await _client.SearchAsync<PostDocument>(s => s
+                .Indices(indexName)
+                .Size(limit)
+                .Query(q => q
+                    .Bool(b => b
+                        .Must(
+                            // Filtro geográfico - postagens dentro do bounding box
+                            m => m.Bool(bb => bb
+                                .Must(
+                                    // Latitude entre bottomRight e topLeft
+                                    lat => lat.Range(r => r
+                                        .Number(nr => nr
+                                            .Field(f => f.Latitude)
+                                            .Gte(bottomRightLat)
+                                            .Lte(topLeftLat)
+                                        )
+                                    ),
+                                    // Longitude entre topLeft e bottomRight
+                                    lon => lon.Range(r => r
+                                        .Number(nr => nr
+                                            .Field(f => f.Longitude)
+                                            .Gte(topLeftLon)
+                                            .Lte(bottomRightLon)
+                                        )
+                                    )
+                                )
+                            ),
+                            // Filtro de relevância mínima
+                            m => m.Range(r => r
+                                .Number(nr => nr
+                                    .Field(f => f.RelevanceScore)
+                                    .Gte(minRelevanceScore)
+                                )
+                            )
+                        )
+                    )
+                )
+                .Sort(s => s.Field(f => f.RelevanceScore, order: Elastic.Clients.Elasticsearch.SortOrder.Desc))
+            );
+
+            if (response.Hits != null && response.Hits.Count > 0)
+            {
+                foreach (var hit in response.Hits)
+                {
+                    var doc = hit.Source;
+                    if (doc != null && doc.Latitude.HasValue && doc.Longitude.HasValue)
+                    {
+                        doc.Id = Guid.Parse(hit.Id);
+                        results.Add(doc);
+                    }
+                }
+            }
+
+            return results;
+        }
     }
 }
