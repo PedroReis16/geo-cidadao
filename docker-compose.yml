@@ -229,14 +229,16 @@ services:
       - ./docker-compose/local/default.env
       - ./docker-compose/local/gerenciamento-usuarios.env
     labels:
+      - traefik.enable=true
       - traefik.http.routers.gerenciamento-usuarios.rule=PathPrefix(`/gerenciamento-usuarios`)
-      - traefik.http.services.gerenciamento-usuarios.loadbalancer.server.port=8090
-      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
-      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
-      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
-      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
-      - traefik.http.middlewares.cors.headers.addvaryheader=true
-      - traefik.http.routers.gerenciamento-usuarios.middlewares=cors
+      - traefik.http.routers.gerenciamento-usuarios.entrypoints=web
+      - traefik.http.services.gerenciamento-usuarios.loadbalancer.server.port=8080
+      - traefik.http.middlewares.gerenciamento-usuarios-cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.gerenciamento-usuarios-cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.gerenciamento-usuarios-cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.gerenciamento-usuarios-cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.gerenciamento-usuarios-cors.headers.addvaryheader=true
+      - traefik.http.routers.gerenciamento-usuarios.middlewares=gerenciamento-usuarios-cors
     networks:
       - geo-network
     restart: always
@@ -254,14 +256,16 @@ services:
       - ./docker-compose/local/default.env
       - ./docker-compose/local/gerenciamento-posts.env
     labels:
+      - traefik.enable=true
       - traefik.http.routers.gerenciamento-posts.rule=PathPrefix(`/gerenciamento-posts`)
-      - traefik.http.services.gerenciamento-posts.loadbalancer.server.port=8091
-      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
-      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
-      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
-      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
-      - traefik.http.middlewares.cors.headers.addvaryheader=true
-      - traefik.http.routers.gerenciamento-posts.middlewares=cors
+      - traefik.http.routers.gerenciamento-posts.entrypoints=web
+      - traefik.http.services.gerenciamento-posts.loadbalancer.server.port=8080
+      - traefik.http.middlewares.gerenciamento-posts-cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.gerenciamento-posts-cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.gerenciamento-posts-cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.gerenciamento-posts-cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.gerenciamento-posts-cors.headers.addvaryheader=true
+      - traefik.http.routers.gerenciamento-posts.middlewares=gerenciamento-posts-cors
     networks:
       - geo-network
     restart: always
@@ -293,14 +297,16 @@ services:
       - ./docker-compose/local/default.env
       - ./docker-compose/local/engagement-service.env
     labels:
+      - traefik.enable=true
       - traefik.http.routers.engagement-service.rule=PathPrefix(`/engagement-service`)
-      - traefik.http.services.engagement-service.loadbalancer.server.port=8092
-      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
-      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
-      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
-      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
-      - traefik.http.middlewares.cors.headers.addvaryheader=true
-      - traefik.http.routers.engagement-service.middlewares=cors
+      - traefik.http.routers.engagement-service.entrypoints=web
+      - traefik.http.services.engagement-service.loadbalancer.server.port=8080
+      - traefik.http.middlewares.engagement-service-cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.engagement-service-cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.engagement-service-cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.engagement-service-cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.engagement-service-cors.headers.addvaryheader=true
+      - traefik.http.routers.engagement-service.middlewares=engagement-service-cors
     networks:
       - geo-network
     restart: always
@@ -334,14 +340,16 @@ services:
       - ./docker-compose/local/default.env
       - ./docker-compose/local/feed-service.env
     labels:
+      - traefik.enable=true
       - traefik.http.routers.feed-service.rule=PathPrefix(`/feed-service`)
-      - traefik.http.services.feed-service.loadbalancer.server.port=8093
-      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
-      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
-      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
-      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
-      - traefik.http.middlewares.cors.headers.addvaryheader=true
-      - traefik.http.routers.feed-service.middlewares=cors
+      - traefik.http.routers.feed-service.entrypoints=web
+      - traefik.http.services.feed-service.loadbalancer.server.port=8080
+      - traefik.http.middlewares.feed-service-cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.feed-service-cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.feed-service-cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.feed-service-cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.feed-service-cors.headers.addvaryheader=true
+      - traefik.http.routers.feed-service.middlewares=feed-service-cors
     networks:
       - geo-network
     restart: always
@@ -359,14 +367,16 @@ services:
       - ./docker-compose/local/default.env
       - ./docker-compose/local/feed-map.env
     labels:
+      - traefik.enable=true
       - traefik.http.routers.feed-map.rule=PathPrefix(`/feed-map`)
-      - traefik.http.services.feed-map.loadbalancer.server.port=8094
-      - traefik.http.middlewares.cors.headers.accesscontrolallowmethods=*
-      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
-      - traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*
-      - traefik.http.middlewares.cors.headers.accesscontrolmaxage=100
-      - traefik.http.middlewares.cors.headers.addvaryheader=true
-      - traefik.http.routers.feed-map.middlewares=cors
+      - traefik.http.routers.feed-map.entrypoints=web
+      - traefik.http.services.feed-map.loadbalancer.server.port=8080
+      - traefik.http.middlewares.feed-map-cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.feed-map-cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.feed-map-cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.feed-map-cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.feed-map-cors.headers.addvaryheader=true
+      - traefik.http.routers.feed-map.middlewares=feed-map-cors
     networks:
       - geo-network
     restart: always
@@ -400,7 +410,11 @@ services:
 
   traefik:
     image: traefik:v2.10
-    command: --api.insecure=true --providers.docker
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
     ports:
       - "${TRAEFIK_SERVICES_PORT}:80"
       - "${TRAEFIK_DASHBOARD_PORT}:8080"
