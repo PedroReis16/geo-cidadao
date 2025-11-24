@@ -1,5 +1,29 @@
 version: "3.8"
 services:
+  keycloak:
+    image: pedroreis16/keycloak:latest
+    container_name: keycloak
+    ports:
+      - "8082:8180"
+    environment:
+      - KEYCLOAK_IMPORT=/opt/keycloak/data/import/geocidadao-realm.json
+    depends_on:
+      db:
+        condition: service_healthy
+      init-keycloak-db:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_started
+      mailhog:
+        condition: service_started
+    networks:
+      - geo-network
+    command: ["start-dev", "--import-realm"]
+    volumes:
+      - ./keycloak/geocidadao-realm.json:/opt/keycloak/data/import/geocidadao-realm.json
+      - ./keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
+      - ./keycloak/themes:/opt/keycloak/themes/custom-theme
+      - keycloak_data:/opt/keycloak/data
   gerenciamento-usuarios:
     container_name: gerenciamento-usuarios
     image: pedroreis16/gerenciamento-usuarios-api:latest
