@@ -151,6 +151,7 @@ services:
       - "8082:8180"
     environment:
       - KEYCLOAK_IMPORT=/opt/keycloak/data/import/geocidadao-realm.json
+      - KC_HOSTNAME=54.83.28.246
     depends_on:
       db:
         condition: service_healthy
