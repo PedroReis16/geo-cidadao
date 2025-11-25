@@ -6,7 +6,7 @@ import "../styles/components/MapLayout.css";
 
 /**
  * Layout global que mantém o MapComponent visível em todas as páginas
- * O mapa funciona como uma camada de navegação paralela
+ * O mapa funciona como um popup fixo no canto inferior direito da tela
  */
 const MapLayout: React.FC = () => {
   const {
@@ -41,25 +41,23 @@ const MapLayout: React.FC = () => {
         <Outlet />
       </div>
 
-      {/* Mapa global - sempre renderiza se expandido ou se houver posts */}
-      {(postsWithLocation.length > 0 || isMapExpanded) && (
-        <div className={`map-layout-wrapper ${isMapExpanded ? "expanded" : "collapsed"}`}>
-          <MapComponent
-            items={postsWithLocation}
-            center={center}
-            zoom={zoom}
-            setZoom={setZoom}
-            setCenter={setCenter}
-            isMapExpanded={isMapExpanded}
-            setIsMapExpanded={setIsMapExpanded}
-            selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
-            newItemPos={newItemPos}
-            onItemPreviewClick={navigateToPost}
-            onMapClick={handleMapClick}
-          />
-        </div>
-      )}
+      {/* Mapa global - sempre renderizado como popup fixo */}
+      <div className={`map-layout-wrapper ${isMapExpanded ? "expanded" : "collapsed"}`}>
+        <MapComponent
+          items={postsWithLocation}
+          center={center}
+          zoom={zoom}
+          setZoom={setZoom}
+          setCenter={setCenter}
+          isMapExpanded={isMapExpanded}
+          setIsMapExpanded={setIsMapExpanded}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          newItemPos={newItemPos}
+          onItemPreviewClick={navigateToPost}
+          onMapClick={handleMapClick}
+        />
+      </div>
     </div>
   );
 };

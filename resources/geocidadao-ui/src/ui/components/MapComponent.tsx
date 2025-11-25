@@ -392,8 +392,23 @@ const MapComponent: React.FC<MapComponentProps> = ({
     <div
       className={`map-container ${isMapExpanded ? "expanded" : "collapsed"}`}
       onClick={!isMapExpanded ? () => setIsMapExpanded(true) : undefined}
+      style={{ cursor: !isMapExpanded ? "pointer" : "default" }}
     >
       <div ref={mapContainerRef} className="leaflet-map" />
+
+      {/* Overlay minimizado */}
+      {!isMapExpanded && (
+        <div className="map-overlay">
+          <div className="map-overlay-content">
+            <MapPin size={16} />
+            <span>
+              {visibleItems.length > 0 
+                ? `${visibleItems.length} ${visibleItems.length === 1 ? 'ponto' : 'pontos'} - Expandir` 
+                : 'Mapa - Clique para expandir'}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Indicador de zoom mínimo */}
       {isMapExpanded && zoom < MIN_ZOOM_TO_SHOW_ITEMS && (
@@ -414,27 +429,36 @@ const MapComponent: React.FC<MapComponentProps> = ({
         </div>
       )}
 
-      {/* Overlay minimizado */}
-      {!isMapExpanded && (
-        <div className="map-overlay">
-          <div className="map-overlay-content">
-            <Maximize2 size={16} />
-            <span>Clique para expandir</span>
-          </div>
-        </div>
-      )}
-
       {/* Controles */}
       {isMapExpanded && (
         <>
-          <button className="btn-close" onClick={() => setIsMapExpanded(false)}>
+          <button 
+            className="btn-close" 
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMapExpanded(false);
+            }}
+            aria-label="Fechar mapa"
+          >
             <X size={20} />
           </button>
           <div className="zoom-controls">
-            <button onClick={handleZoomIn}>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleZoomIn();
+              }}
+              aria-label="Aumentar zoom"
+            >
               <ZoomIn size={20} />
             </button>
-            <button onClick={handleZoomOut}>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleZoomOut();
+              }}
+              aria-label="Diminuir zoom"
+            >
               <ZoomOut size={20} />
             </button>
           </div>
