@@ -1,10 +1,17 @@
 api:
   insecure: true
   dashboard: true
+
+# entrypoints
+entryPoints:
+  web:
+    address: ":80"
+
 # provider docker
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
     
 accessLog:
   format: txt

@@ -213,12 +213,13 @@ services:
       - traefik.http.routers.nominatim.rule=PathPrefix(`/nominatim`)
       - traefik.http.routers.nominatim.entrypoints=web
       - traefik.http.services.nominatim.loadbalancer.server.port=8080
+      - traefik.http.middlewares.nominatim-stripprefix.stripprefix.prefixes=/nominatim
       - traefik.http.middlewares.nominatim-cors.headers.accesscontrolallowmethods=*
       - traefik.http.middlewares.nominatim-cors.headers.accessControlAllowHeaders=*
       - traefik.http.middlewares.nominatim-cors.headers.accesscontrolalloworiginlist=*
       - traefik.http.middlewares.nominatim-cors.headers.accesscontrolmaxage=100
       - traefik.http.middlewares.nominatim-cors.headers.addvaryheader=true
-      - traefik.http.routers.nominatim.middlewares=nominatim-cors
+      - traefik.http.routers.nominatim.middlewares=nominatim-stripprefix,nominatim-cors
 
     volumes:
       - ./docker-compose/nominatim/abc_paulista.osm.pbf:/opt/nominatim/data/abc_paulista.osm.pbf
@@ -244,12 +245,13 @@ services:
       - traefik.http.routers.gerenciamento-usuarios.rule=PathPrefix(`/gerenciamento-usuarios`)
       - traefik.http.routers.gerenciamento-usuarios.entrypoints=web
       - traefik.http.services.gerenciamento-usuarios.loadbalancer.server.port=8080
+      - traefik.http.middlewares.gerenciamento-usuarios-stripprefix.stripprefix.prefixes=/gerenciamento-usuarios
       - traefik.http.middlewares.gerenciamento-usuarios-cors.headers.accesscontrolallowmethods=*
       - traefik.http.middlewares.gerenciamento-usuarios-cors.headers.accessControlAllowHeaders=*
       - traefik.http.middlewares.gerenciamento-usuarios-cors.headers.accesscontrolalloworiginlist=*
       - traefik.http.middlewares.gerenciamento-usuarios-cors.headers.accesscontrolmaxage=100
       - traefik.http.middlewares.gerenciamento-usuarios-cors.headers.addvaryheader=true
-      - traefik.http.routers.gerenciamento-usuarios.middlewares=gerenciamento-usuarios-cors
+      - traefik.http.routers.gerenciamento-usuarios.middlewares=gerenciamento-usuarios-stripprefix,gerenciamento-usuarios-cors
     networks:
       - geo-network
     restart: always
@@ -271,12 +273,13 @@ services:
       - traefik.http.routers.gerenciamento-posts.rule=PathPrefix(`/gerenciamento-posts`)
       - traefik.http.routers.gerenciamento-posts.entrypoints=web
       - traefik.http.services.gerenciamento-posts.loadbalancer.server.port=8080
+      - traefik.http.middlewares.gerenciamento-posts-stripprefix.stripprefix.prefixes=/gerenciamento-posts
       - traefik.http.middlewares.gerenciamento-posts-cors.headers.accesscontrolallowmethods=*
       - traefik.http.middlewares.gerenciamento-posts-cors.headers.accessControlAllowHeaders=*
       - traefik.http.middlewares.gerenciamento-posts-cors.headers.accesscontrolalloworiginlist=*
       - traefik.http.middlewares.gerenciamento-posts-cors.headers.accesscontrolmaxage=100
       - traefik.http.middlewares.gerenciamento-posts-cors.headers.addvaryheader=true
-      - traefik.http.routers.gerenciamento-posts.middlewares=gerenciamento-posts-cors
+      - traefik.http.routers.gerenciamento-posts.middlewares=gerenciamento-posts-stripprefix,gerenciamento-posts-cors
     networks:
       - geo-network
     restart: always
@@ -312,12 +315,13 @@ services:
       - traefik.http.routers.engagement-service.rule=PathPrefix(`/engagement-service`)
       - traefik.http.routers.engagement-service.entrypoints=web
       - traefik.http.services.engagement-service.loadbalancer.server.port=8080
+      - traefik.http.middlewares.engagement-service-stripprefix.stripprefix.prefixes=/engagement-service
       - traefik.http.middlewares.engagement-service-cors.headers.accesscontrolallowmethods=*
       - traefik.http.middlewares.engagement-service-cors.headers.accessControlAllowHeaders=*
       - traefik.http.middlewares.engagement-service-cors.headers.accesscontrolalloworiginlist=*
       - traefik.http.middlewares.engagement-service-cors.headers.accesscontrolmaxage=100
       - traefik.http.middlewares.engagement-service-cors.headers.addvaryheader=true
-      - traefik.http.routers.engagement-service.middlewares=engagement-service-cors
+      - traefik.http.routers.engagement-service.middlewares=engagement-service-stripprefix,engagement-service-cors
     networks:
       - geo-network
     restart: always
@@ -355,12 +359,13 @@ services:
       - traefik.http.routers.feed-service.rule=PathPrefix(`/feed-service`)
       - traefik.http.routers.feed-service.entrypoints=web
       - traefik.http.services.feed-service.loadbalancer.server.port=8080
+      - traefik.http.middlewares.feed-service-stripprefix.stripprefix.prefixes=/feed-service
       - traefik.http.middlewares.feed-service-cors.headers.accesscontrolallowmethods=*
       - traefik.http.middlewares.feed-service-cors.headers.accessControlAllowHeaders=*
       - traefik.http.middlewares.feed-service-cors.headers.accesscontrolalloworiginlist=*
       - traefik.http.middlewares.feed-service-cors.headers.accesscontrolmaxage=100
       - traefik.http.middlewares.feed-service-cors.headers.addvaryheader=true
-      - traefik.http.routers.feed-service.middlewares=feed-service-cors
+      - traefik.http.routers.feed-service.middlewares=feed-service-stripprefix,feed-service-cors
     networks:
       - geo-network
     restart: always
@@ -382,12 +387,13 @@ services:
       - traefik.http.routers.feed-map.rule=PathPrefix(`/feed-map`)
       - traefik.http.routers.feed-map.entrypoints=web
       - traefik.http.services.feed-map.loadbalancer.server.port=8080
+      - traefik.http.middlewares.feed-map-stripprefix.stripprefix.prefixes=/feed-map
       - traefik.http.middlewares.feed-map-cors.headers.accesscontrolallowmethods=*
       - traefik.http.middlewares.feed-map-cors.headers.accessControlAllowHeaders=*
       - traefik.http.middlewares.feed-map-cors.headers.accesscontrolalloworiginlist=*
       - traefik.http.middlewares.feed-map-cors.headers.accesscontrolmaxage=100
       - traefik.http.middlewares.feed-map-cors.headers.addvaryheader=true
-      - traefik.http.routers.feed-map.middlewares=feed-map-cors
+      - traefik.http.routers.feed-map.middlewares=feed-map-stripprefix,feed-map-cors
     networks:
       - geo-network
     restart: always
@@ -421,16 +427,11 @@ services:
 
   traefik:
     image: traefik:v2.10
-    command:
-      - --api.insecure=true
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --entrypoints.web.address=:80
     ports:
       - "${TRAEFIK_SERVICES_PORT}:80"
       - "${TRAEFIK_DASHBOARD_PORT}:8080"
     volumes:
-      - ./docker-compose/traefik:/etc/traefik
+      - ./docker-compose/traefik/traefik.yml:/etc/traefik/traefik.yml
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - geo-network
