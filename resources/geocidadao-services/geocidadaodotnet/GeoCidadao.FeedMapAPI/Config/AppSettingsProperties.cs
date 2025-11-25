@@ -11,7 +11,7 @@ public class AppSettingsProperties
     public const string EngagementClient = "EngagementClient";
     public const string EngagementServiceAPI = "EngagementServiceAPI";
     public const string Keycloak = "Keycloak";
-    public const string KeycloakAdmin = "KeycloakAdmin";
+    public const string Admin = "Admin";
     public const string TokenClient = "keycloakToken";
     public const string ElasticSearch = "ElasticSearch";
 }

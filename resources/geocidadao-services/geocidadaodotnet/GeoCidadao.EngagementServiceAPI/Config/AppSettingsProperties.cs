@@ -12,6 +12,6 @@ public class AppSettingsProperties
     public const string KeycloakClient = "KeycloakClient";
     public const string KeycloakAPI = "KeycloakAPI";
     public const string Keycloak = "Keycloak";
-    public const string KeycloakAdmin = "KeycloakAdmin";
+    public const string Admin = "Admin";
     public const string TokenClient = "keycloakToken";
 }
