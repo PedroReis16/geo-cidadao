@@ -173,8 +173,8 @@ services:
       - keycloak_data:/opt/keycloak/data
     labels:
     - "traefik.enable=true"
-    # Rota principal com stripPrefix
-    - "traefik.http.routers.keycloak.rule=PathPrefix(`/auth`)"
+    # Rota para /auth/realms/... (com stripPrefix)
+    - "traefik.http.routers.keycloak.rule=PathPrefix(`/auth/realms`)"
     - "traefik.http.routers.keycloak.entrypoints=web"
     - "traefik.http.routers.keycloak.priority=100"
     - "traefik.http.routers.keycloak.service=keycloak-service"
