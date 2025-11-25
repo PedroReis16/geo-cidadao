@@ -56,6 +56,7 @@ const MapLayout: React.FC = () => {
           newItemPos={newItemPos}
           onItemPreviewClick={navigateToPost}
           onMapClick={handleMapClick}
+          enableDynamicLoading={true}
         />
       </div>
     </div>

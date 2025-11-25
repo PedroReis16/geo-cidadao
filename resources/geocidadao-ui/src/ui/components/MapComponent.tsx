@@ -1,10 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
-import { MapPin, Maximize2, ZoomIn, ZoomOut, X } from "lucide-react";
+import { MapPin, ZoomIn, ZoomOut, X, RefreshCw } from "lucide-react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../styles/components/MapComponent.css";
 import type { Coordinates } from "../../data/@types/Coordinates";
 import type { Post } from "../../data/@types/Post";
+import { useMapPosts } from "../../data/hooks/useMapPosts";
 
 interface MapComponentProps {
   items: Post[];
@@ -19,6 +20,7 @@ interface MapComponentProps {
   onMapClick?: (coords: Coordinates) => void;
   newItemPos?: Coordinates | null;
   onItemPreviewClick?: (item: Post) => void;
+  enableDynamicLoading?: boolean; // Habilita carregamento dinâmico do backend
 }
 
 const MapComponent: React.FC<MapComponentProps> = ({
@@ -34,6 +36,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
   onMapClick,
   newItemPos,
   onItemPreviewClick,
+  enableDynamicLoading = false, // Por padrão desabilitado (usa items prop)
 }) => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -43,6 +46,21 @@ const MapComponent: React.FC<MapComponentProps> = ({
   const popupRef = useRef<L.Popup | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
   const [visibleItems, setVisibleItems] = useState<Post[]>([]);
+
+  // Hook para carregamento dinâmico de posts
+  const {
+    posts: dynamicPosts,
+    loading: loadingPosts,
+    refresh: refreshPosts,
+  } = useMapPosts({
+    center,
+    zoom,
+    enabled: enableDynamicLoading && isMapExpanded,
+    debounceMs: 500,
+  });
+
+  // Usa posts dinâmicos se habilitado, senão usa items prop
+  const allPosts = enableDynamicLoading ? dynamicPosts : items;
 
   const MIN_ZOOM_TO_SHOW_ITEMS = 13;
   const MAX_DISTANCE_KM = 10;
@@ -77,7 +95,9 @@ const MapComponent: React.FC<MapComponentProps> = ({
     const zoomFactor = Math.max(0.5, (zoom - MIN_ZOOM_TO_SHOW_ITEMS) / 5);
     const maxDistance = MAX_DISTANCE_KM * (2 - zoomFactor);
 
-    const filtered = items.filter((item) => {
+    const filtered = allPosts.filter((item) => {
+      if (!item.coordinates) return false;
+      
       const distance = calculateDistance(
         center.lat,
         center.lng,
@@ -88,7 +108,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
     });
 
     setVisibleItems(filtered);
-  }, [items, center, zoom]);
+  }, [allPosts, center, zoom]);
 
   // Cria o HTML do popup personalizado
   const createPopupContent = (item: Post): HTMLDivElement => {
@@ -410,6 +430,14 @@ const MapComponent: React.FC<MapComponentProps> = ({
         </div>
       )}
 
+      {/* Indicador de loading */}
+      {isMapExpanded && loadingPosts && enableDynamicLoading && (
+        <div className="map-loading-indicator">
+          <RefreshCw size={16} className="spinning" />
+          <span>Carregando pontos...</span>
+        </div>
+      )}
+
       {/* Indicador de zoom mínimo */}
       {isMapExpanded && zoom < MIN_ZOOM_TO_SHOW_ITEMS && (
         <div className="zoom-info">
@@ -442,7 +470,21 @@ const MapComponent: React.FC<MapComponentProps> = ({
           >
             <X size={20} />
           </button>
+          
           <div className="zoom-controls">
+            {enableDynamicLoading && (
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  refreshPosts();
+                }}
+                aria-label="Atualizar posts"
+                className="refresh-button"
+                disabled={loadingPosts}
+              >
+                <RefreshCw size={20} className={loadingPosts ? "spinning" : ""} />
+              </button>
+            )}
             <button 
               onClick={(e) => {
                 e.stopPropagation();
