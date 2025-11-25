@@ -1,11 +1,11 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8081";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export const API_ENDPOINTS = {
-  GERENCIAMENTO_POSTS: `${API_BASE_URL}/gerenciamento-posts`,
-  GERENCIAMENTO_USUARIOS: `${API_BASE_URL}/gerenciamento-usuarios`,
-  FEED_SERVICE: `${API_BASE_URL}/feed-service`,
-  FEED_MAP: `${API_BASE_URL}/feed-map`,
-  ENGAGEMENT_SERVICE: `${API_BASE_URL}/engagement-service`,
+  GERENCIAMENTO_POSTS: `http://localhost:8091/gerenciamento-posts`,
+  GERENCIAMENTO_USUARIOS: `http://localhost:8092/gerenciamento-usuarios`,
+  FEED_SERVICE: `http://localhost:8093/feed-service`,
+  FEED_MAP: `http://localhost:8094/feed-map`,
+  ENGAGEMENT_SERVICE: `http://localhost:8092/engagement-service`,
 };
 
 export default API_ENDPOINTS;
