@@ -23,6 +23,9 @@ namespace GeoCidadao.FeedServiceAPI.Services.ConnectionServices
 
             string responseContent = await response.Content.ReadAsStringAsync();
 
+            if(string.IsNullOrWhiteSpace(responseContent))
+                return null;
+
             result = JsonSerializer.Deserialize<UserInterestsDTO>(responseContent, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
