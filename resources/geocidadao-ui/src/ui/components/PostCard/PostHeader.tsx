@@ -1,20 +1,32 @@
 import React from "react";
 import "../../styles/components/PostCard/PostHeader.css";
-import type { User } from "../../../data/@types/User";
+import type { Author } from "../../../data/@types/Author";
+import { formatTimestamp } from "../../../utils/dateUtils";
+import Avatar from "./Avatar";
 
 interface PostHeaderProps {
-  user: User;
+  user?: Author;
   timestamp: string;
 }
 
 const PostHeader: React.FC<PostHeaderProps> = ({ user, timestamp }) => {
+  // Valores padrão caso user seja undefined
+  const userName = user?.name || "Usuário Desconhecido";
+  const userUsername = user?.username || "desconhecido";
+  const userProfilePicture = user?.profilePictureUrl;
+
   return (
     <div className="post-header">
-      <img src={user.avatar} alt={user.name} className="post-header__avatar" />
+      <Avatar 
+        src={userProfilePicture} 
+        name={userName}
+        alt={`Foto de perfil de ${userName}`}
+        className="post-header__avatar" 
+      />
       <div className="post-header__info">
-        <div className="post-header__name">{user.name}</div>
+        <div className="post-header__name">{userName}</div>
         <div className="post-header__meta">
-          @{user.username} · {timestamp}
+          @{userUsername} · {formatTimestamp(timestamp)}
         </div>
       </div>
     </div>

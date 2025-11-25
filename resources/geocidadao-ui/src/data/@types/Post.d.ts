@@ -1,13 +1,30 @@
-import { Coordinates } from "./Coordinates";
-import { MediaItem } from "./MediaItem";
+import type { Author } from "./Author";
+import type { Coordinates } from "./Coordinates";
+import type { MediaItem } from "./MediaItem";
+import type { Location } from "./Location";
 
 export interface Post {
   id: string;
   author: Author;
   content: string;
   media?: MediaItem[];
-  likes: number;
-  comments: number;
+  location?: Location;
+  createdAt: string;
+  likesCount: number;
+  commentsCount: number;
   timestamp: string;
   coordinates?: Coordinates;
+  isLiked?: boolean;
+}
+
+export interface FeedPost {
+  id: string;
+  media: MediaItem[];
+  author: Author;
+  content: string;
+  location: Location | null;
+  createdAt: string;
+  likesCount: number;
+  commentsCount: number;
+  timestamp: string;
 }

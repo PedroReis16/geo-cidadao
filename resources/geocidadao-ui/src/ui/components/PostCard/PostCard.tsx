@@ -29,7 +29,7 @@ const PostCard: React.FC<PostCardProps> = ({
   return (
     <>
       <article className="post-card">
-        <PostHeader user={post.user} timestamp={post.timestamp} />
+        <PostHeader user={post.author} timestamp={post.timestamp} />
 
         <div
           className={`post-text ${
@@ -59,12 +59,12 @@ const PostCard: React.FC<PostCardProps> = ({
               fill={post.isLiked ? "var(--color-alert)" : "none"}
               className="post-action-icon"
             />
-            <span>{post.likes}</span>
+            <span>{post.likesCount}</span>
           </button>
 
           <button onClick={handleComment} className="post-action-btn">
             <MessageCircle size={20} className="post-action-icon" />
-            <span>{post.comments}</span>
+            <span>{post.commentsCount}</span>
           </button>
 
           {post.coordinates && (
