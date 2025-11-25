@@ -25,7 +25,6 @@ export const useAuthImage = (imageUrl: string | null | undefined) => {
 
     let isMounted = true;
     const controller = new AbortController();
-    let currentObjectUrl: string | null = null;
 
     const loadImage = async () => {
       try {
@@ -45,23 +44,29 @@ export const useAuthImage = (imageUrl: string | null | undefined) => {
           signal: controller.signal,
         });
 
-        console.log('📡 useAuthImage - Response status:', response.status);
+        console.log('📡 useAuthImage - Response:', {
+          status: response.status,
+          ok: response.ok,
+          contentType: response.headers.get('content-type'),
+          url: imageUrl
+        });
         
         if (!response.ok) {
           throw new Error(`Erro ao carregar imagem: ${response.status}`);
         }
 
-        const blob = await response.blob();
-        currentObjectUrl = URL.createObjectURL(blob);
-        console.log('✅ Imagem carregada com sucesso! Blob URL:', currentObjectUrl, 'size:', blob.size, 'type:', blob.type);
+        // Lê a resposta como texto para obter a URL real da imagem
+        const realImageUrl = await response.text();
+        console.log('🔗 useAuthImage - URL real da imagem:', realImageUrl);
 
+        // Como a URL do S3 é assinada e temporária, podemos usá-la diretamente
+        // Isso evita problemas de CORS com o LocalStack
+        console.log('✅ Usando URL assinada diretamente');
+        
         if (isMounted) {
-          setImageSrc(currentObjectUrl);
+          setImageSrc(realImageUrl);
           setLoading(false);
-          console.log('🎯 useAuthImage - Estado atualizado com blob URL');
-        } else {
-          console.log('⚠️ useAuthImage - Componente desmontado, revogando blob');
-          URL.revokeObjectURL(currentObjectUrl);
+          console.log('🎯 useAuthImage - Estado atualizado com URL assinada');
         }
       } catch (err) {
         if (isMounted && err instanceof Error && err.name !== "AbortError") {
@@ -76,14 +81,11 @@ export const useAuthImage = (imageUrl: string | null | undefined) => {
 
     loadImage();
 
-    // Cleanup: revoga o object URL e cancela a requisição se o componente desmontar
+    // Cleanup: cancela a requisição se o componente desmontar
     return () => {
       console.log('🧹 useAuthImage - Cleanup, desmontando:', imageUrl);
       isMounted = false;
       controller.abort();
-      if (currentObjectUrl) {
-        URL.revokeObjectURL(currentObjectUrl);
-      }
     };
   }, [imageUrl]);
 

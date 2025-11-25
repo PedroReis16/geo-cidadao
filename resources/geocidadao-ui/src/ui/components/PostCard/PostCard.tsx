@@ -26,7 +26,8 @@ const PostCard: React.FC<PostCardProps> = ({
     id: post.id, 
     hasMedia, 
     mediaCount: post.media?.length,
-    media: post.media 
+    mediaTypes: post.media?.map(m => m.type),
+    mediaUrls: post.media?.map(m => m.url.substring(m.url.length - 40))
   });
 
   const handleLike = () => onLike?.(post.id);

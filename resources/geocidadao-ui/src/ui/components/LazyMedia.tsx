@@ -33,9 +33,11 @@ const LazyMedia: React.FC<LazyMediaProps> = React.memo(({
   const { imageSrc, loading, error } = useAuthImage(shouldLoad ? url : null);
   
   console.log('📊 LazyMedia estado após useAuthImage:', { 
+    urlEnd: url.substring(url.length - 30),
     imageSrc: imageSrc ? imageSrc.substring(0, 50) + '...' : null, 
     loading, 
-    error 
+    error,
+    type
   });
 
   // Se não deve carregar ainda, mostra placeholder
@@ -52,7 +54,7 @@ const LazyMedia: React.FC<LazyMediaProps> = React.memo(({
 
   // Se está carregando
   if (loading) {
-    console.log('⏳ LazyMedia: Carregando...');
+    console.log('⏳ LazyMedia: Carregando...', url.substring(url.length - 30));
     return (
       <div className={className}>
         <div className="lazy-media-loading">
@@ -64,7 +66,7 @@ const LazyMedia: React.FC<LazyMediaProps> = React.memo(({
 
   // Se houve erro
   if (error || !imageSrc) {
-    console.log('❌ LazyMedia: Erro ou sem imagem');
+    console.error('❌ LazyMedia: Erro ou sem imagem', { error, imageSrc, url });
     return (
       <div className={className}>
         <div className="lazy-media-error">
@@ -77,10 +79,18 @@ const LazyMedia: React.FC<LazyMediaProps> = React.memo(({
   // Renderiza a mídia carregada
   console.log('✅ LazyMedia: Renderizando mídia!', type, 'com src:', imageSrc);
   if (type === "image") {
-    return <img key={imageSrc} src={imageSrc} alt={alt} className={className} />;
+    return <img src={imageSrc} alt={alt} className={className} />;
   } else {
-    return <video key={imageSrc} src={imageSrc} controls className={className} />;
+    return <video src={imageSrc} controls className={className} />;
   }
+}, (prevProps, nextProps) => {
+  // Custom comparison para evitar re-renders desnecessários
+  return (
+    prevProps.url === nextProps.url &&
+    prevProps.isActive === nextProps.isActive &&
+    prevProps.shouldPreload === nextProps.shouldPreload &&
+    prevProps.type === nextProps.type
+  );
 });
 
 LazyMedia.displayName = 'LazyMedia';

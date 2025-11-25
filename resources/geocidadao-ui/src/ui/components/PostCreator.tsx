@@ -195,10 +195,9 @@ export default function PostCreator() {
       setLocationAddress(null);
       setNewItemPos(null);
 
-      alert("Post criado com sucesso!");
     } catch (error) {
       console.error("Erro ao criar post:", error);
-      alert("Erro ao criar post. Tente novamente.");
+      
     } finally {
       setIsPublishing(false);
     }

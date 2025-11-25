@@ -23,7 +23,10 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
   console.log('🎠 MediaCarousel:', { 
     mediaCount: media.length, 
     currentIndex,
-    firstMediaUrl: media[0]?.url?.substring(media[0]?.url?.length - 30)
+    media: media.map(m => ({
+      type: m.type,
+      urlEnd: m.url.substring(m.url.length - 30)
+    }))
   });
 
   const nextMedia = () => {
