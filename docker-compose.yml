@@ -64,8 +64,8 @@ services:
       - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/
-      - ./docker-compose/local/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
-      - ./docker-compose/local/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./docker-compose/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./docker-compose/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
@@ -164,9 +164,9 @@ services:
       - geo-network
     command: ["start-dev", "--import-realm"]
     volumes:
-      - ./docker-compose/local/keycloak/geocidadao-realm.json:/opt/keycloak/data/import/geocidadao-realm.json
-      - ./docker-compose/local/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
-      - ./docker-compose/local/keycloak/themes:/opt/keycloak/themes/custom-theme
+      - ./docker-compose/keycloak/geocidadao-realm.json:/opt/keycloak/data/import/geocidadao-realm.json
+      - ./docker-compose/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar:/opt/keycloak/providers/keycloak-rabbitmq-spi-1.0.0.jar
+      - ./docker-compose/keycloak/themes:/opt/keycloak/themes/custom-theme
       - keycloak_data:/opt/keycloak/data
   init-nominatim-db:
     image: postgres:15-alpine
@@ -208,9 +208,20 @@ services:
       - IMPORT_WIKIMEDIA=true
 
       - PBF_PATH=/opt/nominatim/data/abc_paulista.osm.pbf
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nominatim.rule=PathPrefix(`/nominatim`)
+      - traefik.http.routers.nominatim.entrypoints=web
+      - traefik.http.services.nominatim.loadbalancer.server.port=8080
+      - traefik.http.middlewares.nominatim-cors.headers.accesscontrolallowmethods=*
+      - traefik.http.middlewares.nominatim-cors.headers.accessControlAllowHeaders=*
+      - traefik.http.middlewares.nominatim-cors.headers.accesscontrolalloworiginlist=*
+      - traefik.http.middlewares.nominatim-cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.nominatim-cors.headers.addvaryheader=true
+      - traefik.http.routers.nominatim.middlewares=nominatim-cors
 
     volumes:
-      - ./docker-compose/local/nominatim/abc_paulista.osm.pbf:/opt/nominatim/data/abc_paulista.osm.pbf
+      - ./docker-compose/nominatim/abc_paulista.osm.pbf:/opt/nominatim/data/abc_paulista.osm.pbf
       - nominatim-app-data:/var/lib/nominatim
     restart: always
     networks:
@@ -226,8 +237,8 @@ services:
       rabbitmq:
         condition: service_healthy
     env_file:
-      - ./docker-compose/local/default.env
-      - ./docker-compose/local/gerenciamento-usuarios.env
+      - ./docker-compose/default.env
+      - ./docker-compose/gerenciamento-usuarios.env
     labels:
       - traefik.enable=true
       - traefik.http.routers.gerenciamento-usuarios.rule=PathPrefix(`/gerenciamento-usuarios`)
@@ -253,8 +264,8 @@ services:
       rabbitmq:
         condition: service_healthy
     env_file:
-      - ./docker-compose/local/default.env
-      - ./docker-compose/local/gerenciamento-posts.env
+      - ./docker-compose/default.env
+      - ./docker-compose/gerenciamento-posts.env
     labels:
       - traefik.enable=true
       - traefik.http.routers.gerenciamento-posts.rule=PathPrefix(`/gerenciamento-posts`)
@@ -278,8 +289,8 @@ services:
       rabbitmq:
         condition: service_healthy
     env_file:
-      - ./docker-compose/local/default.env
-      - ./docker-compose/local/post-indexer-worker.env
+      - ./docker-compose/default.env
+      - ./docker-compose/post-indexer-worker.env
     networks:
       - geo-network
     restart: always
@@ -294,8 +305,8 @@ services:
       rabbitmq:
         condition: service_healthy
     env_file:
-      - ./docker-compose/local/default.env
-      - ./docker-compose/local/engagement-service.env
+      - ./docker-compose/default.env
+      - ./docker-compose/engagement-service.env
     labels:
       - traefik.enable=true
       - traefik.http.routers.engagement-service.rule=PathPrefix(`/engagement-service`)
@@ -321,8 +332,8 @@ services:
       rabbitmq:
         condition: service_healthy
     env_file:
-      - ./docker-compose/local/default.env
-      - ./docker-compose/local/post-indexer-worker.env
+      - ./docker-compose/default.env
+      - ./docker-compose/post-indexer-worker.env
     networks:
       - geo-network
     restart: always
@@ -337,8 +348,8 @@ services:
       rabbitmq:
         condition: service_healthy
     env_file:
-      - ./docker-compose/local/default.env
-      - ./docker-compose/local/feed-service.env
+      - ./docker-compose/default.env
+      - ./docker-compose/feed-service.env
     labels:
       - traefik.enable=true
       - traefik.http.routers.feed-service.rule=PathPrefix(`/feed-service`)
@@ -364,8 +375,8 @@ services:
       rabbitmq:
         condition: service_healthy
     env_file:
-      - ./docker-compose/local/default.env
-      - ./docker-compose/local/feed-map.env
+      - ./docker-compose/default.env
+      - ./docker-compose/feed-map.env
     labels:
       - traefik.enable=true
       - traefik.http.routers.feed-map.rule=PathPrefix(`/feed-map`)
@@ -388,8 +399,8 @@ services:
     ports:
       - "5173:80"
     env_file:
-      - ./docker-compose/local/default.env
-      - ./docker-compose/local/geocidadao-ui.env
+      - ./docker-compose/default.env
+      - ./docker-compose/geocidadao-ui.env
     labels:
       - traefik.enable=true
       - traefik.http.routers.geocidadao-ui.rule=PathPrefix(`/`)
