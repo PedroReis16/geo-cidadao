@@ -173,18 +173,20 @@ services:
       - keycloak_data:/opt/keycloak/data
     labels:
     - "traefik.enable=true"
-    # Rota principal para o Keycloak (com stripPrefix)
+    # Rota principal com stripPrefix
     - "traefik.http.routers.keycloak.rule=PathPrefix(`/auth`)"
     - "traefik.http.routers.keycloak.entrypoints=web"
     - "traefik.http.routers.keycloak.priority=100"
+    - "traefik.http.routers.keycloak.service=keycloak-service"
     - "traefik.http.middlewares.keycloak-stripprefix.stripPrefix.prefixes=/auth"
     - "traefik.http.routers.keycloak.middlewares=keycloak-stripprefix"
-    - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
-    # Rota adicional para /auth raiz (sem stripPrefix)
+    - "traefik.http.services.keycloak-service.loadbalancer.server.port=8080"
+    # Rota adicional sem stripPrefix
     - "traefik.http.routers.keycloak-root.rule=Path(`/auth`)"
     - "traefik.http.routers.keycloak-root.entrypoints=web"
     - "traefik.http.routers.keycloak-root.priority=110"
-    - "traefik.http.services.keycloak-root.loadbalancer.server.port=8080"
+    - "traefik.http.routers.keycloak-root.service=keycloak-root-service"
+    - "traefik.http.services.keycloak-root-service.loadbalancer.server.port=8080"
 
   init-nominatim-db:
     image: postgres:15-alpine
