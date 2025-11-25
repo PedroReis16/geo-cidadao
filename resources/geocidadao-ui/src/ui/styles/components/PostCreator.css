@@ -109,6 +109,16 @@
   background: #374151;
 }
 
+.pc-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pc-btn-active {
+  background: #1e3a5f;
+  border: 1px solid #3b82f6;
+}
+
 .pc-icon-green {
   color: #22c55e;
 }
@@ -222,4 +232,248 @@
 
 .pc-hidden-input {
   display: none;
+}
+
+/* Card de localização selecionada */
+.pc-location-card {
+  margin: 0 1rem 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pc-location-card-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.pc-location-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.pc-location-card-address {
+  color: white;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pc-location-card-coords {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.8125rem;
+  font-family: monospace;
+}
+
+.pc-location-card-loading {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.pc-location-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.pc-location-card-btn {
+  width: 2rem;
+  height: 2rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 0.375rem;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.pc-location-card-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.pc-location-card-btn-remove:hover {
+  background: #ef4444;
+}
+
+/* Informações de localização selecionada (fallback) */
+.pc-location-info {
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1f2937;
+  border-bottom: 1px solid #374151;
+}
+
+.pc-location-info-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pc-location-info-icon {
+  color: #ef4444;
+}
+
+.pc-location-info-text {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.pc-location-info-remove {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.pc-location-info-remove:hover {
+  color: #ef4444;
+  background: #374151;
+}
+
+/* Banner de modo de seleção */
+.pc-selection-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  color: white;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  z-index: 10000; /* Maior que o mapa (z-index: 1000) */
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.pc-selection-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pc-selection-banner-icon {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.pc-selection-banner-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.pc-selection-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pc-selection-btn-cancel {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.pc-selection-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.pc-selection-btn-confirm {
+  background: white;
+  color: #1e40af;
+}
+
+.pc-selection-btn-confirm:hover {
+  background: #f3f4f6;
+}
+
+.pc-selection-btn-confirm:disabled {
+  background: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .pc-selection-banner {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .pc-selection-banner-content {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pc-selection-banner-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .pc-selection-btn {
+    flex: 1;
+  }
 }

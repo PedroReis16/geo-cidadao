@@ -172,7 +172,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
     });
 
     map.on("click", (e: L.LeafletMouseEvent) => {
-      if (isMapExpanded && onMapClick) {
+      if (onMapClick) {
         onMapClick({ lat: e.latlng.lat, lng: e.latlng.lng });
       }
     });

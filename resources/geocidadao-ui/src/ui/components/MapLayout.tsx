@@ -21,10 +21,18 @@ const MapLayout: React.FC = () => {
     setSelectedItem,
     navigateToPost,
     newItemPos,
+    setNewItemPos,
   } = useMap();
 
   // Filtra posts que possuem coordenadas
   const postsWithLocation = posts.filter((post) => post.coordinates);
+
+  // Handler para clique no mapa (quando está em modo de seleção)
+  const handleMapClick = (coords: { lat: number; lng: number }) => {
+    // Sempre permite clique quando o mapa está expandido
+    // Isso permite seleção de localização no PostCreator
+    setNewItemPos(coords);
+  };
 
   return (
     <div className="map-layout">
@@ -33,8 +41,8 @@ const MapLayout: React.FC = () => {
         <Outlet />
       </div>
 
-      {/* Mapa global - só aparece se houver posts com localização */}
-      {postsWithLocation.length > 0 && (
+      {/* Mapa global - sempre renderiza se expandido ou se houver posts */}
+      {(postsWithLocation.length > 0 || isMapExpanded) && (
         <div className={`map-layout-wrapper ${isMapExpanded ? "expanded" : "collapsed"}`}>
           <MapComponent
             items={postsWithLocation}
@@ -48,6 +56,7 @@ const MapLayout: React.FC = () => {
             setSelectedItem={setSelectedItem}
             newItemPos={newItemPos}
             onItemPreviewClick={navigateToPost}
+            onMapClick={handleMapClick}
           />
         </div>
       )}
