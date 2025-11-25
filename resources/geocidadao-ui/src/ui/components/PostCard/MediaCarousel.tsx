@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import "../../styles/components/PostCard/MediaCarousel.css";
 import type { MediaItem } from "../../../data/@types/MediaItem";
+import LazyMedia from "../LazyMedia";
 
 interface MediaCarouselProps {
   media: MediaItem[];
@@ -18,6 +19,12 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
 }) => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  
+  console.log('🎠 MediaCarousel:', { 
+    mediaCount: media.length, 
+    currentIndex,
+    firstMediaUrl: media[0]?.url?.substring(media[0]?.url?.length - 30)
+  });
 
   const nextMedia = () => {
     onIndexChange((currentIndex + 1) % media.length);
@@ -47,24 +54,35 @@ const MediaCarousel: React.FC<MediaCarouselProps> = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {media.map((item, index) => (
-        <div
-          key={index}
-          className={`media-carousel__item ${
-            index === currentIndex ? "media-carousel__item--active" : ""
-          }`}
-        >
-          {item.type === "image" ? (
-            <img
-              src={item.url}
-              alt="Post media"
-              className="media-carousel__image"
+      {media.map((item, index) => {
+        // A mídia atual deve ser sempre carregada
+        const isCurrentMedia = index === currentIndex;
+        
+        // Pré-carrega as mídias adjacentes (anterior e próxima)
+        const isAdjacentMedia = 
+          index === currentIndex - 1 || 
+          index === currentIndex + 1 ||
+          (currentIndex === 0 && index === media.length - 1) ||
+          (currentIndex === media.length - 1 && index === 0);
+
+        return (
+          <div
+            key={index}
+            className={`media-carousel__item ${
+              isCurrentMedia ? "media-carousel__item--active" : ""
+            }`}
+          >
+            <LazyMedia
+              type={item.type}
+              url={item.url}
+              isActive={isCurrentMedia}
+              shouldPreload={isAdjacentMedia}
+              alt={`Post media ${index + 1}`}
+              className={item.type === "image" ? "media-carousel__image" : "media-carousel__video"}
             />
-          ) : (
-            <video src={item.url} controls className="media-carousel__video" />
-          )}
-        </div>
-      ))}
+          </div>
+        );
+      })}
 
       {media.length > 1 && (
         <>

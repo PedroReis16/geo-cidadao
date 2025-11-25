@@ -1,5 +1,6 @@
 import React from "react";
 import "../../styles/components/PostCard/Avatar.css";
+import AuthImage from "../AuthImage";
 
 interface AvatarProps {
   src?: string;
@@ -13,7 +14,6 @@ interface AvatarProps {
  * Caso não haja foto, exibe as iniciais em um círculo colorido
  */
 const Avatar: React.FC<AvatarProps> = ({ src, name, alt, className = "" }) => {
-  const [imageError, setImageError] = React.useState(false);
 
   /**
    * Extrai as iniciais do nome do usuário
@@ -58,34 +58,34 @@ const Avatar: React.FC<AvatarProps> = ({ src, name, alt, className = "" }) => {
     return colors[Math.abs(hash) % colors.length];
   };
 
-  const showInitials = !src || imageError;
   const initials = getInitials(name);
   const backgroundColor = getColorFromName(name);
 
-  const handleImageError = () => {
-    setImageError(true);
-  };
+  // Fallback para quando não há imagem ou ocorre erro
+  const initialsElement = (
+    <div
+      className={`avatar avatar--initials ${className}`}
+      style={{ backgroundColor }}
+      aria-label={alt}
+      title={name}
+    >
+      <span className="avatar__initials">{initials}</span>
+    </div>
+  );
 
-  if (showInitials) {
-    return (
-      <div
-        className={`avatar avatar--initials ${className}`}
-        style={{ backgroundColor }}
-        aria-label={alt}
-        title={name}
-      >
-        <span className="avatar__initials">{initials}</span>
-      </div>
-    );
+  // Se não há src, mostra as iniciais
+  if (!src) {
+    return initialsElement;
   }
 
+  // Usa AuthImage para carregar com autenticação
   return (
-    <img
+    <AuthImage
       src={src}
       alt={alt}
       className={`avatar avatar--image ${className}`}
-      onError={handleImageError}
-      title={name}
+      fallback={initialsElement}
+      loadingComponent={initialsElement}
     />
   );
 };

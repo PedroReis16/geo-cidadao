@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import type { FeedPost, Post } from "../../data/@types/Post";
+import type { MediaItem } from "../../data/@types/MediaItem";
 import { getFeed } from "../../data/services/feedService";
 
 interface UseFeedOptions {
@@ -17,26 +18,59 @@ interface UseFeedReturn {
 }
 
 /**
+ * Converte URL de mídia em MediaItem
+ * Detecta o tipo baseado na extensão do arquivo ou assume imagem por padrão
+ */
+const convertMediaUrlToMediaItem = (url: string): MediaItem => {
+  const lowerUrl = url.toLowerCase();
+  const isVideo = lowerUrl.includes('.mp4') || 
+                  lowerUrl.includes('.webm') || 
+                  lowerUrl.includes('.ogg') ||
+                  lowerUrl.includes('video');
+  
+  const type: "image" | "video" = isVideo ? "video" : "image";
+  const mediaItem: MediaItem = {
+    type,
+    url: url,
+  };
+  
+  console.log('🔄 Convertendo mídia:', url, '→', mediaItem.type);
+  return mediaItem;
+};
+
+/**
  * Converte FeedPost da API para Post do componente
  */
 const convertFeedPostToPost = (feedPost: FeedPost): Post | null => {
   // Validações básicas
-  if (!feedPost || !feedPost.id || !feedPost.author) {
-    console.warn("Post inválido recebido da API:", feedPost);
+  if (!feedPost) {
+    console.warn("❌ Post nulo recebido da API");
+    return null;
+  }
+  
+  if (!feedPost.id) {
+    console.warn("❌ Post sem ID:", feedPost);
+    return null;
+  }
+  
+  if (!feedPost.author) {
+    console.warn("❌ Post sem autor:", feedPost);
     return null;
   }
 
   try {
-    return {
+    const converted: Post = {
       id: feedPost.id,
       author: {
-        id: feedPost.author?.id || "",
-        name: feedPost.author?.name || "Usuário Desconhecido",
-        username: feedPost.author?.username || "desconhecido",
-        profilePictureUrl: feedPost.author?.profilePictureUrl,
+        id: feedPost.author.id || "",
+        name: feedPost.author.name || "Usuário Desconhecido",
+        username: feedPost.author.username || "desconhecido",
+        profilePictureUrl: feedPost.author.profilePictureUrl || undefined,
       },
       content: feedPost.content || "",
-      media: feedPost.media || [],
+      media: Array.isArray(feedPost.media) 
+        ? feedPost.media.map(convertMediaUrlToMediaItem)
+        : [],
       location: feedPost.location || undefined,
       createdAt: feedPost.createdAt || new Date().toISOString(),
       likesCount: feedPost.likesCount || 0,
@@ -50,8 +84,10 @@ const convertFeedPostToPost = (feedPost: FeedPost): Post | null => {
           }
         : undefined,
     };
+    
+    return converted;
   } catch (error) {
-    console.error("Erro ao converter post:", error, feedPost);
+    console.error("❌ Erro ao converter post:", error, feedPost);
     return null;
   }
 };
@@ -83,6 +119,7 @@ export const useFeed = ({
         setError(null);
 
         const feedPosts = await getFeed(pageToLoad, pageSize);
+        
         const convertedPosts = feedPosts
           .map(convertFeedPostToPost)
           .filter((post): post is Post => post !== null);

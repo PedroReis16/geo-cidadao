@@ -21,6 +21,13 @@ const PostCard: React.FC<PostCardProps> = ({
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
 
   const hasMedia = post.media && post.media.length > 0;
+  
+  console.log('📰 PostCard:', { 
+    id: post.id, 
+    hasMedia, 
+    mediaCount: post.media?.length,
+    media: post.media 
+  });
 
   const handleLike = () => onLike?.(post.id);
   const handleComment = () => onComment?.(post.id);
