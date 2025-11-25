@@ -7,13 +7,20 @@ interface AvatarProps {
   name: string;
   alt: string;
   className?: string;
+  size?: "small" | "medium" | "large";
 }
 
 /**
  * Componente Avatar que exibe a foto de perfil ou iniciais do usuário
  * Caso não haja foto, exibe as iniciais em um círculo colorido
  */
-const Avatar: React.FC<AvatarProps> = ({ src, name, alt, className = "" }) => {
+const Avatar: React.FC<AvatarProps> = ({ 
+  src, 
+  name, 
+  alt, 
+  className = "",
+  size = "medium" 
+}) => {
 
   /**
    * Extrai as iniciais do nome do usuário
@@ -60,11 +67,12 @@ const Avatar: React.FC<AvatarProps> = ({ src, name, alt, className = "" }) => {
 
   const initials = getInitials(name);
   const backgroundColor = getColorFromName(name);
+  const sizeClass = `avatar--${size}`;
 
   // Fallback para quando não há imagem ou ocorre erro
   const initialsElement = (
     <div
-      className={`avatar avatar--initials ${className}`}
+      className={`avatar avatar--initials ${sizeClass} ${className}`}
       style={{ backgroundColor }}
       aria-label={alt}
       title={name}
@@ -83,7 +91,7 @@ const Avatar: React.FC<AvatarProps> = ({ src, name, alt, className = "" }) => {
     <AuthImage
       src={src}
       alt={alt}
-      className={`avatar avatar--image ${className}`}
+      className={`avatar avatar--image ${sizeClass} ${className}`}
       fallback={initialsElement}
       loadingComponent={initialsElement}
     />

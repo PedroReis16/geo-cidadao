@@ -11,6 +11,7 @@
   width: 100%;
   position: relative;
   z-index: 1;
+  padding-top: 60px; /* Espaço para a navigation bar */
 }
 
 .map-layout-wrapper {

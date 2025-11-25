@@ -2,6 +2,7 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import { useMap } from "../../data/hooks/useMap";
 import MapComponent from "./MapComponent";
+import NavigationBar from "./NavigationBar";
 import "../styles/components/MapLayout.css";
 
 /**
@@ -36,6 +37,9 @@ const MapLayout: React.FC = () => {
 
   return (
     <div className="map-layout">
+      {/* Barra de navegação */}
+      <NavigationBar />
+
       {/* Conteúdo da página atual (Feed, PostDetail, etc) */}
       <div className="map-layout-content">
         <Outlet />

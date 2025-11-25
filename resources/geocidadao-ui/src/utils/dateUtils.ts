@@ -58,3 +58,15 @@ export const isThisWeek = (timestamp: string): boolean => {
   const diffDays = Math.floor(diffMs / 86400000);
   return diffDays < 7;
 };
+
+/**
+ * Formata data para exibição em formato "mês de ano"
+ * Exemplo: "novembro de 2025"
+ */
+export const formatDate = (timestamp: string): string => {
+  const date = new Date(timestamp);
+  return date.toLocaleDateString("pt-BR", {
+    month: "long",
+    year: "numeric",
+  });
+};
