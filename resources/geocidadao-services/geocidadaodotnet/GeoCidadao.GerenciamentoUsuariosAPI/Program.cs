@@ -48,7 +48,7 @@ builder.Services.AddControllers(options =>
 builder.Services.UsePostgreSql(builder.Configuration);
 
 
-builder.Services.Configure<KeycloakAdminOptions>(builder.Configuration.GetSection(AppSettingsProperties.Keycloak).GetSection(AppSettingsProperties.KeycloakAdmin)!);
+builder.Services.Configure<KeycloakAdminOptions>(builder.Configuration.GetSection(AppSettingsProperties.Keycloak).GetSection(AppSettingsProperties.Admin)!);
 
 // Middlewares
 builder.Services.AddTransient<GlobalExceptionHandler>();
