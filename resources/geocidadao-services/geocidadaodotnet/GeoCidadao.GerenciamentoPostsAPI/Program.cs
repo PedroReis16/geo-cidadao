@@ -47,6 +47,16 @@ builder.Services.AddControllers(options =>
 
 builder.Services.UsePostgreSql(builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()      // libera qualquer origem
+            .AllowAnyHeader()      // libera qualquer header
+            .AllowAnyMethod();     // libera GET, POST, PUT, DELETE etc.
+    });
+});
 
 // Middlewares
 builder.Services.AddTransient<GlobalExceptionHandler>();
@@ -192,6 +202,8 @@ app.UseResponseCaching();
 app.UseMiddleware<HttpResponseCacheHandler>();
 
 app.UsePathBase($"/{basePath}");
+
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();

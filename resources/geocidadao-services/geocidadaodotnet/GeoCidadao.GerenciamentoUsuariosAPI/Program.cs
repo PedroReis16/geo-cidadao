@@ -47,6 +47,17 @@ builder.Services.AddControllers(options =>
 
 builder.Services.UsePostgreSql(builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()      // libera qualquer origem
+            .AllowAnyHeader()      // libera qualquer header
+            .AllowAnyMethod();     // libera GET, POST, PUT, DELETE etc.
+    });
+});
+
 
 builder.Services.Configure<KeycloakAdminOptions>(builder.Configuration.GetSection(AppSettingsProperties.Keycloak).GetSection(AppSettingsProperties.Admin)!);
 
@@ -206,6 +217,8 @@ app.UseResponseCaching();
 app.UseMiddleware<HttpResponseCacheHandler>();
 
 app.UsePathBase($"/{basePath}");
+
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
