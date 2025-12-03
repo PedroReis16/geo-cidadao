@@ -416,32 +416,6 @@
           "attributes": {}
         }
       ],
-      "security-admin-console": [],
-      "geocidadao-map-service": [],
-      "geocidadao-user-management-admin": [],
-      "account-console": [],
-      "broker": [
-        {
-          "id": "fbfe6d7a-e938-4b8e-bcc4-62752e7e083d",
-          "name": "read-token",
-          "description": "${role_read-token}",
-          "composite": false,
-          "clientRole": true,
-          "containerId": "963e3f5b-8445-4419-9c32-239db5a4f3c6",
-          "attributes": {}
-        }
-      ],
-      "geocidadao-user-api": [],
-      "geocidadao-feed-service": [
-        {
-          "id": "38c17ffc-be45-4781-a3c9-bf450720703a",
-          "name": "uma_protection",
-          "composite": false,
-          "clientRole": true,
-          "containerId": "95c5e295-477c-4c0c-9edc-84b9fd6141f0",
-          "attributes": {}
-        }
-      ],
       "geocidadao-ui": [
         {
           "id": "7d2c6889-2669-4f95-88b8-5ccfbe67b9cb",
@@ -517,7 +491,22 @@
           "attributes": {}
         }
       ],
+      "security-admin-console": [],
+      "geocidadao-user-management-admin": [],
       "admin-cli": [],
+      "account-console": [],
+      "broker": [
+        {
+          "id": "fbfe6d7a-e938-4b8e-bcc4-62752e7e083d",
+          "name": "read-token",
+          "description": "${role_read-token}",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "963e3f5b-8445-4419-9c32-239db5a4f3c6",
+          "attributes": {}
+        }
+      ],
+      "geocidadao-user-api": [],
       "account": [
         {
           "id": "5513722d-f00b-44d2-a45d-443d2be64dac",
@@ -806,6 +795,51 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister": false,
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "webAuthnPolicyPasswordlessExtraOrigins": [],
+  "users": [
+    {
+      "id": "24c7facd-eeb8-4fc9-84e8-5b55bc050e11",
+      "username": "service-account-geocidadao-interation-api",
+      "emailVerified": false,
+      "enabled": true,
+      "createdTimestamp": 1763779753104,
+      "totp": false,
+      "serviceAccountClientId": "geocidadao-interation-api",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-geo-cidadao"
+      ],
+      "notBefore": 0,
+      "groups": [
+        "/users"
+      ]
+    },
+    {
+      "id": "b199ace9-9fb3-4ac3-9b46-8c2e9f539fb4",
+      "username": "service-account-geocidadao-user-management-admin",
+      "emailVerified": false,
+      "enabled": true,
+      "createdTimestamp": 1760892429154,
+      "totp": false,
+      "serviceAccountClientId": "geocidadao-user-management-admin",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-geo-cidadao"
+      ],
+      "clientRoles": {
+        "realm-management": [
+          "view-users",
+          "manage-users",
+          "query-users"
+        ]
+      },
+      "notBefore": 0,
+      "groups": [
+        "/users"
+      ]
+    }
+  ],
   "scopeMappings": [
     {
       "clientScope": "offline_access",
@@ -1019,71 +1053,6 @@
       ]
     },
     {
-      "id": "95c5e295-477c-4c0c-9edc-84b9fd6141f0",
-      "clientId": "geocidadao-feed-service",
-      "name": "FeedService",
-      "description": "",
-      "rootUrl": "",
-      "adminUrl": "",
-      "baseUrl": "",
-      "surrogateAuthRequired": false,
-      "enabled": true,
-      "alwaysDisplayInConsole": false,
-      "clientAuthenticatorType": "client-secret",
-      "redirectUris": [
-        "/*"
-      ],
-      "webOrigins": [
-        "/*"
-      ],
-      "notBefore": 0,
-      "bearerOnly": false,
-      "consentRequired": false,
-      "standardFlowEnabled": true,
-      "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": false,
-      "serviceAccountsEnabled": false,
-      "publicClient": true,
-      "frontchannelLogout": true,
-      "protocol": "openid-connect",
-      "attributes": {
-        "realm_client": "false",
-        "oidc.ciba.grant.enabled": "false",
-        "client.secret.creation.time": "1763958265",
-        "backchannel.logout.session.required": "true",
-        "standard.token.exchange.enabled": "false",
-        "frontchannel.logout.session.required": "true",
-        "post.logout.redirect.uris": "+",
-        "oauth2.device.authorization.grant.enabled": "false",
-        "display.on.consent.screen": "false",
-        "backchannel.logout.revoke.offline.tokens": "false",
-        "dpop.bound.access.tokens": "false"
-      },
-      "authenticationFlowBindingOverrides": {},
-      "fullScopeAllowed": true,
-      "nodeReRegistrationTimeout": -1,
-      "defaultClientScopes": [
-        "aud-geocidadao-users-api",
-        "web-origins",
-        "acr",
-        "profile",
-        "aud-geocidadao-posts-api",
-        "roles",
-        "basic",
-        "group-scopes",
-        "email",
-        "aud-comments-service"
-      ],
-      "optionalClientScopes": [
-        "address",
-        "phone",
-        "offline_access",
-        "organization",
-        "microprofile-jwt",
-        "manager-city"
-      ]
-    },
-    {
       "id": "a176a3ef-25d4-40cb-9ed7-5ffceed89ad5",
       "clientId": "geocidadao-interation-api",
       "name": "",
@@ -1095,6 +1064,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
+      "secret": "**********",
       "redirectUris": [
         "/*"
       ],
@@ -1107,8 +1077,8 @@
       "standardFlowEnabled": false,
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
-      "serviceAccountsEnabled": false,
-      "publicClient": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
       "frontchannelLogout": true,
       "protocol": "openid-connect",
       "attributes": {
@@ -1142,6 +1112,7 @@
       "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": -1,
       "defaultClientScopes": [
+        "service_account",
         "web-origins",
         "acr",
         "profile",
@@ -1158,67 +1129,6 @@
         "organization",
         "microprofile-jwt",
         "aud-comments-service"
-      ]
-    },
-    {
-      "id": "42a53756-0367-4844-bd68-4280efec9e9f",
-      "clientId": "geocidadao-map-service",
-      "name": "",
-      "description": "",
-      "rootUrl": "",
-      "adminUrl": "",
-      "baseUrl": "",
-      "surrogateAuthRequired": false,
-      "enabled": true,
-      "alwaysDisplayInConsole": false,
-      "clientAuthenticatorType": "client-secret",
-      "redirectUris": [
-        "/*"
-      ],
-      "webOrigins": [
-        "/*"
-      ],
-      "notBefore": 0,
-      "bearerOnly": false,
-      "consentRequired": false,
-      "standardFlowEnabled": true,
-      "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": false,
-      "serviceAccountsEnabled": false,
-      "publicClient": true,
-      "frontchannelLogout": true,
-      "protocol": "openid-connect",
-      "attributes": {
-        "realm_client": "false",
-        "oidc.ciba.grant.enabled": "false",
-        "backchannel.logout.session.required": "true",
-        "standard.token.exchange.enabled": "false",
-        "oauth2.device.authorization.grant.enabled": "false",
-        "backchannel.logout.revoke.offline.tokens": "false",
-        "dpop.bound.access.tokens": "false"
-      },
-      "authenticationFlowBindingOverrides": {},
-      "fullScopeAllowed": true,
-      "nodeReRegistrationTimeout": -1,
-      "defaultClientScopes": [
-        "aud-geocidadao-users-api",
-        "web-origins",
-        "acr",
-        "profile",
-        "aud-geocidadao-posts-api",
-        "roles",
-        "basic",
-        "group-scopes",
-        "email",
-        "aud-comments-service"
-      ],
-      "optionalClientScopes": [
-        "address",
-        "phone",
-        "offline_access",
-        "organization",
-        "microprofile-jwt",
-        "manager-city"
       ]
     },
     {
@@ -1295,16 +1205,16 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "http://localhost:80/*",
-        "http://localhost:5173/*",
-        "http://localhost/*",
+        "http://54.83.28.246:80/*",
+        "http://54.83.28.246:5173/*",
+        "http://54.83.28.246/*",
         "https://www.keycloak.org/app/*",
-        "http://localhost:80/feed"
+        "http://54.83.28.246:80/feed"
       ],
       "webOrigins": [
-        "http://localhost:80",
-        "http://localhost",
-        "http://localhost:5173",
+        "http://54.83.28.246:80",
+        "http://54.83.28.246",
+        "http://54.83.28.246:5173",
         "https://www.keycloak.org"
       ],
       "notBefore": 0,
@@ -1426,6 +1336,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
+      "secret": "**********",
       "redirectUris": [
         "/*"
       ],
@@ -1438,8 +1349,8 @@
       "standardFlowEnabled": false,
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
-      "serviceAccountsEnabled": false,
-      "publicClient": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
       "frontchannelLogout": true,
       "protocol": "openid-connect",
       "attributes": {
@@ -1449,9 +1360,7 @@
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
         "post.logout.redirect.uris": "+",
-        "frontchannel.logout.session.required": "true",
         "oauth2.device.authorization.grant.enabled": "false",
-        "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "dpop.bound.access.tokens": "false"
       },
@@ -1460,6 +1369,7 @@
       "nodeReRegistrationTimeout": -1,
       "defaultClientScopes": [
         "aud-geocidadao-users-api",
+        "service_account",
         "web-origins",
         "acr",
         "profile",
@@ -2647,13 +2557,13 @@
         "config": {
           "allowed-protocol-mapper-types": [
             "oidc-sha256-pairwise-sub-mapper",
-            "saml-user-attribute-mapper",
-            "oidc-usermodel-attribute-mapper",
             "oidc-full-name-mapper",
-            "oidc-address-mapper",
-            "saml-user-property-mapper",
             "oidc-usermodel-property-mapper",
-            "saml-role-list-mapper"
+            "saml-user-attribute-mapper",
+            "oidc-address-mapper",
+            "saml-role-list-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "saml-user-property-mapper"
           ]
         }
       },
@@ -2712,14 +2622,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "saml-user-attribute-mapper",
-            "saml-user-property-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "oidc-address-mapper",
             "oidc-sha256-pairwise-sub-mapper",
             "oidc-full-name-mapper",
+            "saml-user-attribute-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "saml-role-list-mapper",
             "oidc-usermodel-property-mapper",
-            "saml-role-list-mapper"
+            "saml-user-property-mapper",
+            "oidc-address-mapper"
           ]
         }
       }
@@ -3617,7 +3527,7 @@
     "acr.loa.map": "{}",
     "darkMode": "true"
   },
-  "keycloakVersion": "26.4.5",
+  "keycloakVersion": "26.4.0",
   "userManagedAccessAllowed": false,
   "organizationsEnabled": false,
   "verifiableCredentialsEnabled": false,

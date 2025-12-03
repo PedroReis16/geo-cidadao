@@ -21,6 +21,14 @@ const PostCard: React.FC<PostCardProps> = ({
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
 
   const hasMedia = post.media && post.media.length > 0;
+  
+  console.log('📰 PostCard:', { 
+    id: post.id, 
+    hasMedia, 
+    mediaCount: post.media?.length,
+    mediaTypes: post.media?.map(m => m.type),
+    mediaUrls: post.media?.map(m => m.url.substring(m.url.length - 40))
+  });
 
   const handleLike = () => onLike?.(post.id);
   const handleComment = () => onComment?.(post.id);
@@ -29,7 +37,7 @@ const PostCard: React.FC<PostCardProps> = ({
   return (
     <>
       <article className="post-card">
-        <PostHeader user={post.user} timestamp={post.timestamp} />
+        <PostHeader user={post.author} timestamp={post.timestamp} />
 
         <div
           className={`post-text ${
@@ -59,12 +67,12 @@ const PostCard: React.FC<PostCardProps> = ({
               fill={post.isLiked ? "var(--color-alert)" : "none"}
               className="post-action-icon"
             />
-            <span>{post.likes}</span>
+            <span>{post.likesCount}</span>
           </button>
 
           <button onClick={handleComment} className="post-action-btn">
             <MessageCircle size={20} className="post-action-icon" />
-            <span>{post.comments}</span>
+            <span>{post.commentsCount}</span>
           </button>
 
           {post.coordinates && (

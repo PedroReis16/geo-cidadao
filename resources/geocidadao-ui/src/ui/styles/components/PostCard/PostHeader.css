@@ -5,6 +5,15 @@
   gap: 12px;
 }
 
+.post-header__avatar-wrapper {
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+
+.post-header__avatar-wrapper:hover {
+  opacity: 0.8;
+}
+
 .post-header__avatar {
   width: 48px;
   height: 48px;
@@ -20,6 +29,12 @@
   color: var(--color-text);
   font-weight: 600;
   font-size: 15px;
+  transition: color 0.2s;
+}
+
+.post-header__name:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
 }
 
 .post-header__meta {

@@ -1,5 +1,6 @@
-interface Author{
-    name: string;
-    username: string;
-    avatar: string;
+export interface Author {
+  id: string;
+  name: string;
+  username: string;
+  profilePictureUrl?: string;
 }

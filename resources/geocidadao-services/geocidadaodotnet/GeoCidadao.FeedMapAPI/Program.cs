@@ -26,6 +26,16 @@ builder.Services.AddControllers(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()      // libera qualquer origem
+            .AllowAnyHeader()      // libera qualquer header
+            .AllowAnyMethod();     // libera GET, POST, PUT, DELETE etc.
+    });
+});
 
 builder.Services.UsePostgreSql(builder.Configuration);
 
@@ -101,6 +111,8 @@ app.UseResponseCaching();
 app.UseMiddleware<HttpResponseCacheHandler>();
 
 app.UsePathBase($"/{basePath}");
+
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
