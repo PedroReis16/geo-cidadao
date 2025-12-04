@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Oauth2Service } from '@core/services';
+import { OauthService } from '@core/services';
 
 @Component({
   selector: 'app-callback',
@@ -9,7 +9,7 @@ import { Oauth2Service } from '@core/services';
   styleUrl: './callback.component.css'
 })
 export class CallbackComponent implements OnInit {
-  oauth2Service = inject(Oauth2Service);
+  oauth2Service = inject(OauthService);
   router = inject(Router);
 
   async ngOnInit(): Promise<void> {
