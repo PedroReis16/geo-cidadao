@@ -45,9 +45,20 @@ builder.Services.AddControllers(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-builder.Services.Configure<KeycloakAdminOptions>(builder.Configuration.GetSection(AppSettingsProperties.Keycloak).GetSection(AppSettingsProperties.KeycloakAdmin)!);
+builder.Services.Configure<KeycloakAdminOptions>(builder.Configuration.GetSection(AppSettingsProperties.Keycloak).GetSection(AppSettingsProperties.Admin)!);
 
 builder.Services.UsePostgreSql(builder.Configuration);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()      // libera qualquer origem
+            .AllowAnyHeader()      // libera qualquer header
+            .AllowAnyMethod();     // libera GET, POST, PUT, DELETE etc.
+    });
+});
 
 // Middlewares
 builder.Services.AddTransient<GlobalExceptionHandler>();
@@ -215,6 +226,8 @@ app.UseResponseCaching();
 app.UseMiddleware<HttpResponseCacheHandler>();
 
 app.UsePathBase($"/{basePath}");
+
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 

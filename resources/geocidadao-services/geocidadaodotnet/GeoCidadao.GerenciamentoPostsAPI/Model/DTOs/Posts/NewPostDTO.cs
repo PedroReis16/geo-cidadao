@@ -9,6 +9,7 @@ namespace GeoCidadao.GerenciamentoPostsAPI.Model.DTOs.Posts
         public double? Longitude { get; set; }
         public List<IFormFile> MediaFiles { get; set; } = new();
 
+
         public bool HasPosition => Latitude.HasValue && Longitude.HasValue;
     }
 }
