@@ -2,7 +2,6 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import FeedPage from "../../ui/pages/FeedPage";
 import PostDetailsPage from "../../ui/pages/PostDetailsPage";
-import ProfilePage from "../../ui/pages/ProfilePage";
 import KeycloakCallback from "../../ui/pages/KeycloakCallback";
 import NotFoundPage from "../../ui/pages/NotFound";
 import ProtectedRouter from "../../ui/components/ProtectedRouter";
@@ -33,14 +32,6 @@ const Router = createBrowserRouter([
       {
         path: "post/:postId",
         element: <PostDetailsPage />,
-      },
-      {
-        path: "profile",
-        element: <ProfilePage />,
-      },
-      {
-        path: "profile/:userId",
-        element: <ProfilePage />,
       },
       {
         path: "*",
