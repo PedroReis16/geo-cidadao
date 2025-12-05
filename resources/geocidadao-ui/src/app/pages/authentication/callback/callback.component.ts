@@ -13,7 +13,11 @@ export class CallbackComponent implements OnInit {
   router = inject(Router);
 
   async ngOnInit(): Promise<void> {
-    await this.oauth2Service.handleCallback();
-    this.router.navigate(['/']);
+    const isAuthenticated = await this.oauth2Service.isAuthenticated();
+    if (isAuthenticated) {
+      this.router.navigate(['/']);
+    } else {
+      this.router.navigate(['/login']);
+    }
   }
 }

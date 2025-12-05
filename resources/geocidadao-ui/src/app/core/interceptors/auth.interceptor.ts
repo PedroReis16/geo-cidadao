@@ -8,7 +8,7 @@ export class AuthInterceptor implements HttpInterceptor {
   oauthService = inject(OauthService);
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return from(this.oauthService.getAccessToken()).pipe(
+    return from(this.oauthService.accessToken).pipe(
       switchMap((token) => {
         
         if (req.headers.get('Skip-Auth') === 'true') {

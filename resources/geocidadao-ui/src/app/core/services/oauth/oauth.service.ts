@@ -1,88 +1,61 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../../environments/environment';
-import {OAuthService} from 'angular-oauth2-oidc';
-import { authCodeFlowConfig } from '../../config/auth/oauth.config';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { authCodeFlowConfig } from '@core/config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OauthService {
   oauthService = inject(OAuthService);
-  isLoaded = false;
-  promiseRefreshToken: Promise<string> | null = null;
+  private configurePromise: Promise<void> | null = null;
 
   constructor() {
     this.configure();
   }
 
-  async configure() {
-    if (this.isLoaded) {
-      return;
+  private configure(): Promise<void> {
+    if (!this.configurePromise) {
+      this.oauthService.configure(authCodeFlowConfig);
+      
+      this.configurePromise = this.oauthService
+        .loadDiscoveryDocument()
+        .then(() => {
+          return this.oauthService.tryLogin();
+        })
+        .then(() => {
+          this.oauthService.setupAutomaticSilentRefresh();
+        })
+        .catch((error) => {
+          console.error('Erro durante a configuração do OAuthService:', error);
+        });
     }
-
-    this.oauthService.configure(authCodeFlowConfig);
-    await this.oauthService.loadDiscoveryDocument();
-
-    this.isLoaded = true;
+    return this.configurePromise;
   }
 
-  async login() {
-    await this.configure();
-    this.oauthService.initLoginFlow();
+  public async login() {
+    try {
+      await this.configure();
+      this.oauthService.initLoginFlow(); //Redireciona para a página de autenticação do keycloak
+    } catch (error) {
+      console.error('Erro durante o login:', error);
+    }
   }
 
-  async logout() {
+  public async logout() {
     await this.configure();
-
-    await this.oauthService.revokeTokenAndLogout({
-      token_type_hint: 'refresh_token',
-      token: this.oauthService.getRefreshToken(),
-    });
+    this.oauthService.logOut(); //Redireciona para a página de logout do keycloak
   }
 
-  async handleCallback() {
-    await this.configure();
-
-    await this.oauthService.tryLogin({
-      disableNonceCheck: true,
-    });
-  }
-
-  async getUser() {
-    await this.configure();
+  public get identityClaims() {
     return this.oauthService.getIdentityClaims();
   }
 
-  async isLoggedIn() {
-    const user = await this.getUser();
-
-    return !!user;
-  }
-
-  async getAccessToken() {
-    await this.configure();
-
-    if (this.promiseRefreshToken) {
-      return await this.promiseRefreshToken;
-    }
-
-    const tokenExp = this.oauthService.getAccessTokenExpiration();
-    const now = new Date();
-    const diff = tokenExp - now.getTime();
-
-    if (diff < environment.oauth2.refreshTokenTimeThreshold) {
-      this.promiseRefreshToken = this.oauthService.refreshToken().then(() => {
-        return this.oauthService.getAccessToken();
-      });
-
-      return await this.promiseRefreshToken;
-    }
-
+  public get accessToken() {
     return this.oauthService.getAccessToken();
   }
 
-  async getRefreshToken() {
+  public async isAuthenticated() {
     await this.configure();
-    return this.oauthService.getRefreshToken();
+    return this.oauthService.hasValidAccessToken();
   }
 }

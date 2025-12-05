@@ -8,10 +8,10 @@ export const environment = {
   ],
   apiUrl: 'http://localhost:81',
   oauth2: {
-    issuer: 'http://localhost:8082',
+    issuer: 'http://localhost:8082/realms/geocidadao',
     clientId: 'geocidadao-ui',
     redirectUri: 'http://localhost:4200/callback',
-    scope: 'openid',
+    scope: 'openid profile email',
     showDebugInformation: true,
     strictDiscoveryDocumentValidation: false,
     skipIssuerCheck: true,

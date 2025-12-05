@@ -6,19 +6,17 @@ import { OauthService } from '@core/services';
   selector: 'app-login',
   imports: [],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.css',
 })
 export class LoginComponent implements OnInit {
   oauthService = inject(OauthService);
   router = inject(Router);
 
   async ngOnInit(): Promise<void> {
-    const user = await this.oauthService.getUser();
-    if (user) {
+    if(await this.oauthService.isAuthenticated()) {
       this.router.navigate(['/']);
-      return
     }
 
-    await this.oauthService.login();
+    this.oauthService.login();
   }
 }
