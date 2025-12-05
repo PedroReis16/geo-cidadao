@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ThemeService } from '@core/services';
+import { injectPaletteVariables } from '@shared/theme/geocidadao.theme';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +10,12 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.component.css',
   standalone: true,
 })
-export class AppComponent {
-  title = 'geocidadao-ui';
+export class AppComponent implements OnInit {
+  themeService = inject(ThemeService);
+
+  ngOnInit(): void {
+    this.themeService.setTheme(this.themeService.getBrowserTheme());
+
+    injectPaletteVariables();
+  }
 }

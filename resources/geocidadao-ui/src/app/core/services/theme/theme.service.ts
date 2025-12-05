@@ -25,9 +25,9 @@ export class ThemeService {
     const element = document.querySelector('html');
 
     if (theme === 'dark') {
-      element?.classList.add('mobilemed-dark');
+      element?.classList.add('geocidadao-dark');
     } else {
-      element?.classList.remove('mobilemed-dark');
+      element?.classList.remove('geocidadao-dark');
     }
     this.selectedTheme.set(theme);
 
