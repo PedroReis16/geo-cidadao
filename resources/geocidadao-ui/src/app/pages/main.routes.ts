@@ -6,18 +6,17 @@ export const mainRoutes: Routes = [
   {
     path: '',
     component: LayoutComponent, // LayoutComponent = Base page
-    // canActivate: [authGuard],
-    children:[
+    canActivate: [authGuard],
+    children: [
       {
         path: '',
         redirectTo: 'feed',
-        pathMatch: 'full'
+        pathMatch: 'full',
       },
       {
         path: 'feed',
-        loadComponent: () => 
-          import('./feed/feed.component').then(m => m.FeedComponent)
-      }
-    ]
+        loadComponent: () => import('./feed/feed.component').then((m) => m.FeedComponent),
+      },
+    ],
   },
 ];

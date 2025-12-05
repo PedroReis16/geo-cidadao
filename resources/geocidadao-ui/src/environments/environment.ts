@@ -6,10 +6,10 @@ export const environment = {
     { value: 'en-US', label: 'English' },
     { value: 'es-ES', label: 'Español' },
   ],
-  apiUrl: '',
+  apiUrl: 'http://localhost:81',
   oauth2: {
-    issuer: '',
-    clientId: '',
+    issuer: 'http://localhost:8082',
+    clientId: 'geocidadao-ui',
     redirectUri: 'http://localhost:4200/callback',
     scope: 'openid',
     showDebugInformation: true,
