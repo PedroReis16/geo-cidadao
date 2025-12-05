@@ -1,9 +1,23 @@
 import { Routes } from '@angular/router';
-import { FeedComponent } from './feed/feed.component';
+import { authGuard } from '@core/guards/auth/auth.guard';
+import { LayoutComponent } from './layout/layout.component';
 
 export const mainRoutes: Routes = [
   {
     path: '',
-    component: FeedComponent,
+    component: LayoutComponent, // LayoutComponent = Base page
+    // canActivate: [authGuard],
+    children:[
+      {
+        path: '',
+        redirectTo: 'feed',
+        pathMatch: 'full'
+      },
+      {
+        path: 'feed',
+        loadComponent: () => 
+          import('./feed/feed.component').then(m => m.FeedComponent)
+      }
+    ]
   },
 ];
